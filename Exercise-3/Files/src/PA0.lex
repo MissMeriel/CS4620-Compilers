@@ -22,6 +22,7 @@ import java_cup.runtime.Symbol;
 ";" { return new Symbol(sym.SEMI, null); }
 "*" { return new Symbol(sym.TIMES, null); }
 "+" { return new Symbol(sym.PLUS, null); }
+"++" { return new Symbol(sym.PLUSPLUS, null); }
 "-" { return new Symbol(sym.MINUS, null); }
 "print" { return new Symbol(sym.PRINT, null); }
 [ \t\r\n\f] { /* ignore white space. */ }

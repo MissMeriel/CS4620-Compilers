@@ -25,6 +25,7 @@ parser code {:
 terminal PRINT;
 terminal Integer NUMBER;
 terminal PLUS, MINUS, TIMES;
+terminal PLUSPLUS;
 terminal SEMI;
 
 non terminal program;
@@ -52,9 +53,9 @@ stmt	::=
     ;
 
 exp ::=            
-        exp:a TIMES:op exp:b          {: RESULT = new Integer(0); :}
-	|	exp:a PLUS:op exp:b			  {: RESULT = a.intValue() + b.intValue(); :}
-	|	exp:a MINUS:op exp:b		  {: RESULT = a.intValue() - b.intValue(); :}
-    |   NUMBER:n                      {: RESULT = new Integer(0); :}
-               			
+        exp:a TIMES:op exp:b          {: RESULT = new Integer(a.intValue() * b.intValue()); :}
+	|	exp:a PLUS:op exp:b			  {: RESULT = new Integer(a.intValue() + b.intValue()); :}
+	|	exp:a MINUS:op exp:b		  {: RESULT = new Integer(a.intValue() - b.intValue()); :}
+    |   NUMBER:n                      {: RESULT = new Integer(n.intValue()); :}
+	|   PLUSPLUS					  {: System.out.println("PLUSPLUS FOUND"); :}               			
     ;

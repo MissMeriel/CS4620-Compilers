@@ -1,0 +1,60 @@
+/* PA0.cup */
+ 
+/***** Command Line build instructions (as implemented in Makefile)
+ in this (src) directory:
+ java -jar java-cup-11a.jar  PA0.cup
+ javac -classpath .:java-cup-11a-runtime.jar -d . parser.java sym.java Yylex.java
+    
+*****/
+
+/***** Run instructions
+ in this (src) directory:
+ java -classpath .:java-cup-11a-runtime.jar parser ../infile
+
+*****/
+
+import java_cup.runtime.*;
+import java.io.FileInputStream;
+
+parser code {:
+    public static void main(String args[]) throws Exception {
+        new parser(new Yylex(new FileInputStream(args[0]))).parse();
+    }
+:}
+
+terminal PRINT;
+terminal Integer NUMBER;
+terminal PLUS, MINUS, TIMES;
+terminal SEMI;
+
+non terminal program;
+non terminal stmts;
+non terminal stmt;
+non terminal Integer exp;
+
+precedence left PLUS, MINUS;
+precedence left TIMES;
+
+program	::=	
+        stmts
+    |   /* Empty */
+	;
+	
+stmts   ::=
+        stmts stmt
+    |   stmt
+    ;
+
+stmt	::=
+        PRINT exp:e SEMI
+        {: System.out.println("exp "+ e.intValue()); :}
+
+    ;
+
+exp ::=            
+        exp:a TIMES:op exp:b          {: RESULT = new Integer(a.intValue() * b.intValue()); :}
+	|	exp:a PLUS:op exp:b			  {: RESULT = new Integer(a.intValue() + b.intValue()); :}
+	|	exp:a MINUS:op exp:b		  {: RESULT = new Integer(a.intValue() - b.intValue()); :}
+    |   NUMBER:n                      {: RESULT = new Integer(n.intValue()); :}
+               			
+    ;
