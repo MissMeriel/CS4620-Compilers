@@ -86,6 +86,6 @@ public class CheckTypes extends DepthFirstVisitor
        }
 
    }
-  
+
 
 }
