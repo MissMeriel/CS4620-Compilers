@@ -66,7 +66,7 @@ public class MJDriver {
           java.io.PrintStream astout =
             new java.io.PrintStream(
                 new java.io.FileOutputStream(filename + ".ast.dot"));
-		System.out.println("ast_root null?: "+(ast_root == null));
+		//System.out.println("ast_root null?: "+(ast_root == null));
 		  ast_root.accept(new DotVisitor(new PrintWriter(astout)));
           System.out.println("Printing AST to " + filename + ".ast.dot");
 

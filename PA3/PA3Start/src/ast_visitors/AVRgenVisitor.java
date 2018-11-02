@@ -172,7 +172,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n\tpush   r24"
                 );  
         }   
-		/*else if(node instanceof ){
+		/*else if(node instanceof MulExp){
 			out.println(
 				+"\n\t"
 				+"\n\t"
@@ -376,6 +376,74 @@ public class AVRgenVisitor extends DepthFirstVisitor
         super.outAndExp(node);
     }  
 
+    @Override
+    public void visitMulExp(MulExp node)
+    {    
+        inMulExp(node);
+        if(node.getLExp() != null)
+        {    
+			if(node.getLExp() instanceof IExp){
+				node.getLExp().accept(this);
+			} else {
+				System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator *");
+			}
+        }    
+        if(node.getRExp() != null)
+        {    
+            if(node.getRExp() instanceof IExp) {
+				node.getRExp().accept(this);
+            } else {
+                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator *");
+            }   
+        }    
+        outMulExp(node);
+    }
+
+    @Override
+    public void visitPlusExp(PlusExp node)
+    {
+        inPlusExp(node);
+        if(node.getLExp() != null)
+        {
+            if(node.getLExp() instanceof IExp){
+                node.getLExp().accept(this);
+            } else {
+                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator +");
+            }   
+        }         
+        if(node.getRExp() != null)
+        {
+            if(node.getRExp() instanceof IExp) {
+                node.getRExp().accept(this);
+            } else {
+                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator +");
+            }
+        }
+        outPlusExp(node);
+    }
+
+    @Override
+    public void visitMinusExp(MinusExp node)
+    {
+        inMinusExp(node);
+        if(node.getLExp() != null)
+        {
+            if(node.getLExp() instanceof IExp){
+                node.getLExp().accept(this);
+            } else {
+                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator -");
+            }
+        }
+        if(node.getRExp() != null)
+        {
+            if(node.getRExp() instanceof IExp) {
+                node.getRExp().accept(this);
+            } else {
+                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator -");
+            }
+        }
+        outMinusExp(node);
+    } 
 
    /** A helper that trims a node's class name before printing it.
     * (E.g., "node.Token" --> "Token".) 
