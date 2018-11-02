@@ -1,0 +1,24 @@
+2018-11-01 17:23:39,105 [main] FATAL ui.AVRSim - Encountered error during runtime.
+instructions.RuntimeError: Hit max number of jumps for label: MJ_L0:
+	at machine.MachineState.executeInstruction(MachineState.java:310)
+	at ui.AVRSim.runAssem(AVRSim.java:97)
+	at ui.AVRSim.run(AVRSim.java:82)
+	at ui.Main.main(Main.java:134)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.simontuffs.onejar.Boot.run(Boot.java:340)
+	at com.simontuffs.onejar.Boot.main(Boot.java:166)
+2018-11-01 18:24:54,155 [main] FATAL ui.AVRSim - Encountered error during runtime.
+instructions.RuntimeError: Hit max number of jumps for label: MJ_L0:
+	at machine.MachineState.executeInstruction(MachineState.java:310)
+	at ui.AVRSim.runAssem(AVRSim.java:97)
+	at ui.AVRSim.run(AVRSim.java:82)
+	at ui.Main.main(Main.java:134)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.simontuffs.onejar.Boot.run(Boot.java:340)
+	at com.simontuffs.onejar.Boot.main(Boot.java:166)
