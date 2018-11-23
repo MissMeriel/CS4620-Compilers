@@ -296,6 +296,10 @@ exp ::=
 	{:
 		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
 	:}
+	| exp:e1 LT:lt exp:e2
+	{:
+		RESULT = new LtExp(lt.line, lt.pos, e1, e2);
+	:}
 	| exp:e1 PLUS:p exp:e2
 	{:
 		RESULT = new PlusExp(p.line, p.pos, e1, e2);

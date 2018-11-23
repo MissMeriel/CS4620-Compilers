@@ -172,7 +172,41 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n\tpush   r24"
                 );  
         }   
-		/*else if(node instanceof MulExp){
+		else if(node instanceof CallExp){
+			CallExp callExp = (CallExp) node;
+			LinkedList<IExp> args = callExp.getArgs();
+			//N.B. CAN'T DO THIS TO GET PARENT CLASS
+			// TRY SYM TABLE LOOKUP
+			String parentClass = "";
+			if(node.parent() != null){
+				parentClass = ((ClassDecl)node.parent()).getId();
+			}
+			LinkedList<IExp> args = callExp.getArgs();
+			int argReg = 24 - args.size() * 2;
+			out.println("\n\t#### function call"
+				+"\n\t# put parameter values into appropriate registers");
+			Iterator iter = args.descendingIterator();
+			while(iter.hasNext()){
+				Formal arg = iter.next();
+                if(arg.getType() == Type.INT){
+                    //pop 2 bytes off stack
+                    out.println("\n\tpop    r"+argReg);
+                    argReg++;
+                    out.println("\n\tpop    r"+argReg);
+                    argReg++;
+                }else{
+                    //pop 1 byte off stack
+                    out.println("\n\tpop    r"+argReg);
+                    argReg += 2;
+                }
+			}
+			out.println("\n\t# receiver will be passed as first param"
+				+"\n\tpop    r"+argReg);
+				argReg++;
+				out.println("\n\tpop    r"+argReg);
+				out.println("\n\tcall    "+parentClass+callExp.getId());
+		}
+/*		else if(node instanceof ){
 			out.println(
 				+"\n\t"
 				+"\n\t"
@@ -183,7 +217,17 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				+"\n"
 				);
 		}
-
+		else if(node instanceof ){
+			out.println(
+				+"\n\t"
+				+"\n\t"
+				+"\n\t"
+				+"\n"
+				+"\n"
+				+"\n"
+				+"\n"
+				);
+		}
 		else if(node instanceof ){
 			out.println(
 				+"\n\t"
@@ -196,6 +240,17 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				);
 		}
 
+/*		else if(node instanceof ){
+			out.println(
+				+"\n\t"
+				+"\n\t"
+				+"\n\t"
+				+"\n"
+				+"\n"
+				+"\n"
+				+"\n"
+				);
+		}
 		else if(node instanceof ){
 			out.println(
 				+"\n\t"
@@ -247,11 +302,81 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			);
 		}
 		else if(node instanceof AndExp){
-			out.println("\n\t#### short-circuited && operation"
-				);
+			out.println("\n\t#### short-circuited && operation");
 		}
 		else if(node instanceof WhileStatement){
 		}
+		else if(node instanceof NewExp){
+			out.println("\n\t# NewExp"
+				+"\n\tldi    r24, lo8(0)"
+				+"\n\tldi    r25, lo8(0)"
+				+"\n\t# allocating object of size 0 on heap"
+				+"\n\tcall    malloc"
+				+"\n\t# push object address"
+				+"\n\t# push two byte expression onto stack"
+				+"\n\tpush   r25"
+				+"\n\tpush   r24"
+				);
+		else if(node instanceof MethodDecl){
+			MethodDecl methDecl = (MethodDecl) node;
+            String methodName = ""; 
+            if(node.parent() != null){
+                methodName = ((ClassDecl)node.parent()).getId();
+            }
+			methodName = methodName+methDecl.getId();
+			LinkedList<Formal> fs = methDecl.getFormals();
+			out.println("\n\t.text"
+				+"\n.global "+methodName
+				+"\n\t.type  "+methodName+", @function"
+				+"\n"+methodName+":"
+				+"\n\tpush   r29"
+				+"\n\tpush   r28"
+				+"\n\t# make space for locals and params"
+				+"\n\tldi    r30, 0");
+			for(int i = 0; i < fs.size()*2; i++){
+				out.print("\n\tpush   r30");
+			}
+			out.print("\n\t"
+				+"\n\t# Copy stack pointer to frame pointer"
+				+"\n\tin     r28,__SP_L__"
+				+"\n\tin     r29,__SP_H__"
+				+"\n\t"
+				+"\n\t# save off parameters");
+			int avrReg = 20 + fs.size()*2 + 1;
+			int offset = 3;
+			out.println("std    Y + 2, r"+avrReg);
+			avrReg--;
+			out.println("std    Y + 1, r"+avrReg);
+			avrReg--;
+			Iterator iter = fs.listIterator();
+			while(iter.hasNext()){
+			    Formal arg = iter.next();
+				if(arg.getType() instanceof Type.INT){
+                    //pop 2 bytes off stack
+					out.println("\n\tstd    Y + "+(offset+1)+", r"+argReg);
+                    argReg--;
+                    out.println("\n\tstd    Y + "+offset+", r"+argReg);
+                    argReg--;
+                    offset += 2;
+				}else{
+                    //pop 1 byte off stack
+                    out.println("\n\tpop    r"+argReg);
+                    argReg -= 2;
+                    offset++;
+				}
+			}
+			out.print("\n/* done with function Simplebluedot prologue */");
+		}
+		else if(node instanceof ThisLiteral){
+			out.println("\n\t# loading the implicit \"this\"");
+		}
+		/*else if(node instanceof ){
+			out.println(""
+				+"\n\t"
+				+"\n\t"
+				+"\n\t"
+				);
+		}*/
 		/*else if(node instanceof ){
 			out.println(""
 				+"\n\t"
@@ -444,6 +569,111 @@ public class AVRgenVisitor extends DepthFirstVisitor
         }
         outMinusExp(node);
     } 
+
+    @Override
+	/** containing class important */
+    public void visitMethodDecl(MethodDecl node)
+    {   
+        inMethodDecl(node);
+        if(node.getType() != null) {
+			if(node.getType() instanceof IType) {
+				node.getType().accept(this);
+            } else {
+                System.out.println("["+node.getType().getLine()+","+node.getType().getPos()+"] Invalid type for method declaration "+node.getName());
+			}   
+        }   
+        if(node.getFormals() != null) {
+			if(node.getFormals() instanceof List<Formal>) {
+				Iterator iter = node.getFormals().listIterator();
+				while(iter.hasNext()){
+					Formal formal = iter.next();
+					formal.accept(this);
+				}
+            } else {
+                System.out.println("["+node.getFormals().getLine()+","+node.getFormals().getPos()+"] Invalid formal list for method decl "+node.getName());
+			}   
+        }   
+        if(node.getVarDecls() != null) {
+            if(node.getVarDecls() instanceof List<VarDecl>) {
+                Iterator iter = node.getVarDecls().listIterator();
+                while(iter.hasNext()){
+                    VarDecl vd = iter.next();
+                    vd.accept(this);
+                }
+            } else {
+                System.out.println("["+node.getVarDecls().getLine()+","+node.getVarDecls().getPos()+"] Invalid var decl list for method decl "+node.getName());
+            }
+        }
+        if(node.getStatements() != null) {
+			if(node.getStatements() instanceof List<IStatement>) {
+                Iterator iter = node.getStatements().listIterator();
+                while(iter.hasNext()){
+                    IStatement s = iter.next();
+                    s.accept(this);
+                }
+            } else {
+                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator -");
+			}   
+        }
+        if(node.getExp() != null) {
+            if(node.getExp() instanceof IExp) {
+                node.getExp().accept(this);
+            } else {
+                System.out.println("["+node.getExp().getLine()+","+node.getExp().getPos()+"] Invalid return for method declaration "+node.getName());
+            }
+        }
+        outMethodDecl(node);
+    } 
+
+
+    @Override
+    public void visitLtExp(MinusExp node)
+    {   
+        inLtExp(node);
+        if(node.getLExp() != null)
+        {   
+            if(node.getLExp() instanceof IExp){
+                node.getLExp().accept(this);
+            } else {
+                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator <");
+            }   
+        }   
+        if(node.getRExp() != null)
+        {   
+            if(node.getRExp() instanceof IExp) {
+                node.getRExp().accept(this);
+            } else {
+                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator <");
+            }   
+        }   
+        outLtExp(node);
+    } 
+
+
+/*    @Override
+    public void visitMinusExp(MinusExp node)
+    {   
+        inMinusExp(node);
+        if(node.getLExp() != null)
+        {   
+            if(node.getLExp() instanceof IExp){
+                node.getLExp().accept(this);
+            } else {
+                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator -");
+            }   
+        }   
+        if(node.getRExp() != null)
+        {   
+            if(node.getRExp() instanceof IExp) {
+                node.getRExp().accept(this);
+            } else {
+                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator -");
+            }   
+        }   
+        outMinusExp(node);
+    } 
+*/
+
 
    /** A helper that trims a node's class name before printing it.
     * (E.g., "node.Token" --> "Token".) 
