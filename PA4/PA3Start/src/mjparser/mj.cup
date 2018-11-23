@@ -93,6 +93,7 @@ non terminal MainClass main_class;
 non terminal LinkedList<IClassDecl> classes;
 non terminal IClassDecl class_decl;
 non terminal MethodDecl method_decl;
+non terminal LinkedList<Formal> formals;
 non terminal LinkedList<MethodDecl> methods;
 non terminal IType type;
 non terminal IExp return;
@@ -129,7 +130,7 @@ classes ::=
 	:}
 	| /*nothing*/
 	{:
-		RESULT = new LinkedList<IClassDecl>());
+		RESULT = new LinkedList<IClassDecl>();
 	:}
 	;
 
@@ -141,7 +142,7 @@ main_class ::=
     RBRACE
 		{:
 			BlockStatement blockStatement = new BlockStatement(l.line, l.pos, list);
-			System.out.println("mainClass");
+			//System.out.println("mainClass");
 			MainClass _mainClass_ = new MainClass(c.line, c.pos, name.lexeme, param.lexeme, blockStatement);
 			RESULT = _mainClass_; 
 		:}
@@ -152,7 +153,7 @@ main_class ::=
 class_decl ::=
 	CLASS:c identifier:id LBRACE methods:m RBRACE
 	{:
-		RESULT = new TopClass(c.line, c.pos, id.getLexeme(), new LinkedList<VarDecl>(), m);
+		RESULT = new TopClassDecl(c.line, c.pos, id.getLexeme(), new LinkedList<VarDecl>(), m);
 	:}
 	;
 
@@ -169,47 +170,30 @@ methods ::=
 	;
 
 method_decl ::=
-	PUBLIC:p type:t identifier:id LBRACE statement_list:sl return:r RBRACE
+	PUBLIC:p type:t identifier:id LPAREN formals:f RPAREN LBRACE statement_list:sl return:r RBRACE
 	{:
-		IType class_type = null;
-		switch(t.getClass().toString()){
-			case "BoolType":
-				class_type = new BoolType(t.line, t.pos);
-				break;
-			case "ButtonType":
-				class_type = new ButtonType(t.line, t.pos);
-				break;
-			case "ByteType":
-				class_type = new ByteType(t.line, t.pos);
-				break;
-			case "ClassType":
-				class_type = new ClassType(t.line, t.pos);
-				break;
-			case "ColorArrayType":
-				class_type = new ColorArrayType(t.line, t.pos);
-				break;
-			case "ColorType":
-				class_type = new ColorType(t.line, t.pos);
-				break;
-			case "IntArrayType":
-				class_type = new IntArrayType(t.line, t.pos);
-				break;
-			case "IntType":
-				class_type = new IntType(t.line, t.pos);
-				break;
-			case "ToneType":
-				class_type = new ToneType(t.line, t.pos);
-				break;
-			case "VoidType":
-				class_type = new VoidType(t.line, t.pos);
-				break;
-		}
-		RESULT = MethodDecl(p.line, p.pos, class_type, id.getLexeme(), 
-        IType _type_, String _name_,
-        List<Formal> _formals_, List<VarDecl> _varDecls_,
-        List<IStatement> _statements_, IExp _exp_);
+		//int _line_, int _pos_, IType _type_, String _name_,
+        //List<Formal> _formals_, List<VarDecl> _varDecls_, List<IStatement> _statements_, IExp _exp_);
+		RESULT = new MethodDecl(p.line, p.pos, t, id.getLexeme(), f, new LinkedList<VarDecl>(), sl, r); 
 	:}
 	;
+
+formals ::=
+	formals:fs COMMA type:t identifier:id
+	{:
+		Formal f = new Formal(t.getLine(), t.getPos(), t, id.getLexeme());
+		fs.add(f);
+		RESULT = fs;
+	:}
+	| type:t identifier:id
+	{:
+		Formal f = new Formal(t.getLine(), t.getPos(), t, id.getLexeme());
+		LinkedList<Formal> ll = new LinkedList<Formal>();
+		ll.add(f);
+		RESULT = ll;
+	:}
+	;
+
 return ::=
 	RETURN exp:e SEMI
 	{:
