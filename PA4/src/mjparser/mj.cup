@@ -248,7 +248,7 @@ statement_list ::=
 statement ::=
 	 LBRACE:lb statement_list:list RBRACE
 	{:
-		System.out.println("{statement_list}");
+		//System.out.println("{statement_list}");
 		RESULT = new BlockStatement(lb.line, lb.pos, list);
 		//System.out.println("successfully set statement::= blockstatements "+ list.size());
 	:}
@@ -276,7 +276,7 @@ statement ::=
 	:}
 	| WHILE:w LPAREN exp:e RPAREN statement:s 
 	{:	
-		System.out.println("in while statement");
+		//System.out.println("in while statement");
 		RESULT = new WhileStatement(w.line, w.pos, e, s);
 	:}
     | exp:e1 DOT identifier:id params:p SEMI

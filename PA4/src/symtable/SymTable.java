@@ -92,18 +92,19 @@ public class SymTable {
      * Returns null if the symbol is not found.
      */
     public STE lookup(String sym) {
-		Scope currentScope = mScopeStack.peek();
-		if(currentScope.lookupInnermost(sym) != null){
-			return currentScope.lookupInnermost(sym);
-		} else {
+//		Scope currentScope = mScopeStack.peek();
+//		if(currentScope.lookupInnermost(sym) != null){
+//			return currentScope.lookupInnermost(sym);
+//		} else {
 			Iterator<Scope> iter = mScopeStack.iterator();
 			while(iter.hasNext()){
 				Scope scope = iter.next();
+//				System.out.println("Scope: "+scope.getName());
 				if(scope.lookupInnermost(sym) != null){
 					return scope.lookupInnermost(sym);
 				}
 			}
-		}
+//		}
         /* WRITE ME */
 		return null;
     }
@@ -185,13 +186,13 @@ public class SymTable {
 		//connect new scope members to their previous scopes
 		HashMap<String, STE> hm = scope.getDict();
 		Set keyset = hm.keySet();
-		if(scope.getName() != null){
+/*		if(scope.getName() != null){
 			System.out.println("scope name: " + scope.getName());
 		} else {
 			System.out.println("scope name: null");
 		}
 		System.out.println("keys in scope: " + keyset.size());
-		
+*/		
 		int currScopeStart = portCount;
 		//print out scope
 		Iterator<String> iter = keyset.iterator();

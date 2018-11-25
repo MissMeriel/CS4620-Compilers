@@ -8,8 +8,15 @@ public class MethodSTE extends STE{
 	String mName;
 	String mSignature;
 	Scope mScope;
+	Type type;
 
 	public MethodSTE(String mName, String mSignature, Scope mScope){
+		this.mName = mName;
+		this.mSignature = mSignature;
+		this.mScope = mScope;
+	}
+	public MethodSTE(String mName, String mSignature, Scope mScope, Type t){
+		this.type = t;
 		this.mName = mName;
 		this.mSignature = mSignature;
 		this.mScope = mScope;
@@ -35,6 +42,9 @@ public class MethodSTE extends STE{
 		return sig;
 	}
 
+	public Type getType(){
+		return type;
+	}
 	public String getmName(){
 		return mName;
 	}

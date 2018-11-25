@@ -73,6 +73,28 @@ public class BuildSymTable extends DepthFirstVisitor
 				}
 				//push new scope on top of stack to add MethodSTEs to
 			this.symTable.addScope(classSTE.getScope());
+		}else if (node instanceof MethodDecl){
+				MethodDecl md = (MethodDecl) node;
+				Type t = VarSTE.iTypeToType(md.getType());
+				symTable.setExpType(node, t);
+				//create signature & VarSTEs
+				LinkedList<Formal> ll = md.getFormals();
+				String sig = "(";
+				Iterator<Formal> iter = ll.listIterator();
+				Scope scope = new Scope("MethodDecl"+md.getName());
+				while(iter.hasNext()){
+					Formal f = iter.next();
+					scope.add(f.getName(), new VarSTE(f.getName(), f.getType()));
+					sig += printNodeName(f.getType().getClass().toString()) + " ";
+					Type type = VarSTE.iTypeToType(f.getType());
+					symTable.setExpType(f, type);
+				}
+				sig = sig + ") return "+printNodeName(md.getType().getClass().toString());
+				MethodSTE methSTE = new MethodSTE(md.getName(), sig, scope, t);
+				//add STE to existing scope @ top of stack
+				this.symTable.insert(methSTE);
+				//push STE's scope onto stack
+				this.symTable.addScope(scope);
 		}
    }
 
@@ -92,18 +114,12 @@ public class BuildSymTable extends DepthFirstVisitor
 				symTable.setExpType(node, t);
 
 			} else if (node instanceof MethodDecl) {
-				MethodDecl md = (MethodDecl) node;
+	/*			MethodDecl md = (MethodDecl) node;
 				Type t = VarSTE.iTypeToType(md.getType());
 				symTable.setExpType(node, t);
-				//getType
-				//getName
-				//getFormals
-				//getVarDecls
-				//getStatements
-				System.out.println("md.getName(): "+md.getName());
+//				System.out.println("md.getName(): "+md.getName());
 				//create signature & VarSTEs
 				LinkedList<Formal> ll = md.getFormals();
-				//String[] sig = new String[ll.size()];
 				String sig = "(";
 				Iterator<Formal> iter = ll.listIterator();
 				Scope scope = new Scope("MethodDecl"+md.getName());
@@ -120,7 +136,7 @@ public class BuildSymTable extends DepthFirstVisitor
 				this.symTable.insert(methSTE);
 				//push STE's scope onto stack
 				this.symTable.addScope(scope);
-			}
+	*/		}
 			if (node instanceof NewExp){
 				symTable.setExpType(node, Type.CLASS);
 			} else if (node instanceof CallStatement){
@@ -141,10 +157,15 @@ public class BuildSymTable extends DepthFirstVisitor
 				symTable.setExpType(node, Type.BYTE);
 			} else if (node instanceof Formal && symTable.getExpType(node) == null){
 				symTable.setExpType(node, Type.VOID);
-				
 			} else if (node instanceof IdLiteral){
-				symTable.setExpType(node, Type.VOID);
-				
+				IdLiteral id = (IdLiteral) node;
+				VarSTE varSTE = (VarSTE) symTable.lookup(id.getLexeme());
+				if(varSTE != null){
+					System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
+					this.symTable.setExpType(node, varSTE.getmType());
+				} else {
+					this.symTable.setExpType(node, Type.VOID);
+				}
 			} else if (node instanceof TrueLiteral){
 				symTable.setExpType(node, Type.BOOL);
 			} else if (node instanceof MeggyDelay){
@@ -160,7 +181,12 @@ public class BuildSymTable extends DepthFirstVisitor
 			} else if (node instanceof ThisLiteral){
 				symTable.setExpType(node, Type.CLASS);
 			} else if (node instanceof CallExp){
-				symTable.setExpType(node, Type.VOID);
+				CallExp callExp = (CallExp) node;
+				MethodSTE methodSTE = (MethodSTE) symTable.lookup(callExp.getId());
+				System.out.println("callExp.getId(): "+callExp.getId());
+				System.out.println("null ste? "+(methodSTE == null));
+				System.out.println("null type? "+(methodSTE.getType() == null));
+				symTable.setExpType(node, methodSTE.getType());
 /*			if (node instanceof ){
 				symTable.setExpType(node, Type.);
 */			} //else if (node instanceof ) {
