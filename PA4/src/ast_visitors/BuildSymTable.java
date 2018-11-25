@@ -27,15 +27,15 @@ import symtable.*;
 public class BuildSymTable extends DepthFirstVisitor
 {
     private SymTable symTable;
-    public SymTable getSymTable() {
-        return this.symTable;
-    }   
 
-   /** Constructor takes a PrintWriter, and stores in instance var. */
    public BuildSymTable() {
 	HashMap<Node, Type> map = new HashMap();
 	this.symTable = new SymTable(map);
    }
+
+    public SymTable getSymTable() {
+        return this.symTable;
+    }   
 
    
    /** Upon entering each node in AST, check of this node is the root
@@ -88,7 +88,11 @@ public class BuildSymTable extends DepthFirstVisitor
 				sig = sig + ") return "+printNodeName(md.getType().getClass().toString());
 				MethodSTE methSTE = new MethodSTE(md.getName(), sig, scope, t);
 				//add STE to existing scope @ top of stack
-				this.symTable.insert(methSTE);
+				//look for TopClassDecl or MainClass scope in stack
+				System.out.println("\nFinding scope for MethodDecl "+md.getName());
+				Scope progScope = this.symTable.lookupClosestScopeWith("TopClassDecl");
+				progScope.add(methSTE.getName(), methSTE);
+				//this.symTable.insert(methSTE);
 				//push STE's scope onto stack
 				this.symTable.addScope(scope);
 		}
@@ -102,8 +106,6 @@ public class BuildSymTable extends DepthFirstVisitor
 				Formal f = (Formal) node;
 				Type t = VarSTE.iTypeToType(f.getType());
 				symTable.setExpType(node, t);
-				
-				
 			} else if (node instanceof VarDecl) {
 				VarDecl vd = (VarDecl) node;
 				Type t = VarSTE.iTypeToType(vd.getType());
@@ -134,7 +136,7 @@ public class BuildSymTable extends DepthFirstVisitor
 				IdLiteral id = (IdLiteral) node;
 				VarSTE varSTE = (VarSTE) symTable.lookup(id.getLexeme());
 				if(varSTE != null){
-					System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
+					//System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
 					this.symTable.setExpType(node, varSTE.getmType());
 				} else {
 					this.symTable.setExpType(node, Type.VOID);

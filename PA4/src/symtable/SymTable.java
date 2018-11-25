@@ -70,10 +70,6 @@ public class SymTable {
      * Returns null if scope is not found.
      */
     public Scope lookupScope(String classType) {
-		Scope currentScope = mScopeStack.peek();
-		if(currentScope.getName() != null && currentScope.getName() == classType){
-				return currentScope;
-		} else {
 			//looks at other scopees if no return from current scope
 			Iterator<Scope> iter = mScopeStack.iterator();
 			while(iter.hasNext()){
@@ -85,7 +81,31 @@ public class SymTable {
 			}
 			return null;
 		}
-	}
+
+	public Scope lookupClosestScopeWith(String str){
+			//looks at other scopees if no return from current scope
+			Iterator<Scope> iter = mScopeStack.iterator();
+			while(iter.hasNext()){
+				Scope scope = iter.next();
+				//scope.getExpTypeMap();
+				printScope(scope);
+				if(scope.getName().contains(str)){
+					return scope;
+				}
+				HashMap<String, STE> dict = scope.getDict();
+				Iterator<String> mapIter = dict.keySet().iterator();
+				while(mapIter.hasNext()){
+					String key = mapIter.next();
+					if(key.contains(str)){
+						//return scope;
+						//return dict.get(key); 
+					}
+				}
+			}
+			return null;
+		}
+
+
 
     /** Lookup a symbol in this symbol table.
      * Starts looking in innermost scope and then
@@ -94,6 +114,7 @@ public class SymTable {
      */
     public STE lookup(String sym) {
 			Iterator<Scope> iter = mScopeStack.iterator();
+			System.out.println("in scope lookup(); size "+mScopeStack.size());
 			while(iter.hasNext()){
 				Scope scope = iter.next();
 				System.out.println("Scope: "+scope.getName());
@@ -111,8 +132,8 @@ public class SymTable {
 		Iterator<String> iter = keyset.iterator();
 		while(iter.hasNext()){
 			String str = iter.next();
-			
-			System.out.println(str);
+			STE ste = dict.get(str);
+			System.out.println("\t"+str+ste.getClass());
 		}
 	}
 
@@ -159,7 +180,7 @@ public class SymTable {
    to generate start of .dot file, output the dot output for the node.
    */
 	public void outputDot(PrintStream ps){
-		System.out.println("stack size: "+ mScopeStack.size());
+		//System.out.println("stack size: "+ mScopeStack.size());
 		this.out = ps;
 		out.println("digraph ASTGraph {");
 		out.println("\tgraph [pad=\"0.5\", nodesep=\"0.5\", ranksep=\"2\"];");

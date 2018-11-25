@@ -31,9 +31,34 @@ MethodDeclinBounds:2 -> 1:2;
 MethodDeclrain [ label=<
 <table border="0" cellborder="1" cellspacing="0">
 	<tr><td port="MethodDeclrain0"><i>Scope MethodDeclrain</i></td></tr>
-	<tr><td port="MethodDeclrain1">mDict[inBounds]</td></tr>
-	<tr><td port="MethodDeclrain2">mDict[y]</td></tr>
-	<tr><td port="MethodDeclrain3">mDict[x]</td></tr>
+	<tr><td port="MethodDeclrain1">mDict[y]</td></tr>
+	<tr><td port="MethodDeclrain2">mDict[x]</td></tr>
+</table>>];
+
+2 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="2"><i>VarSTE</i></td></tr>
+	<tr><td>mName=y</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+MethodDeclrain:3 -> 2:3;
+
+3 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="3"><i>VarSTE</i></td></tr>
+	<tr><td>mName=x</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+MethodDeclrain:4 -> 3:4;
+TopClassDeclCloud [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="TopClassDeclCloud0"><i>Scope TopClassDeclCloud</i></td></tr>
+	<tr><td port="TopClassDeclCloud1">mDict[inBounds]</td></tr>
+	<tr><td port="TopClassDeclCloud2">mDict[rain]</td></tr>
 </table>>];
 
 inBounds [ label=<
@@ -41,35 +66,10 @@ inBounds [ label=<
 	<tr><td port="inBounds0"><i>MethodSTE</i></td></tr>
 	<tr><td>mName=inBounds</td></tr>
 	<tr><td>mSignature=(ByteType ByteType ) return BoolType</td></tr>
-	<tr><td port="2">mScope</td></tr>
+	<tr><td port="4">mScope</td></tr>
 </table>>];
-MethodDeclrain:MethodDeclrain0 -> inBounds:inBounds0;
-inBounds:2 -> MethodDeclinBounds:MethodDeclinBounds0
-
-3 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="3"><i>VarSTE</i></td></tr>
-	<tr><td>mName=y</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-MethodDeclrain:4 -> 3:4;
-
-4 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="4"><i>VarSTE</i></td></tr>
-	<tr><td>mName=x</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-MethodDeclrain:5 -> 4:5;
-TopClassDeclCloud [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="TopClassDeclCloud0"><i>Scope TopClassDeclCloud</i></td></tr>
-	<tr><td port="TopClassDeclCloud1">mDict[rain]</td></tr>
-</table>>];
+TopClassDeclCloud:TopClassDeclCloud0 -> inBounds:inBounds0;
+inBounds:4 -> MethodDeclinBounds:MethodDeclinBounds0
 
 rain [ label=<
 <table border="0" cellborder="1" cellspacing="0">
@@ -78,7 +78,7 @@ rain [ label=<
 	<tr><td>mSignature=(ByteType ByteType ) return VoidType</td></tr>
 	<tr><td port="5">mScope</td></tr>
 </table>>];
-TopClassDeclCloud:TopClassDeclCloud0 -> rain:rain0;
+TopClassDeclCloud:TopClassDeclCloud1 -> rain:rain0;
 rain:5 -> MethodDeclrain:MethodDeclrain0
 MainClassPA4raindrop [ label=<
 <table border="0" cellborder="1" cellspacing="0">
