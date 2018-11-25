@@ -69,7 +69,7 @@ public class Type
     
 /*
 */
-    return "MAINCLASS;";
+    return "VOID";
   }
   
   public int getAVRTypeSize() {

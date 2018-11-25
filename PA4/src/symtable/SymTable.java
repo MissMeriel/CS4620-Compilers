@@ -50,6 +50,17 @@ public class SymTable {
 	public Scope removeScope(){
 		return mScopeStack.pop();
 	}
+
+	public HashMap<Node, Type> getExpTypeMap(){
+        Set keyset = mExpType.keySet();
+		Iterator<Node> iter = keyset.iterator();
+		while(iter.hasNext()){
+			Node n = iter.next();
+			Type t = mExpType.get(n);
+			System.out.println(n.getClass().toString()+" "+t.toString());
+		}
+		return mExpType;
+	}
 /*
  */
 

@@ -105,7 +105,7 @@ non terminal IdLiteral identifier;
 
 /* Declare precedence and associativity  here */
 precedence left TIMES, PLUS, MINUS, AND, LT, EQUAL, ELSE, DOT, COMMENT;
-precedence right UMINUS;
+precedence right UMINUS, CLASS;
 
 
 /* Meggy Java Grammar */
@@ -146,7 +146,7 @@ main_class ::=
 			MainClass _mainClass_ = new MainClass(c.line, c.pos, name.lexeme, param.lexeme, blockStatement);
 			RESULT = _mainClass_; 
 		:}
-	| main_class:m COMMENT 
+	| comments main_class:m 
 	{:RESULT = m;:}
     ;
 
@@ -234,7 +234,7 @@ type ::=
 	;
 
 statement_list ::=
-	statement_list:sl statement:s
+	statement_list:sl comments statement:s
 	{:
 		sl.add(s);
 		RESULT = sl;
@@ -246,9 +246,9 @@ statement_list ::=
 	;
 
 statement ::=
-	LBRACE:lb statement_list:list RBRACE
+	 LBRACE:lb statement_list:list RBRACE
 	{:
-		//System.out.println("{statement_list}");
+		System.out.println("{statement_list}");
 		RESULT = new BlockStatement(lb.line, lb.pos, list);
 		//System.out.println("successfully set statement::= blockstatements "+ list.size());
 	:}
@@ -276,15 +276,13 @@ statement ::=
 	:}
 	| WHILE:w LPAREN exp:e RPAREN statement:s 
 	{:	
-		//System.out.println("in while statement");
+		System.out.println("in while statement");
 		RESULT = new WhileStatement(w.line, w.pos, e, s);
 	:}
     | exp:e1 DOT identifier:id params:p SEMI
     {:
         RESULT = new CallStatement(e1.getLine(), e1.getPos(), e1, id.getLexeme(), new LinkedList<IExp>());
     :}
-	| statement:s COMMENT
-	{:RESULT=s;:} 
 	;
 
 exp ::=
@@ -361,7 +359,6 @@ exp ::=
 	{:
 		RESULT = e;
 	:}
-	| COMMENT 
     | identifier:id
     {:
         RESULT = id;
@@ -410,7 +407,7 @@ additional_params ::=
 comments ::=
   	comments COMMENT
     {: RESULT = new Object();:}
-	| COMMENT
+	| /*nothing*/ 
     {: RESULT = new Object();:}
     ;
 

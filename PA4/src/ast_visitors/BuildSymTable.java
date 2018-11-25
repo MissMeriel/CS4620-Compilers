@@ -47,6 +47,7 @@ public class BuildSymTable extends DepthFirstVisitor
 
 		if (node instanceof Program) {
 			this.symTable.addScope(new Scope("Program"));
+			symTable.setExpType(node, Type.VOID);
 		} else if (node instanceof MainClass) {
 				MainClass mc = (MainClass) node;
 				symTable.setExpType(node, Type.MAINCLASS);
@@ -110,6 +111,8 @@ public class BuildSymTable extends DepthFirstVisitor
 					Formal f = iter.next();
 					scope.add(f.getName(), new VarSTE(f.getName(), f.getType()));
 					sig += printNodeName(f.getType().getClass().toString()) + " ";
+					Type type = VarSTE.iTypeToType(f.getType());
+					symTable.setExpType(f, type);
 				}
 				sig = sig + ") return "+printNodeName(md.getType().getClass().toString());
 				MethodSTE methSTE = new MethodSTE(md.getName(), sig, scope);
@@ -117,8 +120,50 @@ public class BuildSymTable extends DepthFirstVisitor
 				this.symTable.insert(methSTE);
 				//push STE's scope onto stack
 				this.symTable.addScope(scope);
-			
-			} //else if (node instanceof ) {
+			}
+			if (node instanceof NewExp){
+				symTable.setExpType(node, Type.CLASS);
+			} else if (node instanceof CallStatement){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof IntLiteral){
+				symTable.setExpType(node, Type.INT);
+			} else if (node instanceof ByteCast){
+				symTable.setExpType(node, Type.BYTE);
+			} else if (node instanceof ColorLiteral){
+				symTable.setExpType(node, Type.COLOR);
+			} else if (node instanceof MeggySetPixel){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof BlockStatement){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof VoidType){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof ByteType){
+				symTable.setExpType(node, Type.BYTE);
+			} else if (node instanceof Formal && symTable.getExpType(node) == null){
+				symTable.setExpType(node, Type.VOID);
+				
+			} else if (node instanceof IdLiteral){
+				symTable.setExpType(node, Type.VOID);
+				
+			} else if (node instanceof TrueLiteral){
+				symTable.setExpType(node, Type.BOOL);
+			} else if (node instanceof MeggyDelay){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof MeggyToneStart){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof MeggyCheckButton){
+				symTable.setExpType(node, Type.BUTTON);
+			} else if (node instanceof ToneLiteral){
+				symTable.setExpType(node, Type.TONE);
+			} else if (node instanceof WhileStatement){
+				symTable.setExpType(node, Type.VOID);
+			} else if (node instanceof ThisLiteral){
+				symTable.setExpType(node, Type.CLASS);
+			} else if (node instanceof CallExp){
+				symTable.setExpType(node, Type.VOID);
+/*			if (node instanceof ){
+				symTable.setExpType(node, Type.);
+*/			} //else if (node instanceof ) {
 				
 		}
    }
