@@ -45,6 +45,7 @@ public class CheckTypes extends DepthFirstVisitor
           throw new InternalException("unexpected null argument");
       }
       mCurrentST = st;
+//	System.out.println("st size: "+st.size());
    }
    
    //========================= Overriding the visitor interface
@@ -87,5 +88,36 @@ public class CheckTypes extends DepthFirstVisitor
 
    }
 
+   public void outIntLiteral(IntLiteral node)
+   {   
+     if(this.mCurrentST.getExpType(node) != Type.INT) {
+       throw new SemanticException(
+         "Invalid type for IntLiteral",
+         node.getLine(), node.getPos());
+     }   
+	System.out.println("Invalid type for IntLiteral "+node.getLine()+","+node.getPos());
+     this.mCurrentST.setExpType(node, Type.INT);
+   } 
+
+   public void outColorLiteral(ColorLiteral node){
+     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
+       throw new SemanticException(
+         "Invalid type for ColorLiteral",
+         node.getLine(), node.getPos());
+     }
+	System.out.println("Invalid type for ColorLiteral "+node.getLine()+","+node.getPos());
+     this.mCurrentST.setExpType(node, Type.COLOR);
+   }
+
+
+   public void outMainClass(MainClass node){
+     if(this.mCurrentST.getExpType(node) != Type.MAINCLASS) {
+       throw new SemanticException(
+         "Invalid type for MainClass",
+         node.getLine(), node.getPos());
+     }
+	System.out.println("Invalid type for MainClass "+node.getLine()+","+node.getPos());
+     this.mCurrentST.setExpType(node, Type.MAINCLASS);
+   }
 
 }

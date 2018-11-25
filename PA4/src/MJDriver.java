@@ -71,20 +71,20 @@ public class MJDriver {
           System.out.println("Printing AST to " + filename + ".ast.dot");
 
           // create the symbol table
-/*          BuildSymTable stVisitor = new BuildSymTable();
+          BuildSymTable stVisitor = new BuildSymTable();
           ast_root.accept(stVisitor);
-          //symtable.SymTable globalST = stVisitor.getSymTable();
+          symtable.SymTable globalST = stVisitor.getSymTable();
           
           // print ast to file
           java.io.PrintStream STout =
             new java.io.PrintStream(
                 new java.io.FileOutputStream(filename + ".ST.dot"));
           System.out.println("Printing symbol table to " + filename + ".ST.dot");
-		  System.out.println("globalST null: "+(globalST == null));
+		  //System.out.println("globalST null: "+(globalST == null));
           globalST.outputDot(STout);
-  */                
+                  
           // perform type checking 
-		  symtable.SymTable globalST = new symtable.SymTable(new HashMap());
+		  //symtable.SymTable globalST = new symtable.SymTable(new HashMap());
           ast_root.accept(new CheckTypes(globalST));
 		
           // Determine whether to do register allocation or not.

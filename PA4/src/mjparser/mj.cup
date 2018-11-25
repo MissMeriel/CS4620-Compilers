@@ -104,7 +104,7 @@ non terminal Object comments;
 non terminal IdLiteral identifier;
 
 /* Declare precedence and associativity  here */
-precedence left TIMES, PLUS, MINUS, AND, EQUAL, ELSE, DOT, COMMENT;
+precedence left TIMES, PLUS, MINUS, AND, LT, EQUAL, ELSE, DOT, COMMENT;
 precedence right UMINUS;
 
 
@@ -114,7 +114,7 @@ start with program;
 program ::= 
 	 IMPORT:i MEGGY SEMI main_class:m classes:c
 	{:
-		RESULT = new Program(i.line, i.pos, m, new LinkedList<IClassDecl>());
+		RESULT = new Program(i.line, i.pos, m, c);
 	:}
     | COMMENT program:p 
 	{:
@@ -172,8 +172,8 @@ methods ::=
 method_decl ::=
 	PUBLIC:p type:t identifier:id LPAREN formals:f RPAREN LBRACE statement_list:sl return:r RBRACE
 	{:
-		//int _line_, int _pos_, IType _type_, String _name_,
-        //List<Formal> _formals_, List<VarDecl> _varDecls_, List<IStatement> _statements_, IExp _exp_);
+		//int _line_, int _pos_, IType _type_, String _name_, List<Formal> _formals_, 
+		//List<VarDecl> _varDecls_, List<IStatement> _statements_, IExp _exp_);
 		RESULT = new MethodDecl(p.line, p.pos, t, id.getLexeme(), f, new LinkedList<VarDecl>(), sl, r); 
 	:}
 	;
@@ -418,6 +418,7 @@ comments ::=
 identifier ::=
     ID:id
     {:
+		//System.out.println("id.lexeme: "+id.lexeme);
         RESULT = new IdLiteral(id.line, id.pos, id.lexeme);
     :}
     ;

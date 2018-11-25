@@ -14,6 +14,8 @@ package ast_visitors;
 
 import java.io.*;
 import java.util.Stack;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import ast.node.*;
 import symtable.*;
@@ -172,40 +174,6 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n\tpush   r24"
                 );  
         }   
-		else if(node instanceof CallExp){
-			CallExp callExp = (CallExp) node;
-			LinkedList<IExp> args = callExp.getArgs();
-			//N.B. CAN'T DO THIS TO GET PARENT CLASS
-			// TRY SYM TABLE LOOKUP
-			String parentClass = "";
-			if(node.parent() != null){
-				parentClass = ((ClassDecl)node.parent()).getId();
-			}
-			LinkedList<IExp> args = callExp.getArgs();
-			int argReg = 24 - args.size() * 2;
-			out.println("\n\t#### function call"
-				+"\n\t# put parameter values into appropriate registers");
-			Iterator iter = args.descendingIterator();
-			while(iter.hasNext()){
-				Formal arg = iter.next();
-                if(arg.getType() == Type.INT){
-                    //pop 2 bytes off stack
-                    out.println("\n\tpop    r"+argReg);
-                    argReg++;
-                    out.println("\n\tpop    r"+argReg);
-                    argReg++;
-                }else{
-                    //pop 1 byte off stack
-                    out.println("\n\tpop    r"+argReg);
-                    argReg += 2;
-                }
-			}
-			out.println("\n\t# receiver will be passed as first param"
-				+"\n\tpop    r"+argReg);
-				argReg++;
-				out.println("\n\tpop    r"+argReg);
-				out.println("\n\tcall    "+parentClass+callExp.getId());
-		}
 /*		else if(node instanceof ){
 			out.println(
 				+"\n\t"
@@ -228,41 +196,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				+"\n"
 				);
 		}
-		else if(node instanceof ){
-			out.println(
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				+"\n"
-				+"\n"
-				+"\n"
-				+"\n"
-				);
-		}
-
-/*		else if(node instanceof ){
-			out.println(
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				+"\n"
-				+"\n"
-				+"\n"
-				+"\n"
-				);
-		}
-		else if(node instanceof ){
-			out.println(
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				+"\n\t"
-				);
-		}*/
-
+*/
 	 }
      out.flush();
    } //end defaultOut
@@ -317,57 +251,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				+"\n\tpush   r25"
 				+"\n\tpush   r24"
 				);
-		else if(node instanceof MethodDecl){
-			MethodDecl methDecl = (MethodDecl) node;
-            String methodName = ""; 
-            if(node.parent() != null){
-                methodName = ((ClassDecl)node.parent()).getId();
-            }
-			methodName = methodName+methDecl.getId();
-			LinkedList<Formal> fs = methDecl.getFormals();
-			out.println("\n\t.text"
-				+"\n.global "+methodName
-				+"\n\t.type  "+methodName+", @function"
-				+"\n"+methodName+":"
-				+"\n\tpush   r29"
-				+"\n\tpush   r28"
-				+"\n\t# make space for locals and params"
-				+"\n\tldi    r30, 0");
-			for(int i = 0; i < fs.size()*2; i++){
-				out.print("\n\tpush   r30");
-			}
-			out.print("\n\t"
-				+"\n\t# Copy stack pointer to frame pointer"
-				+"\n\tin     r28,__SP_L__"
-				+"\n\tin     r29,__SP_H__"
-				+"\n\t"
-				+"\n\t# save off parameters");
-			int avrReg = 20 + fs.size()*2 + 1;
-			int offset = 3;
-			out.println("std    Y + 2, r"+avrReg);
-			avrReg--;
-			out.println("std    Y + 1, r"+avrReg);
-			avrReg--;
-			Iterator iter = fs.listIterator();
-			while(iter.hasNext()){
-			    Formal arg = iter.next();
-				if(arg.getType() instanceof Type.INT){
-                    //pop 2 bytes off stack
-					out.println("\n\tstd    Y + "+(offset+1)+", r"+argReg);
-                    argReg--;
-                    out.println("\n\tstd    Y + "+offset+", r"+argReg);
-                    argReg--;
-                    offset += 2;
-				}else{
-                    //pop 1 byte off stack
-                    out.println("\n\tpop    r"+argReg);
-                    argReg -= 2;
-                    offset++;
-				}
-			}
-			out.print("\n/* done with function Simplebluedot prologue */");
-		}
-		else if(node instanceof ThisLiteral){
+		} else if(node instanceof ThisLiteral){
 			out.println("\n\t# loading the implicit \"this\"");
 		}
 		/*else if(node instanceof ){
@@ -583,36 +467,39 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			}   
         }   
         if(node.getFormals() != null) {
-			if(node.getFormals() instanceof List<Formal>) {
-				Iterator iter = node.getFormals().listIterator();
+			//if(node.getFormals() instanceof LinkedList<Formal>) {
+			if(node.getFormals() instanceof LinkedList) {
+				Iterator<Formal> iter = node.getFormals().listIterator();
 				while(iter.hasNext()){
 					Formal formal = iter.next();
 					formal.accept(this);
 				}
             } else {
-                System.out.println("["+node.getFormals().getLine()+","+node.getFormals().getPos()+"] Invalid formal list for method decl "+node.getName());
+                System.out.println("["+node.getFormals().getFirst().getLine()+","+node.getFormals().getFirst().getPos()+"] Invalid formal list for method decl "+node.getName());
 			}   
         }   
         if(node.getVarDecls() != null) {
-            if(node.getVarDecls() instanceof List<VarDecl>) {
-                Iterator iter = node.getVarDecls().listIterator();
+            //if(node.getVarDecls() instanceof LinkedList<VarDecl>) {
+            if(node.getVarDecls() instanceof LinkedList) {
+                Iterator<VarDecl> iter = node.getVarDecls().listIterator();
                 while(iter.hasNext()){
                     VarDecl vd = iter.next();
                     vd.accept(this);
                 }
             } else {
-                System.out.println("["+node.getVarDecls().getLine()+","+node.getVarDecls().getPos()+"] Invalid var decl list for method decl "+node.getName());
+                System.out.println("["+node.getVarDecls().getFirst().getLine()+","+node.getVarDecls().getFirst().getPos()+"] Invalid var decl list for method decl "+node.getName());
             }
         }
         if(node.getStatements() != null) {
-			if(node.getStatements() instanceof List<IStatement>) {
-                Iterator iter = node.getStatements().listIterator();
+			//if(node.getStatements() instanceof LinkedList<IStatement>) {
+			if(node.getStatements() instanceof LinkedList) {
+                Iterator<IStatement> iter = node.getStatements().listIterator();
                 while(iter.hasNext()){
                     IStatement s = iter.next();
                     s.accept(this);
                 }
             } else {
-                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator -");
+                System.out.println("["+node.getStatements().getFirst().getLine()+","+node.getStatements().getFirst().getPos()+"] Invalid left operand type for operator -");
 			}   
         }
         if(node.getExp() != null) {
@@ -622,12 +509,103 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 System.out.println("["+node.getExp().getLine()+","+node.getExp().getPos()+"] Invalid return for method declaration "+node.getName());
             }
         }
+        String methodName = "";
+        if(node.parent() != null){
+			if(node.parent() instanceof TopClassDecl){
+				methodName += ((TopClassDecl) node.parent()).getName();
+			} else if (node.parent() instanceof MainClass) {
+				//do nothing
+			}
+        }
+        methodName += node.getName();
+        LinkedList<Formal> fs = node.getFormals();
+        out.println("\n\t.text"
+                +"\n.global "+methodName
+                +"\n\t.type  "+methodName+", @function"
+                +"\n"+methodName+":"
+                +"\n\tpush   r29"
+                +"\n\tpush   r28"
+                +"\n\t# make space for locals and params"
+                +"\n\tldi    r30, 0");
+        for(int i = 0; i < fs.size()*2; i++){
+            out.print("\n\tpush   r30");
+        }
+        out.print("\n\t"
+            +"\n\t# Copy stack pointer to frame pointer"
+            +"\n\tin     r28,__SP_L__"
+            +"\n\tin     r29,__SP_H__"
+            +"\n\t"
+            +"\n\t# save off parameters");
+        int avrReg = 20 + fs.size()*2 + 1;
+        int offset = 3;
+        out.println("std    Y + 2, r"+avrReg);
+        avrReg--;
+        out.println("std    Y + 1, r"+avrReg);
+        avrReg--;
+        Iterator<Formal> iter = fs.listIterator();
+        while(iter.hasNext()){
+            Formal arg = iter.next();
+            if(arg.getType() instanceof IntType){
+                //pop 2 bytes off stack
+                out.println("\n\tstd    Y + "+(offset+1)+", r"+avrReg);
+                avrReg--;
+                out.println("\n\tstd    Y + "+offset+", r"+avrReg);
+                avrReg--;
+                offset += 2;
+            }else{
+                //pop 1 byte off stack
+                out.println("\n\tpop    r"+avrReg);
+                avrReg -= 2;
+                offset++;
+			}
+        }
+        out.print("\n/* done with function "+methodName+" prologue */");
         outMethodDecl(node);
     } 
 
+    @Override
+    public void visitCallExp(CallExp node) {
+		String methodName = "";
+        if(node.getExp() != null){
+			if(node.getExp() instanceof NewExp){
+				methodName += ((NewExp)node.getExp()).getId();
+            } else if (node.getExp() instanceof ThisLiteral){
+                out.println("\n\t# loading the implicit \"this\"");
+            }   
+            node.getExp().accept(this);
+        } 
+		methodName += node.getId();
+        LinkedList<IExp> args = node.getArgs();
+        int avrReg = 24 - args.size() * 2;
+        out.println("\n\t#### function call"
+            +"\n\t# put parameter values into appropriate registers");
+        Iterator<IExp> iter = args.descendingIterator();
+        while(iter.hasNext()){
+            IExp arg = iter.next();
+            if(arg instanceof IntLiteral){
+                //pop 2 bytes off stack
+                out.println("\n\tpop    r"+avrReg);
+                avrReg++;
+                out.println("\n\tpop    r"+avrReg);
+                avrReg++;
+            }else{
+                //pop 1 byte off stack
+                out.println("\n\tpop    r"+avrReg);
+                avrReg += 2;
+            }   
+        }   
+        out.println("\n\t# receiver will be passed as first param"
+            +"\n\tpop    r"+avrReg);
+        avrReg++;
+        out.println("\n\tpop    r"+avrReg);
+        out.println("\n\tcall    "+methodName);
+        
+        outCallExp(node);
+    }
+
 
     @Override
-    public void visitLtExp(MinusExp node)
+    public void visitLtExp(LtExp node)
     {   
         inLtExp(node);
         if(node.getLExp() != null)
@@ -646,6 +624,27 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator <");
             }   
         }   
+		out.println("\n\t# less than expression"
+			+"\n\t# load a one byte expression off stack"
+			+"\n\tpop    r18"
+			+"\n\tpop    r24"
+			+"\n\tcp    r24, r18"
+			+"\n\tbrlt MJ_L"+(++breakCount + 1)
+		);
+		out.println("\n\t# load false"
+			+"\nMJ_L"+breakCount+":"
+			+"\n\tldi     r24, 0"
+			+"\n\tjmp      MJ_L"+(++breakCount + 1)
+			+"\n\t"
+			+"\n\t# load true"
+			+"\nMJ_L"+breakCount+":"
+			+"\n\tldi    r24, 1"
+			+"\n\t"
+			+"\n\t# push result of less than"
+			+"\n\t"
+			+"\n\t# push one byte expression onto stack"
+			+"\n\tpush   r24"
+		);
         outLtExp(node);
     } 
 
