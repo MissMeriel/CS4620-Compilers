@@ -78,6 +78,7 @@ public class SymTable {
 			Iterator<Scope> iter = mScopeStack.iterator();
 			while(iter.hasNext()){
 				Scope scope = iter.next();
+				printScope(scope);
 				if(scope.getName() != null && scope.getName() == classType){
 						return scope;
 				}
@@ -92,23 +93,28 @@ public class SymTable {
      * Returns null if the symbol is not found.
      */
     public STE lookup(String sym) {
-//		Scope currentScope = mScopeStack.peek();
-//		if(currentScope.lookupInnermost(sym) != null){
-//			return currentScope.lookupInnermost(sym);
-//		} else {
 			Iterator<Scope> iter = mScopeStack.iterator();
 			while(iter.hasNext()){
 				Scope scope = iter.next();
-//				System.out.println("Scope: "+scope.getName());
+				System.out.println("Scope: "+scope.getName());
+				printScope(scope);
 				if(scope.lookupInnermost(sym) != null){
 					return scope.lookupInnermost(sym);
 				}
 			}
-//		}
-        /* WRITE ME */
 		return null;
     }
 
+	public void printScope(Scope scope){
+		HashMap<String, STE> dict = scope.getDict();
+		Set keyset = dict.keySet();
+		Iterator<String> iter = keyset.iterator();
+		while(iter.hasNext()){
+			String str = iter.next();
+			
+			System.out.println(str);
+		}
+	}
 
     /** Lookup a symbol in innermost scope only.
      * return null if the symbol is not found

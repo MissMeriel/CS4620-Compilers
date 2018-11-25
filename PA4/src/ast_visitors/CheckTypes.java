@@ -274,6 +274,7 @@ public class CheckTypes extends DepthFirstVisitor
 	@Override
 	public void outCallExp(CallExp node){
         MethodSTE methodSTE = (MethodSTE) mCurrentST.lookup(node.getId());
+        System.out.println("callExp.getId(): "+node.getId());
         System.out.println("null ste? "+(methodSTE == null));
         System.out.println("null type? "+(methodSTE.getType() == null));
 		mCurrentST.setExpType(node, methodSTE.getType());
