@@ -103,10 +103,13 @@ non terminal Object comment;
 non terminal Object comments;
 non terminal IdLiteral identifier;
 non terminal IExp byte;
+non terminal IExp eqexp;
+non terminal IfStatement if;
+non terminal IStatement else;
 
 /* Declare precedence and associativity  here */
 precedence left  TIMES, PLUS, MINUS, AND, EQUAL, ELSE, DOT, COMMENT;
-precedence right UMINUS, CLASS, BYTE, NOT, LPAREN, ELSE, RPAREN;
+precedence right UMINUS, CLASS, BYTE, NOT, LPAREN, ELSE, RPAREN, IMPORT;
 
 
 /* Meggy Java Grammar */
@@ -117,14 +120,14 @@ program ::=
 	{:
 		RESULT = new Program(i.line, i.pos, m, c);
 	:}
-    | COMMENT program:p 
+    | comments program:p 
 	{:
 		RESULT = p;
 	:}
 	;
     
 classes ::=
-	classes:c class_decl:cd
+	classes:c comments class_decl:cd
 	{:
 		c.add(cd);
 		RESULT = c;
@@ -159,7 +162,7 @@ class_decl ::=
 	;
 
 methods ::=
-	methods:m method_decl:md
+	methods:m comments method_decl:md
 	{:
 		m.add(md);
 		RESULT = m;
@@ -193,10 +196,12 @@ formals ::=
 		ll.add(f);
 		RESULT = ll;
 	:}
+	| /*nothing*/
+	{:RESULT = new LinkedList<Formal>();:}
 	;
 
 return ::=
-	RETURN lexp:e SEMI
+	RETURN eqexp:e SEMI
 	{:
 		RESULT = e;
 	:}
@@ -235,12 +240,12 @@ type ::=
 	;
 
 statement_list ::=
-	statement_list:sl comments statement:s
+	statement_list:sl comments statement:s comments
 	{:
 		sl.add(s);
 		RESULT = sl;
 	:}
-	| /* Empty */
+	| comments /* Empty */
 	{:
 		RESULT = new LinkedList<IStatement>();
 	:}
@@ -264,16 +269,10 @@ statement ::=
 		//System.out.println("Delay");
 		RESULT = new MeggyDelay(m.line, m.pos, e);
 	:}
-	| IF:i LPAREN lexp:e RPAREN statement:s1
+	| if:i 
 	{:
 		//System.out.println("if");
-		IStatement s2 = new BlockStatement(s1.getLine(), s1.getPos()+1, new LinkedList<IStatement>());
-		RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
-	:}
-	| IF:i LPAREN lexp:e RPAREN statement:s1 ELSE statement:s2 
-	{:
-		//System.out.println("if/else");
-		RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
+		RESULT = i;
 	:}
 	| WHILE:w LPAREN lexp:e RPAREN statement:s 
 	{:	
@@ -286,6 +285,32 @@ statement ::=
     :}
 	;
 
+if ::=
+	IF:i LPAREN eqexp:e RPAREN statement:s1 comments else:s2
+	{:
+		RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
+	:}
+	;
+
+else ::=
+	ELSE comments statement:s2
+	{:RESULT = s2;:}
+	| /*nothing*/
+	{:RESULT = new BlockStatement(0, 0, new LinkedList<IStatement>());:}
+	;
+
+eqexp ::=
+	 eqexp:e1 EQUAL:eq lexp:e2
+	{:
+		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
+	:}
+	| LPAREN lexp:e1 EQUAL:eq exp:e2 RPAREN
+	{:
+		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
+	:}
+	| lexp:e
+	{:RESULT = e;:}
+	;
 
 lexp ::=
 	lexp:e1 LT exp:e2
@@ -296,10 +321,6 @@ lexp ::=
 	| lexp:e1 AND:a exp:e2
 	{:
 		RESULT = new AndExp(a.line, a.pos, e1, e2);
-	:}
-	| lexp:e1 EQUAL:eq exp:e2
-	{:
-		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
 	:}
 	| lexp:e1 PLUS:p exp:e2
 	{:
@@ -313,7 +334,7 @@ lexp ::=
 	{:
 		RESULT = new MulExp(t.line, t.pos, e1, e2);
 	:}
-	| LPAREN exp:e RPAREN
+	| LPAREN lexp:e RPAREN
 	{: RESULT = e; :}
 	| exp:e
 	{: RESULT = e; :}
@@ -366,7 +387,7 @@ exp ::=
 	{:
 		RESULT = new NotExp(n.line, n.pos, e);
 	:}
-	| LPAREN:lp lexp:e RPAREN
+	| LPAREN:lp eqexp:e RPAREN
 	{:
 		RESULT = e;
 	:}

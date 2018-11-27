@@ -89,7 +89,7 @@ public class BuildSymTable extends DepthFirstVisitor
 				MethodSTE methSTE = new MethodSTE(md.getName(), sig, scope, t);
 				//add STE to existing scope @ top of stack
 				//look for TopClassDecl or MainClass scope in stack
-				System.out.println("\nFinding scope for MethodDecl "+md.getName());
+				//System.out.println("\nFinding scope for MethodDecl "+md.getName());
 				Scope progScope = this.symTable.lookupClosestScopeWith("TopClassDecl");
 				progScope.add(methSTE.getName(), methSTE);
 				//this.symTable.insert(methSTE);
@@ -143,11 +143,13 @@ public class BuildSymTable extends DepthFirstVisitor
 				IdLiteral id = (IdLiteral) node;
 				VarSTE varSTE = (VarSTE) symTable.lookup(id.getLexeme());
 				if(varSTE != null){
-					//System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
+					System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
 					this.symTable.setExpType(node, varSTE.getmType());
 				} else {
 					this.symTable.setExpType(node, Type.VOID);
 				}
+			} else if (node instanceof EqualExp){
+				symTable.setExpType(node, Type.BOOL);
 			} else if (node instanceof TrueLiteral){
 				symTable.setExpType(node, Type.BOOL);
 			} else if (node instanceof MeggyDelay){
@@ -156,6 +158,8 @@ public class BuildSymTable extends DepthFirstVisitor
 				symTable.setExpType(node, Type.VOID);
 			} else if (node instanceof MeggyCheckButton){
 				symTable.setExpType(node, Type.BUTTON);
+			} else if (node instanceof MeggyGetPixel){
+				symTable.setExpType(node, Type.COLOR);
 			} else if (node instanceof ToneLiteral){
 				symTable.setExpType(node, Type.TONE);
 			} else if (node instanceof WhileStatement){

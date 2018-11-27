@@ -46,12 +46,12 @@ public class CheckTypes extends DepthFirstVisitor
    public void outAndExp(AndExp node){
      if(this.mCurrentST.getExpType(node.getLExp()) != Type.BOOL) {
        throw new SemanticException(
-         "Invalid left operand type for operator &&",
+         "Invalid left operand type "+this.mCurrentST.getExpType(node.getLExp())+"for operator &&",
          node.getLExp().getLine(), node.getLExp().getPos());
      }
      if(this.mCurrentST.getExpType(node.getRExp()) != Type.BOOL) {
        throw new SemanticException(
-         "Invalid right operand type for operator &&",
+         "Invalid right operand type "+this.mCurrentST.getExpType(node.getRExp())+" for operator &&",
          node.getRExp().getLine(), node.getRExp().getPos());
      }
      this.mCurrentST.setExpType(node, Type.BOOL);
@@ -109,6 +109,24 @@ public class CheckTypes extends DepthFirstVisitor
    }
 
 	@Override
+	public void outEqualExp(EqualExp node){
+       Type lexpType = this.mCurrentST.getExpType(node.getLExp());
+       Type rexpType = this.mCurrentST.getExpType(node.getRExp());
+       if ((lexpType==Type.INT  || lexpType==Type.BYTE || lexpType==Type.COLOR) &&
+           (rexpType==Type.INT  || rexpType==Type.BYTE || rexpType==Type.COLOR)
+          ){
+           this.mCurrentST.setExpType(node, Type.BOOL);
+       } else {
+           throw new SemanticException(
+                   "Operands to == operator must be INT or BYTE",
+                   node.getLExp().getLine(),
+                   node.getLExp().getPos());
+		}
+	}
+
+///////////////////////////////////////////////////////////////
+
+	@Override
    public void outIntegerExp(IntLiteral node){   
 	try{
      if(this.mCurrentST.getExpType(node) != Type.INT) {
@@ -124,6 +142,31 @@ public class CheckTypes extends DepthFirstVisitor
 	}
    } 
 
+
+	@Override
+	public void visitIntLiteral(IntLiteral node){
+	inIntegerExp(node);
+	outIntegerExp(node);
+/*     if(this.mCurrentST.getExpType(node) != Type.INT) {
+       throw new SemanticException(
+         "Invalid type for ",
+         node.getLine(), node.getPos());
+     }
+     this.mCurrentST.setExpType(node, Type.INT);
+*/	}
+
+	@Override
+   public void outMeggyGetPixel(MeggyGetPixel node){
+     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
+       throw new SemanticException(
+         "Invalid type for MeggyGetPixel",
+         node.getLine(), node.getPos());
+     }
+     this.mCurrentST.setExpType(node, Type.COLOR);
+   }
+
+///////////////////////////////////////////////////////////////
+
 	@Override
    public void outColorExp(ColorLiteral node){
      if(this.mCurrentST.getExpType(node) != Type.COLOR) {
@@ -135,6 +178,7 @@ public class CheckTypes extends DepthFirstVisitor
      this.mCurrentST.setExpType(node, Type.COLOR);
    }
 
+///////////////////////////////////////////////////////////////
 
 	@Override
    public void outMainClass(MainClass node){
@@ -237,14 +281,20 @@ public class CheckTypes extends DepthFirstVisitor
 
 	@Override
 	public void outIdLiteral(IdLiteral node){
+	VarSTE ste = (VarSTE) this.mCurrentST.lookup(node.getLexeme());
+	Type steType = ste.getType();
 	 Type t = this.mCurrentST.getExpType(node);
 	 //System.out.println("IdLiteral type: "+t.toString());
-     if(this.mCurrentST.getExpType(node) == Type.MAINCLASS) {
+	if(t == null){
+		//say something
+		this.mCurrentST.setExpType(node, steType);
+	} else if (t != steType) {
+	 System.out.println("Type mismatch for "+node.getLexeme()+": quicklookup Type: "+t.toString()+"; STE type: "+steType.toString());
+     this.mCurrentST.setExpType(node, steType);
        throw new SemanticException(
-         "Invalid type for IdLiteral",
+         "Invalid type for IdLiteral "+node.getLexeme(),
          node.getLine(), node.getPos());
      }
-     //this.mCurrentST.setExpType(node, Type.);
 	}
 
 
@@ -284,26 +334,24 @@ public class CheckTypes extends DepthFirstVisitor
      this.mCurrentST.setExpType(node, Type.VOID);
 */	}
 
-/*	@Override
-	public void out(node){
-     if(this.mCurrentST.getExpType(node) != Type.VOID) {
-       throw new SemanticException(
-         "Invalid type for ",
-         node.getLine(), node.getPos());
-     }
-     this.mCurrentST.setExpType(node, Type.VOID);
-	}
+/////////////////////////////////////////////////////////////
 
 	@Override
-	public void out(node){
-     if(this.mCurrentST.getExpType(node) != Type.VOID) {
+	public void visitColorLiteral(ColorLiteral node){
+		inColorExp(node);
+		outColorExp(node);
+/*     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
        throw new SemanticException(
          "Invalid type for ",
          node.getLine(), node.getPos());
      }
-     this.mCurrentST.setExpType(node, Type.VOID);
-	}
+     this.mCurrentST.setExpType(node, Type.COLOR);
+*/	}
 
+/////////////////////////////////////////////////////////////
+
+
+/*
 	@Override
 	public void out(node){
      if(this.mCurrentST.getExpType(node) != Type.VOID) {

@@ -1,0 +1,87 @@
+digraph ASTGraph {
+	graph [pad="0.5", nodesep="0.5", ranksep="2"];
+	node [shape=plain]
+	rankdir=LR;
+setP [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="setP0"><i>Scope setP</i></td></tr>
+	<tr><td port="setP1">mDict[c]</td></tr>
+	<tr><td port="setP2">mDict[y]</td></tr>
+	<tr><td port="setP3">mDict[x]</td></tr>
+</table>>];
+
+0 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="0"><i>VarSTE</i></td></tr>
+	<tr><td>mName=c</td></tr>
+	<tr><td>mType=COLOR</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+setP:1 -> 0:1;
+
+1 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="1"><i>VarSTE</i></td></tr>
+	<tr><td>mName=y</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+setP:2 -> 1:2;
+
+2 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="2"><i>VarSTE</i></td></tr>
+	<tr><td>mName=x</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+setP:3 -> 2:3;
+C [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="C0"><i>Scope C</i></td></tr>
+	<tr><td port="C1">mDict[setP]</td></tr>
+</table>>];
+
+setP [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="setP0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=setP</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ColorType ) return VoidType</td></tr>
+	<tr><td port="3">mScope</td></tr>
+</table>>];
+C:C0 -> setP:setP0;
+setP:3 -> setP:setP0
+PA4noDef [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="PA4noDef0"><i>Scope PA4noDef</i></td></tr>
+</table>>];
+Program [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="Program0"><i>Scope Program</i></td></tr>
+	<tr><td port="Program1">mDict[C]</td></tr>
+	<tr><td port="Program2">mDict[PA4noDef]</td></tr>
+</table>>];
+C [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="C0"><i>ClassSTE</i></td></tr>
+	<tr><td>mName=C</td></tr>
+	<tr><td>mMain=false</td></tr>
+	<tr><td>mSuperClass=NULL</td></tr>
+	<tr><td port="4">mScope</td></tr>
+</table>>];
+Program:Program0 -> C:C0;
+C:4 -> C:C0
+PA4noDef [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="PA4noDef1"><i>ClassSTE</i></td></tr>
+	<tr><td>mName=PA4noDef</td></tr>
+	<tr><td>mMain=true</td></tr>
+	<tr><td>mSuperClass=NULL</td></tr>
+	<tr><td port="5">mScope</td></tr>
+</table>>];
+Program:Program1 -> PA4noDef:PA4noDef1;
+PA4noDef:5 -> PA4noDef:PA4noDef0
+}

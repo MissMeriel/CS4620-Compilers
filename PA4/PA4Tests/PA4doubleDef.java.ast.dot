@@ -4,82 +4,84 @@ digraph ASTGraph {
 0 -> 1
 2 [ label="BlockStatement" ];
 1 -> 2
-3 [ label="CallStatement" ];
+3 [ label="BlockStatement" ];
 2 -> 3
-4 [ label="NewExp" ];
+4 [ label="CallStatement" ];
 3 -> 4
-5 [ label="ByteCast" ];
-3 -> 5
-6 [ label="IntLiteral\n3" ];
-5 -> 6
-7 [ label="ByteCast" ];
-3 -> 7
-8 [ label="IntLiteral\n7" ];
-7 -> 8
-9 [ label="ColorLiteral\nMeggy.Color.BLUE" ];
-3 -> 9
-10 [ label="CallStatement" ];
-2 -> 10
-11 [ label="NewExp" ];
-10 -> 11
-12 [ label="IntLiteral\n2" ];
-10 -> 12
-13 [ label="ByteCast" ];
-10 -> 13
-14 [ label="IntLiteral\n7" ];
-13 -> 14
-15 [ label="ColorLiteral\nMeggy.Color.BLUE" ];
-10 -> 15
-16 [ label="TopClassDecl" ];
-0 -> 16
-17 [ label="MethodDecl" ];
-16 -> 17
-18 [ label="VoidType" ];
+5 [ label="NewExp" ];
+4 -> 5
+6 [ label="ByteCast" ];
+4 -> 6
+7 [ label="IntLiteral\n3" ];
+6 -> 7
+8 [ label="ColorLiteral\nMeggy.Color.BLUE" ];
+4 -> 8
+9 [ label="ByteCast" ];
+4 -> 9
+10 [ label="IntLiteral\n7" ];
+9 -> 10
+11 [ label="CallStatement" ];
+3 -> 11
+12 [ label="NewExp" ];
+11 -> 12
+13 [ label="IntLiteral\n2" ];
+11 -> 13
+14 [ label="ColorLiteral\nMeggy.Color.BLUE" ];
+11 -> 14
+15 [ label="ByteCast" ];
+11 -> 15
+16 [ label="IntLiteral\n7" ];
+15 -> 16
+17 [ label="TopClassDecl" ];
+0 -> 17
+18 [ label="MethodDecl" ];
 17 -> 18
-19 [ label="Formal" ];
-17 -> 19
-20 [ label="ByteType" ];
-19 -> 20
-21 [ label="Formal" ];
-17 -> 21
-22 [ label="ByteType" ];
-21 -> 22
-23 [ label="Formal" ];
-17 -> 23
-24 [ label="ColorType" ];
-23 -> 24
-25 [ label="MeggySetPixel" ];
-17 -> 25
-26 [ label="IdLiteral\nx" ];
-25 -> 26
+19 [ label="VoidType" ];
+18 -> 19
+20 [ label="Formal" ];
+18 -> 20
+21 [ label="ByteType" ];
+20 -> 21
+22 [ label="Formal" ];
+18 -> 22
+23 [ label="ByteType" ];
+22 -> 23
+24 [ label="Formal" ];
+18 -> 24
+25 [ label="ColorType" ];
+24 -> 25
+26 [ label="MeggySetPixel" ];
+18 -> 26
 27 [ label="IdLiteral\nx" ];
-25 -> 27
-28 [ label="IdLiteral\nc" ];
-25 -> 28
-29 [ label="MethodDecl" ];
-16 -> 29
-30 [ label="VoidType" ];
-29 -> 30
-31 [ label="Formal" ];
-29 -> 31
-32 [ label="IntType" ];
-31 -> 32
-33 [ label="Formal" ];
-29 -> 33
-34 [ label="ByteType" ];
-33 -> 34
-35 [ label="Formal" ];
-29 -> 35
-36 [ label="ColorType" ];
-35 -> 36
-37 [ label="MeggySetPixel" ];
-29 -> 37
-38 [ label="ByteCast" ];
-37 -> 38
-39 [ label="IdLiteral\nx" ];
+26 -> 27
+28 [ label="IdLiteral\nx" ];
+26 -> 28
+29 [ label="IdLiteral\nc" ];
+26 -> 29
+30 [ label="MethodDecl" ];
+17 -> 30
+31 [ label="VoidType" ];
+30 -> 31
+32 [ label="Formal" ];
+30 -> 32
+33 [ label="IntType" ];
+32 -> 33
+34 [ label="Formal" ];
+30 -> 34
+35 [ label="ByteType" ];
+34 -> 35
+36 [ label="Formal" ];
+30 -> 36
+37 [ label="ColorType" ];
+36 -> 37
+38 [ label="MeggySetPixel" ];
+30 -> 38
+39 [ label="ByteCast" ];
 38 -> 39
-40 [ label="IdLiteral\ny" ];
-37 -> 40
-41 [ label="IdLiteral\nc" ];
-37 -> 41
+40 [ label="IdLiteral\nx" ];
+39 -> 40
+41 [ label="IdLiteral\ny" ];
+38 -> 41
+42 [ label="IdLiteral\nc" ];
+38 -> 42
 }

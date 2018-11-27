@@ -96,7 +96,7 @@ public class SymTable {
 		Iterator<Scope> iter = mScopeStack.iterator();
 		while(iter.hasNext()){
 			Scope scope = iter.next();
-			printScope(scope);
+			//printScope(scope);
 			if(scope.getName().contains(s) || scope.getType().contains(s)){
 				return scope;
 			}

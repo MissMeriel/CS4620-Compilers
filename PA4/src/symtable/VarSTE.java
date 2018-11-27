@@ -26,6 +26,10 @@ public class VarSTE extends STE {
         return mName;
     } 
 
+	public Type getType(){
+		return mType;
+	}
+
 	public Type getmType(){
 		return mType;
 	}
