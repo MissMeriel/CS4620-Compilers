@@ -76,7 +76,8 @@ class Solver {
     
     public void findTargetOrMove(byte nextX, byte nextY, byte targetX, byte targetY) {
         // If target then turn target BLUE and fall to end of function.
-        if (nextX==targetX && nextY==targetY ) { 
+        if ((nextX==targetX) && (nextY==targetY) ) { 
+        //if (nextX==targetX && nextY==targetY ) { 
             Meggy.setPixel(nextX, nextY, Meggy.Color.BLUE);  
         }
         // if is not target then move there to continue search

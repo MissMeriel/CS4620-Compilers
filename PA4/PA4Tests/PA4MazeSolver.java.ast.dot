@@ -376,20 +376,20 @@ digraph ASTGraph {
 186 -> 187
 188 [ label="IfStatement" ];
 178 -> 188
-189 [ label="EqualExp" ];
+189 [ label="AndExp" ];
 188 -> 189
 190 [ label="EqualExp" ];
 189 -> 190
 191 [ label="IdLiteral\nnextX" ];
 190 -> 191
-192 [ label="AndExp" ];
+192 [ label="IdLiteral\ntargetX" ];
 190 -> 192
-193 [ label="IdLiteral\ntargetX" ];
-192 -> 193
+193 [ label="EqualExp" ];
+189 -> 193
 194 [ label="IdLiteral\nnextY" ];
-192 -> 194
+193 -> 194
 195 [ label="IdLiteral\ntargetY" ];
-189 -> 195
+193 -> 195
 196 [ label="BlockStatement" ];
 188 -> 196
 197 [ label="MeggySetPixel" ];

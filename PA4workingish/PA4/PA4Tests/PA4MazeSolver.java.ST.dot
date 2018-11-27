@@ -1,0 +1,424 @@
+digraph ASTGraph {
+	graph [pad="0.5", nodesep="0.5", ranksep="2"];
+	node [shape=plain]
+	rankdir=LR;
+mazeCol [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="mazeCol0"><i>Scope mazeCol</i></td></tr>
+	<tr><td port="mazeCol1">mDict[endrow]</td></tr>
+	<tr><td port="mazeCol2">mDict[col]</td></tr>
+	<tr><td port="mazeCol3">mDict[startrow]</td></tr>
+</table>>];
+
+0 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="0"><i>VarSTE</i></td></tr>
+	<tr><td>mName=endrow</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+mazeCol:1 -> 0:1;
+
+1 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="1"><i>VarSTE</i></td></tr>
+	<tr><td>mName=col</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+mazeCol:2 -> 1:2;
+
+2 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="2"><i>VarSTE</i></td></tr>
+	<tr><td>mName=startrow</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+mazeCol:3 -> 2:3;
+mazeRow [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="mazeRow0"><i>Scope mazeRow</i></td></tr>
+	<tr><td port="mazeRow1">mDict[endcol]</td></tr>
+	<tr><td port="mazeRow2">mDict[row]</td></tr>
+	<tr><td port="mazeRow3">mDict[startcol]</td></tr>
+</table>>];
+
+3 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="3"><i>VarSTE</i></td></tr>
+	<tr><td>mName=endcol</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+mazeRow:4 -> 3:4;
+
+4 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="4"><i>VarSTE</i></td></tr>
+	<tr><td>mName=row</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+mazeRow:5 -> 4:5;
+
+5 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="5"><i>VarSTE</i></td></tr>
+	<tr><td>mName=startcol</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+mazeRow:6 -> 5:6;
+move [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="move0"><i>Scope move</i></td></tr>
+	<tr><td port="move1">mDict[targetX]</td></tr>
+	<tr><td port="move2">mDict[targetY]</td></tr>
+	<tr><td port="move3">mDict[currentY]</td></tr>
+	<tr><td port="move4">mDict[currentX]</td></tr>
+</table>>];
+
+6 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="6"><i>VarSTE</i></td></tr>
+	<tr><td>mName=targetX</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+move:7 -> 6:7;
+
+7 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="7"><i>VarSTE</i></td></tr>
+	<tr><td>mName=targetY</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+move:8 -> 7:8;
+
+8 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="8"><i>VarSTE</i></td></tr>
+	<tr><td>mName=currentY</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+move:9 -> 8:9;
+
+9 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="9"><i>VarSTE</i></td></tr>
+	<tr><td>mName=currentX</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+move:10 -> 9:10;
+findTargetOrMove [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="findTargetOrMove0"><i>Scope findTargetOrMove</i></td></tr>
+	<tr><td port="findTargetOrMove1">mDict[targetX]</td></tr>
+	<tr><td port="findTargetOrMove2">mDict[targetY]</td></tr>
+	<tr><td port="findTargetOrMove3">mDict[nextX]</td></tr>
+	<tr><td port="findTargetOrMove4">mDict[nextY]</td></tr>
+</table>>];
+
+10 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="10"><i>VarSTE</i></td></tr>
+	<tr><td>mName=targetX</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+findTargetOrMove:11 -> 10:11;
+
+11 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="11"><i>VarSTE</i></td></tr>
+	<tr><td>mName=targetY</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+findTargetOrMove:12 -> 11:12;
+
+12 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="12"><i>VarSTE</i></td></tr>
+	<tr><td>mName=nextX</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+findTargetOrMove:13 -> 12:13;
+
+13 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="13"><i>VarSTE</i></td></tr>
+	<tr><td>mName=nextY</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+findTargetOrMove:14 -> 13:14;
+isBLUE [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="isBLUE0"><i>Scope isBLUE</i></td></tr>
+	<tr><td port="isBLUE1">mDict[y]</td></tr>
+	<tr><td port="isBLUE2">mDict[x]</td></tr>
+</table>>];
+
+14 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="14"><i>VarSTE</i></td></tr>
+	<tr><td>mName=y</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+isBLUE:15 -> 14:15;
+
+15 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="15"><i>VarSTE</i></td></tr>
+	<tr><td>mName=x</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+isBLUE:16 -> 15:16;
+isDark [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="isDark0"><i>Scope isDark</i></td></tr>
+	<tr><td port="isDark1">mDict[y]</td></tr>
+	<tr><td port="isDark2">mDict[x]</td></tr>
+</table>>];
+
+16 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="16"><i>VarSTE</i></td></tr>
+	<tr><td>mName=y</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+isDark:17 -> 16:17;
+
+17 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="17"><i>VarSTE</i></td></tr>
+	<tr><td>mName=x</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+isDark:18 -> 17:18;
+inBounds [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="inBounds0"><i>Scope inBounds</i></td></tr>
+	<tr><td port="inBounds1">mDict[y]</td></tr>
+	<tr><td port="inBounds2">mDict[x]</td></tr>
+</table>>];
+
+18 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="18"><i>VarSTE</i></td></tr>
+	<tr><td>mName=y</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+inBounds:19 -> 18:19;
+
+19 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="19"><i>VarSTE</i></td></tr>
+	<tr><td>mName=x</td></tr>
+	<tr><td>mType=BYTE</td></tr>
+	<tr><td>mBase=INVALID</td></tr>
+	<tr><td>mOffset=0</td></tr>
+</table>>];
+inBounds:20 -> 19:20;
+run [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="run0"><i>Scope run</i></td></tr>
+</table>>];
+initMazeCool [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="initMazeCool0"><i>Scope initMazeCool</i></td></tr>
+</table>>];
+initMaze2 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="initMaze20"><i>Scope initMaze2</i></td></tr>
+</table>>];
+initMaze1 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="initMaze10"><i>Scope initMaze1</i></td></tr>
+</table>>];
+Solver [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="Solver0"><i>Scope Solver</i></td></tr>
+	<tr><td port="Solver1">mDict[isBLUE]</td></tr>
+	<tr><td port="Solver2">mDict[mazeCol]</td></tr>
+	<tr><td port="Solver3">mDict[findTargetOrMove]</td></tr>
+	<tr><td port="Solver4">mDict[isDark]</td></tr>
+	<tr><td port="Solver5">mDict[initMaze1]</td></tr>
+	<tr><td port="Solver6">mDict[initMaze2]</td></tr>
+	<tr><td port="Solver7">mDict[run]</td></tr>
+	<tr><td port="Solver8">mDict[mazeRow]</td></tr>
+	<tr><td port="Solver9">mDict[move]</td></tr>
+	<tr><td port="Solver10">mDict[inBounds]</td></tr>
+	<tr><td port="Solver11">mDict[initMazeCool]</td></tr>
+</table>>];
+
+isBLUE [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="isBLUE0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=isBLUE</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ) return BoolType</td></tr>
+	<tr><td port="20">mScope</td></tr>
+</table>>];
+Solver:Solver0 -> isBLUE:isBLUE0;
+isBLUE:20 -> isBLUE:isBLUE0
+
+mazeCol [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="mazeCol0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=mazeCol</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ByteType ) return VoidType</td></tr>
+	<tr><td port="21">mScope</td></tr>
+</table>>];
+Solver:Solver1 -> mazeCol:mazeCol0;
+mazeCol:21 -> mazeCol:mazeCol0
+
+findTargetOrMove [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="findTargetOrMove0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=findTargetOrMove</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ByteType ByteType ) return VoidType</td></tr>
+	<tr><td port="22">mScope</td></tr>
+</table>>];
+Solver:Solver2 -> findTargetOrMove:findTargetOrMove0;
+findTargetOrMove:22 -> findTargetOrMove:findTargetOrMove0
+
+isDark [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="isDark0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=isDark</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ) return BoolType</td></tr>
+	<tr><td port="23">mScope</td></tr>
+</table>>];
+Solver:Solver3 -> isDark:isDark0;
+isDark:23 -> isDark:isDark0
+
+initMaze1 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="initMaze10"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=initMaze1</td></tr>
+	<tr><td>mSignature=() return VoidType</td></tr>
+	<tr><td port="24">mScope</td></tr>
+</table>>];
+Solver:Solver4 -> initMaze1:initMaze10;
+initMaze1:24 -> initMaze1:initMaze10
+
+initMaze2 [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="initMaze20"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=initMaze2</td></tr>
+	<tr><td>mSignature=() return VoidType</td></tr>
+	<tr><td port="25">mScope</td></tr>
+</table>>];
+Solver:Solver5 -> initMaze2:initMaze20;
+initMaze2:25 -> initMaze2:initMaze20
+
+run [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="run0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=run</td></tr>
+	<tr><td>mSignature=() return VoidType</td></tr>
+	<tr><td port="26">mScope</td></tr>
+</table>>];
+Solver:Solver6 -> run:run0;
+run:26 -> run:run0
+
+mazeRow [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="mazeRow0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=mazeRow</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ByteType ) return VoidType</td></tr>
+	<tr><td port="27">mScope</td></tr>
+</table>>];
+Solver:Solver7 -> mazeRow:mazeRow0;
+mazeRow:27 -> mazeRow:mazeRow0
+
+move [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="move0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=move</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ByteType ByteType ) return VoidType</td></tr>
+	<tr><td port="28">mScope</td></tr>
+</table>>];
+Solver:Solver8 -> move:move0;
+move:28 -> move:move0
+
+inBounds [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="inBounds0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=inBounds</td></tr>
+	<tr><td>mSignature=(ByteType ByteType ) return BoolType</td></tr>
+	<tr><td port="29">mScope</td></tr>
+</table>>];
+Solver:Solver9 -> inBounds:inBounds0;
+inBounds:29 -> inBounds:inBounds0
+
+initMazeCool [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="initMazeCool0"><i>MethodSTE</i></td></tr>
+	<tr><td>mName=initMazeCool</td></tr>
+	<tr><td>mSignature=() return VoidType</td></tr>
+	<tr><td port="30">mScope</td></tr>
+</table>>];
+Solver:Solver10 -> initMazeCool:initMazeCool0;
+initMazeCool:30 -> initMazeCool:initMazeCool0
+PA4MazeSolver [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="PA4MazeSolver0"><i>Scope PA4MazeSolver</i></td></tr>
+</table>>];
+Program [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="Program0"><i>Scope Program</i></td></tr>
+	<tr><td port="Program1">mDict[PA4MazeSolver]</td></tr>
+	<tr><td port="Program2">mDict[Solver]</td></tr>
+</table>>];
+PA4MazeSolver [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="PA4MazeSolver0"><i>ClassSTE</i></td></tr>
+	<tr><td>mName=PA4MazeSolver</td></tr>
+	<tr><td>mMain=true</td></tr>
+	<tr><td>mSuperClass=NULL</td></tr>
+	<tr><td port="31">mScope</td></tr>
+</table>>];
+Program:Program0 -> PA4MazeSolver:PA4MazeSolver0;
+PA4MazeSolver:31 -> PA4MazeSolver:PA4MazeSolver0
+Solver [ label=<
+<table border="0" cellborder="1" cellspacing="0">
+	<tr><td port="Solver1"><i>ClassSTE</i></td></tr>
+	<tr><td>mName=Solver</td></tr>
+	<tr><td>mMain=false</td></tr>
+	<tr><td>mSuperClass=NULL</td></tr>
+	<tr><td port="32">mScope</td></tr>
+</table>>];
+Program:Program1 -> Solver:Solver1;
+Solver:32 -> Solver:Solver0
+}

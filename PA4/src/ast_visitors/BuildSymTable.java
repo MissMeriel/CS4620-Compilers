@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.util.Stack;
 import java.util.HashMap;
 import java.util.*;
+import exceptions.SemanticException;
+
 
 import ast.visitor.DepthFirstVisitor;
 import ast.node.*;
@@ -71,13 +73,21 @@ public class BuildSymTable extends DepthFirstVisitor
 			this.symTable.addScope(classSTE.getScope());
 		}else if (node instanceof MethodDecl){
 				MethodDecl md = (MethodDecl) node;
+				//get enclosing class scope
+				Scope scope = symTable.peek();
+				//make sure method doesn't already exist
+				if(scope.lookupInnermost(md.getName()) != null){
+					       throw new SemanticException(
+					 "Redefined symbol "+md.getName(),
+			         node.getLine(), node.getPos());
+				}
 				Type t = VarSTE.iTypeToType(md.getType());
 				symTable.setExpType(md.getType(), t);
 				//create signature & VarSTEs
 				LinkedList<Formal> ll = md.getFormals();
 				String sig = "(";
 				Iterator<Formal> iter = ll.listIterator();
-				Scope scope = new Scope("MethodDecl", md.getName());
+				scope = new Scope("MethodDecl", md.getName());
 				while(iter.hasNext()){
 					Formal f = iter.next();
 					scope.add(f.getName(), new VarSTE(f.getName(), f.getType()));
@@ -116,6 +126,7 @@ public class BuildSymTable extends DepthFirstVisitor
 					symTable.setExpType(n, Type.VOID);
 				}else{
 					Type t = symTable.getExpType(n.getExp());
+					t = VarSTE.iTypeToType(n.getType());
 					symTable.setExpType(n, t);
 				}
 			}
@@ -145,7 +156,7 @@ public class BuildSymTable extends DepthFirstVisitor
 				IdLiteral id = (IdLiteral) node;
 				VarSTE varSTE = (VarSTE) symTable.lookup(id.getLexeme());
 				if(varSTE != null){
-					System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
+					//System.out.println("IdLiteral: "+id.getLexeme()+" "+varSTE.getmType().toString());
 					this.symTable.setExpType(node, varSTE.getmType());
 				} else {
 					this.symTable.setExpType(node, Type.VOID);
@@ -170,8 +181,10 @@ public class BuildSymTable extends DepthFirstVisitor
 				symTable.setExpType(node, Type.CLASS);
 			} else if (node instanceof CallExp){
 				CallExp callExp = (CallExp) node;
-/*				MethodSTE methodSTE = (MethodSTE) this.symTable.lookup(callExp.getId());
-				System.out.println("callExp.getId(): "+callExp.getId());
+				MethodSTE methodSTE = (MethodSTE) this.symTable.lookup(callExp.getId());
+				Type t = methodSTE.getType();
+				symTable.setExpType(node, t);
+/*				System.out.println("callExp.getId(): "+callExp.getId());
 				System.out.println("null ste? "+(methodSTE == null));
 				System.out.println("null type? "+(methodSTE.getType() == null));
 				symTable.setExpType(node, methodSTE.getType());

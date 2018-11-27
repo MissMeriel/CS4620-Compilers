@@ -209,7 +209,14 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				+"\n\tpush   r24"
 				);
 		} else if(node instanceof ThisLiteral){
-			out.println("\n\t# loading the implicit \"this\"");
+			out.println("\n\t# loading the implicit \"this\""
+			    +"\n\t# load a two byte variable from base+offset"
+			    +"\n\tldd    r31, Y + 2" 
+			    +"\n\tldd    r30, Y + 1" 
+			    +"\n\t# push two byte expression onto stack"
+			    +"\n\tpush 	   r31"
+			    +"\n\tpush     r30"
+			);
 		}
 		/*else if(node instanceof ){
 			out.println(""
@@ -437,8 +444,14 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n\t# make space for locals and params"
                 +"\n\tldi    r30, 0");
         LinkedList<Formal> fs = node.getFormals();
-        for(int i = 0; i < fs.size()*2; i++){
-            out.print("\n\tpush   r30");
+	out.print("\n\tpush   r30");
+	out.print("\n\tpush   r30");
+        for(int i = 0; i < fs.size(); i++){
+	    Formal f = fs.get(i);
+	    int size = this.st.getExpType(f).getAVRTypeSize();
+	    for (int j = size; j >0; j--){
+		out.print("\n\tpush   r30");
+	    }
         }
         out.print("\n\t"
             +"\n\t# Copy stack pointer to frame pointer"
@@ -446,7 +459,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
             +"\n\tin     r29,__SP_H__"
             +"\n\t"
             +"\n\t# save off parameters");
-        int avrReg = 20 + fs.size()*2 + 1;
+        int avrReg = 20 + (fs.size()+1)*2 + 1;
         int offset = 3;
         out.println("\n\tstd    Y + 2, r"+avrReg);
         avrReg--;
@@ -457,9 +470,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
             Formal arg = iter.next();
             if(arg.getType() instanceof IntType){
                 //pop 2 bytes off stack
-				out.println("\n\tstd    Y + "+(offset+1)+", r"+avrReg);
+				out.println("\tstd    Y + "+(offset+1)+", r"+avrReg);
 				avrReg--;
-				out.println("\n\tstd    Y + "+(offset)+", r"+avrReg);
+				out.println("\tstd    Y + "+(offset)+", r"+avrReg);
 				//update ST with offset
 				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
 				ste.setBase("Y");
@@ -468,7 +481,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 offset += 2;
 			} else if(arg.getType() instanceof ByteType){
                 //pop 1 byte off stack
-                out.println("\n\tstd    Y + "+offset+", r"+avrReg);
+                out.println("\tstd    Y + "+offset+", r"+avrReg);
 				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
 				ste.setBase("Y");
 				ste.setOffset(offset);
@@ -476,7 +489,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 offset++;
             }else{
                 //pop 1 byte off stack
-                out.println("\n\tstd    Y + "+offset+", r"+avrReg);
+                out.println("\tstd    Y + "+offset+", r"+avrReg);
 				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
 				ste.setBase("Y");
 				ste.setOffset(offset);
@@ -513,7 +526,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
             node.getExp().accept(this);
 		}
 
-		out.println("\n/* epilogue start for Cloud_rain */");
+		out.println("\n\n/* epilogue start for  "+methodName+"*/");
 		if(st.getExpType(node) == Type.VOID){
 			out.println("\t# no return value");
 		} else if (st.getExpType(node) == Type.CLASS || st.getExpType(node) == Type.INT){
@@ -536,6 +549,8 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		}
 		out.println("\t# pop space off stack for parameters and locals");
 		{
+		    out.println("\tpop		r30");
+		    out.println("\tpop		r30");
 			List<Formal> copy = new ArrayList<Formal>(node.getFormals());
 			for(Formal e : copy){
 				out.println("\tpop		r30");
@@ -549,25 +564,95 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			);
         outMethodDecl(node);
 		this.st.removeScope();
-    } 
+    }
+    
+    @Override
+    public void visitCallStatement(CallStatement node)
+    {
+	MethodSTE ste = (MethodSTE) this.st.lookup(node.getId());
+	Scope scope = this.st.lookupClosestScope(node.getId());
+	String methodName = scope.getName()+"_"+ste.getName();
+	System.out.println("Visiting method call "+methodName);
+        inCallStatement(node);
+        if(node.getExp() != null)
+        {
+            node.getExp().accept(this);
+        }
+	
+	{
+            List<IExp> copy = new ArrayList<IExp>(node.getArgs());
+            for(IExp e : copy)
+            {
+                e.accept(this);
+            }
+        }
+	
+	LinkedList<IExp> args = node.getArgs();
+        int avrReg = 24 - args.size() * 2;
+        out.println("\n\t#### function call"
+            +"\n\t# put parameter values into appropriate registers");
+        Iterator<IExp> iter = args.descendingIterator();
+        while(iter.hasNext()){
+            IExp arg = iter.next();
+            if(st.getExpType(arg).getAVRTypeSize() == 2){
+                //pop 2 bytes off stack
+                out.println("\tpop    r"+avrReg);
+                avrReg++;
+                out.println("\tpop    r"+avrReg);
+                avrReg++;
+            }else{
+                //pop 1 byte off stack
+                out.println("\tpop    r"+avrReg);
+                avrReg += 2;
+            }   
+        }
+	
+	        out.println("\n\t# receiver will be passed as first param"
+            +"\n\tpop    r"+avrReg);
+        avrReg++;
+        out.println("\n\tpop    r"+avrReg);
+        out.println("\n\tcall    "+methodName);
+        
+		Type returnType = this.st.getExpType(node);
+		if(returnType == Type.VOID){
+			//DO NOTHING
+		} else if (returnType == Type.INT || returnType == Type.CLASS){
+			out.println("\t# handle return value");
+			out.println("\t# push two byte expression onto stack");
+			out.println("\tpush	r24");
+			out.println("\tpush	r25");
+		} else {
+			out.println("\t# handle return value");
+			out.println("\t# push one byte expression onto stack");
+			out.println("\tpush	r24");
+
+		}
+	
+        outCallStatement(node);
+    }
+    
 
     @Override
     public void visitCallExp(CallExp node) {
+	try{
 		//get method name
 		//lookup class Scope containing call name
 		//with correct signature
 		MethodSTE ste = (MethodSTE) this.st.lookup(node.getId());
 		Scope scope = this.st.lookupClosestScope(node.getId());
 		String methodName = scope.getName()+"_"+ste.getName();
-/*        if(node.getExp() != null){
-			if(node.getExp() instanceof NewExp){
-				methodName += ((NewExp)node.getExp()).getId();
-            } else if (node.getExp() instanceof ThisLiteral){
-                out.println("\n\t# loading the implicit \"this\"");
-            }   
-            node.getExp().accept(this);
-        } 
-		methodName += node.getId();*/
+		System.out.println("Visiting method call "+methodName);
+
+        node.getExp().accept(this);
+	
+	{
+            List<IExp> copy = new ArrayList<IExp>(node.getArgs());
+            for(IExp e : copy)
+            {
+                e.accept(this);
+            }
+        }
+	
         LinkedList<IExp> args = node.getArgs();
         int avrReg = 24 - args.size() * 2;
         out.println("\n\t#### function call"
@@ -586,7 +671,8 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 out.println("\n\tpop    r"+avrReg);
                 avrReg += 2;
             }   
-        }   
+        }
+	        
         out.println("\n\t# receiver will be passed as first param"
             +"\n\tpop    r"+avrReg);
         avrReg++;
@@ -607,7 +693,11 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			out.println("\tpush	r24");
 
 		}
-        outCallExp(node);
+	outCallExp(node);
+	} catch(Exception e){
+	    System.out.println("exception in visitCallExp");
+	    e.printStackTrace();
+	}
     }
 
 
@@ -678,21 +768,24 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\n\tcall _Z18MeggyJrSimpleSetupv");
         inMainClass(node);
         if(node.getStatement() != null)
-        {    
+        {
+	    System.out.println("Main statement accepting AVRgenVisitor");
             node.getStatement().accept(this);
         }    
-		out.println("/* epilogue start */"
-			+"\n\tendLabel:"
-			+"\n\tjmp endLabel"
-			+"\n\tret"
-			+"\n\t.size   main, .-main");
+
         outMainClass(node);
-		this.st.pushScope(node.getName());
-		this.st.removeScope();
+    	this.st.pushScope(node.getName());
+    	this.st.removeScope();
+    	out.println("/* epilogue start */"
+	        +"\n\tendLabel:"
+    		+"\n\tjmp endLabel"
+	    	+"\n\tret"
+		+"\n\t.size   main, .-main");
 	}       
 
     @Override
-    public void visitIdLiteral(IdLiteral node){    
+    public void visitIdLiteral(IdLiteral node){
+	System.out.println("Visiting IdLiteral "+node.getLexeme());
         inIdLiteral(node);
 		out.println("\n\t# IdExp"
 			+"\n\t# load value for variable "+node.getLexeme()

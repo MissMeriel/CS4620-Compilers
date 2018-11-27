@@ -105,6 +105,9 @@ public class SymTable {
 	}
 
 
+	public Scope peek(){
+		return mScopeStack.peek();
+	}
 
     /** Lookup a symbol in this symbol table.
      * Starts looking in innermost scope and then
@@ -144,6 +147,7 @@ public class SymTable {
 		}
 	}
 
+	//print members of scope
 	public void printScope(Scope scope){
 		HashMap<String, STE> dict = scope.getDict();
 		Set keyset = dict.keySet();
@@ -196,6 +200,7 @@ public class SymTable {
 		}
     }
 
+////////////////////////////////////////////////////////////////////////////////////////
 
 
    /** Upon entering each node in AST, check of this node is the root
@@ -233,13 +238,6 @@ public class SymTable {
 		//connect new scope members to their previous scopes
 		HashMap<String, STE> hm = scope.getDict();
 		Set keyset = hm.keySet();
-/*		if(scope.getName() != null){
-			System.out.println("scope name: " + scope.getName());
-		} else {
-			System.out.println("scope name: null");
-		}
-		System.out.println("keys in scope: " + keyset.size());
-*/		
 		int currScopeStart = portCount;
 		//print out scope
 		Iterator<String> iter = keyset.iterator();

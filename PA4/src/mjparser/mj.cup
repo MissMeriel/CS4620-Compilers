@@ -104,6 +104,8 @@ non terminal Object comments;
 non terminal IdLiteral identifier;
 non terminal IExp byte;
 non terminal IExp eqexp;
+non terminal IExp compstart;
+non terminal IExp arithexp;
 non terminal IfStatement if;
 non terminal IStatement else;
 
@@ -201,7 +203,7 @@ formals ::=
 	;
 
 return ::=
-	RETURN eqexp:e SEMI
+	RETURN compstart:e SEMI
 	{:
 		RESULT = e;
 	:}
@@ -274,7 +276,7 @@ statement ::=
 		//System.out.println("if");
 		RESULT = i;
 	:}
-	| WHILE:w LPAREN lexp:e RPAREN statement:s 
+	| WHILE:w LPAREN compstart:e RPAREN statement:s 
 	{:	
 		//System.out.println("in while statement");
 		RESULT = new WhileStatement(w.line, w.pos, e, s);
@@ -283,10 +285,10 @@ statement ::=
     {:
         RESULT = new CallStatement(e1.getLine(), e1.getPos(), e1, id.getLexeme(), p); 
     :}
-	;
+    ;
 
 if ::=
-	IF:i LPAREN eqexp:e RPAREN statement:s1 comments else:s2
+	IF:i LPAREN compstart:e RPAREN statement:s1 comments else:s2
 	{:
 		RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
 	:}
@@ -299,56 +301,56 @@ else ::=
 	{:RESULT = new BlockStatement(0, 0, new LinkedList<IStatement>());:}
 	;
 
+compstart ::=
+	compstart:e1 AND:a eqexp:e2
+	{:
+		RESULT = new AndExp(a.line, a.pos, e1, e2);
+	:}
+	| eqexp:e
+	{:RESULT = e;:}
+	;
+
 eqexp ::=
-	 eqexp:e1 EQUAL:eq lexp:e2
+	eqexp:e1 EQUAL lexp:e2
 	{:
-		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
+		RESULT = new EqualExp(e1.getLine(), e1.getPos(), e1, e2);
 	:}
-	| LPAREN lexp:e1 EQUAL:eq exp:e2 RPAREN
+	| eqexp:e1 LT lexp:e2
 	{:
-		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
+		RESULT = new LtExp(e1.getLine(), e1.getPos(), e1, e2);
 	:}
-	| lexp:e
+	| lexp:e 
 	{:RESULT = e;:}
 	;
 
 lexp ::=
-	lexp:e1 LT exp:e2
-	{:
-		RESULT = new LtExp(e1.getLine(), e1.getPos(), e1, e2);
-		//RESULT = new LtExp(e1.line, e1.pos, e1, e2);
-	:}
-	| lexp:e1 AND:a exp:e2
-	{:
-		RESULT = new AndExp(a.line, a.pos, e1, e2);
-	:}
-	| lexp:e1 PLUS:p exp:e2
-	{:
-		RESULT = new PlusExp(p.line, p.pos, e1, e2);
-	:}
-	| lexp:e1 MINUS:m exp:e2
-	{:
-		RESULT = new MinusExp(m.line, m.pos, e1, e2);
-	:}
-	| lexp:e1 TIMES:t exp:e2
+	| lexp:e1 TIMES:t arithexp:e2
 	{:
 		RESULT = new MulExp(t.line, t.pos, e1, e2);
 	:}
 	| LPAREN lexp:e RPAREN
 	{: RESULT = e; :}
-	| exp:e
+	| arithexp:e
 	{: RESULT = e; :}
 	;
 
+arithexp::=
+	 arithexp:e1 PLUS:p exp:e2
+	{:
+		RESULT = new PlusExp(p.line, p.pos, e1, e2);
+	:}
+	| arithexp:e1 MINUS:m exp:e2
+	{:
+		RESULT = new MinusExp(m.line, m.pos, e1, e2);
+	:}
+	| exp:e
+	{: RESULT = e; :}
+	;
 
 exp ::=
 	LPAREN BYTE RPAREN exp:e 
 	{:	
 		RESULT = new ByteCast(e.getLine(), e.getPos(), e);
-	:}
-	| MINUS:m exp:e 
-	{:
-		RESULT = new NegExp(m.line, m.pos, e);
 	:}
 	| MEGGYGETPIXEL:m LPAREN exp:e1 COMMA exp:e2 RPAREN
 	{:
@@ -387,10 +389,10 @@ exp ::=
 	{:
 		RESULT = new NotExp(n.line, n.pos, e);
 	:}
-	| LPAREN:lp eqexp:e RPAREN
-	{:
-		RESULT = e;
-	:}
+    | LPAREN:lp compstart:e RPAREN
+    {:
+	RESULT = e;
+    :}
     | identifier:id
     {:
         RESULT = id;
