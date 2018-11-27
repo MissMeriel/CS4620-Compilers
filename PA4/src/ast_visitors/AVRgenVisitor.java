@@ -382,8 +382,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
     }
 
     @Override
-    public void visitMinusExp(MinusExp node)
-    {
+    public void visitMinusExp(MinusExp node) {
         inMinusExp(node);
         if(node.getLExp() != null)
         {
@@ -510,11 +509,11 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		}
 
 		out.println("\n/* epilogue start for Cloud_rain */");
-		if(node.getType() == Type.VOID){
+		if(st.getExpType(node) == Type.VOID){
 			out.println("\t# no return value");
-		} else if (node.getType() == Type.CLASS || node.getType() == Type.INT){
+		} else if (st.getExpType(node) == Type.CLASS || st.getExpType(node) == Type.INT){
 			out.println("\t# handle return value");
-		} else if (node.getType() == Type.BOOL){
+		} else if (st.getExpType(node) == Type.BOOL){
 			out.println("\t# handle return value");
 			out.println("\t# promoting a byte to an int");
 			out.println("\t# load a one byte expression off stack"
@@ -553,7 +552,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		//lookup class Scope containing call name
 		//with correct signature
 		MethodSTE ste = (MethodSTE) this.st.lookup(node.getId());
-		Scope scope = this.st.lookupEnclosingScope(node.getId());
+		Scope scope = this.st.lookupClosestScope(node.getId());
 		String methodName = scope.getName()+"_"+ste.getName();
 /*        if(node.getExp() != null){
 			if(node.getExp() instanceof NewExp){
@@ -571,7 +570,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
         Iterator<IExp> iter = args.descendingIterator();
         while(iter.hasNext()){
             IExp arg = iter.next();
-            if(st.getExpType(arg).getAVRSize() == 2){
+            if(st.getExpType(arg).getAVRTypeSize() == 2){
                 //pop 2 bytes off stack
                 out.println("\n\tpop    r"+avrReg);
                 avrReg++;
@@ -685,7 +684,50 @@ public class AVRgenVisitor extends DepthFirstVisitor
         outMainClass(node);
 		this.st.pushScope(node.getName());
 		this.st.removeScope();
-	}        
+	}       
+
+    @Override
+    public void visitIdLiteral(IdLiteral node){    
+        inIdLiteral(node);
+		out.println("\n\t# IdExp"
+			+"\n\t# load value for variable "+node.getLexeme()
+		);
+		VarSTE ste = (VarSTE) this.st.lookup(node.getLexeme());
+		int offset = 0;
+		String base = "";
+		if(ste != null){
+			offset = ste.getOffset();
+			base = ste.getBase();
+		} else {
+			System.err.println(node.getLexeme() + "not found in symbol table");
+		}
+		if(st.getExpType(node) == Type.INT){
+			out.println("\t# variable is a local or param variable"
+				+"\n\n\t# load two byte variable from base+offset"
+				+"\n\tldd    r24, "+base+" + "+offset
+				+"\n\tldd    r25, "+base+" + "+(offset+1)
+				+"\n\t# push one byte expression onto stack"
+				+"\n\tpush  r25"
+				+"\n\tpush  r24"
+			);
+
+		} else {
+			out.println("\t# variable is a local or param variable"
+				+"\n\n\t# load a one byte variable from base+offset"
+				+"\n\tldd    r24, "+base+" + "+offset
+				+"\n\t# push one byte expression onto stack"
+				+"\n\tpush	r24"
+			);
+
+		}
+		
+/*		out.println(""
+			+"\n\t"
+			+"\n\t"
+			+"\n\t"
+			);*/
+        outIdLiteral(node);
+    }    
 
 /*
     @Override

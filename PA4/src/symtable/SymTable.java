@@ -91,14 +91,13 @@ public class SymTable {
 			return null;
 		}
 
-	public Scope lookupClosestScopeWith(String str){
+	public Scope lookupClosestScopeWith(String s) {
 		//looks at other scopees if no return from current scope
 		Iterator<Scope> iter = mScopeStack.iterator();
 		while(iter.hasNext()){
 			Scope scope = iter.next();
-				//scope.getExpTypeMap();
 			printScope(scope);
-			if(scope.getName().contains(str) || scope.getType().contains(str)){
+			if(scope.getName().contains(s) || scope.getType().contains(s)){
 				return scope;
 			}
 		}
@@ -184,16 +183,16 @@ public class SymTable {
 		//THIS IS AMBIGUOUS -- WOULDN'T IT MAKE MORE SENSE TO POP UNTIL
 		// DESIRED SCOPE IS ON TOP?
 		if(this.lookup(id) != null){
-			Scope currentScope = mScopeStack.peek();
 			Iterator<Scope> iter =mScopeStack.iterator();
-			
+			Scope scope = null;
 			while(iter.hasNext()){
-				Scope scope = iter.next();
-				if (scope.getName().equals(str)){
+				scope = iter.next();
+				if (scope.getName().equals(id)){
 					mScopeStack.remove(scope);
-					mScopeStack.push(scope);
+					break;
 				}
 			}
+			mScopeStack.push(scope);
 		}
     }
 
@@ -303,8 +302,8 @@ public class SymTable {
 				out.println("\t<tr><td port=\""+(portCount++)+"\"><i>VarSTE</i></td></tr>");	
 				out.println("\t<tr><td>mName="+val.getName()+"</td></tr>");
 				out.println("\t<tr><td>mType="+val.getmType().toString()+"</td></tr>");
-				out.println("\t<tr><td>mBase="+val.getmBase()+"</td></tr>");
-				out.println("\t<tr><td>mOffset="+val.getmOffset()+"</td></tr>");
+				out.println("\t<tr><td>mBase="+val.getBase()+"</td></tr>");
+				out.println("\t<tr><td>mOffset="+val.getOffset()+"</td></tr>");
 				out.println("</table>>];");
 				
 				out.println(scope.getName()+":"+ (currScopeStart+1+iterCount) + " -> " + (steCount)+":"+(portCount)+ ";");

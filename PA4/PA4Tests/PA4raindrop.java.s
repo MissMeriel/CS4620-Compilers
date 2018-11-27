@@ -164,11 +164,33 @@ MJ_L2:
 	ret
 	.size   main, .-main
 
+	.text
+.global Cloud_rain
+	.type  Cloud_rain, @function
+Cloud_rain:
+	push   r29
+	push   r28
+	# make space for locals and params
+	ldi    r30, 0
+
+	push   r30
+	push   r30
+	push   r30
+	push   r30
+	
+	# Copy stack pointer to frame pointer
+	in     r28,__SP_L__
+	in     r29,__SP_H__
+	
+	# save off parametersstd    Y + 2, r25
+std    Y + 1, r24
+
+	std    Y + 3, r23
+
+	std    Y + 4, r22
+
+/* done with function Cloud_rain prologue */
 	#### if statement
-
-	# loading the implicit "this"
-
-	# loading the implicit "this"
 
 	#### function call
 	# put parameter values into appropriate registers
@@ -178,7 +200,10 @@ MJ_L2:
 
 	pop    r25
 
-	call    inBounds
+	call    Cloud_inBounds
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
 
 	# load condition and branch if false
 	pop    r24
@@ -194,6 +219,24 @@ MJ_L2:
 	#then label for if
 MJ_L3:
 
+	# IdExp
+	# load value for variable x
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
 	/* load 5 for Meggy.Color.BLUE */
 	ldi r22, 5
 	push r22
@@ -208,10 +251,6 @@ MJ_L3:
 
 	#### if statement
 
-	# loading the implicit "this"
-
-	# loading the implicit "this"
-
 	#### function call
 	# put parameter values into appropriate registers
 
@@ -220,7 +259,10 @@ MJ_L3:
 
 	pop    r25
 
-	call    inBounds
+	call    Cloud_inBounds
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
 
 	# load condition and branch if false
 	pop    r24
@@ -235,6 +277,24 @@ MJ_L3:
 
 	#then label for if
 MJ_L7:
+
+	# IdExp
+	# load value for variable x
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
 
 	# load int 1
 	ldi r24,lo8(1)
@@ -289,6 +349,24 @@ MJ_L9:
 
 	# loading the implicit "this"
 
+	# IdExp
+	# load value for variable x
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
 	# load int 1
 	ldi r24,lo8(1)
 	ldi r25,hi8(1)
@@ -299,6 +377,14 @@ MJ_L9:
 	/* cast to byte */
 	pop r25
 	pop r24
+	push r24
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
 	push r24
 
 	/* cast to byte */
@@ -316,10 +402,23 @@ MJ_L4:
 	# done label for if
 MJ_L5:
 
+/* epilogue start for Cloud_rain */
+	# no return value
+	# pop space off stack for parameters and locals
+	pop		r30
+	pop		r30
+	pop		r30
+	pop		r30
+	# restoring the frame pointer
+	pop    r28 
+	pop    r29 
+	ret
+	.size Cloud_rain, .-Cloud_rain
+
 	.text
-.global Cloud_rain
-	.type  Cloud_rain, @function
-Cloud_rain:
+.global Cloud_inBounds
+	.type  Cloud_inBounds, @function
+Cloud_inBounds:
 	push   r29
 	push   r28
 	# make space for locals and params
@@ -337,11 +436,11 @@ Cloud_rain:
 	# save off parametersstd    Y + 2, r25
 std    Y + 1, r24
 
-	pop    r23
+	std    Y + 3, r23
 
-	pop    r21
+	std    Y + 4, r22
 
-/* done with function Cloud_rain prologue */
+/* done with function Cloud_inBounds prologue */
 	#### short-circuited && operation
 	# &&: left operand
 
@@ -359,10 +458,27 @@ std    Y + 1, r24
 	push r25
 	push r24
 
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
 	/* cast to byte */
 	pop r25
 	pop r24
 	push r24
+
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
 
 	# less than expression
 	# load a one byte expression off stack
@@ -399,6 +515,15 @@ MJ_L12:
 	# &&: right operand
 	pop	r24
 
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
 	# load int 8
 	ldi r24,lo8(8)
 	ldi r25,hi8(8)
@@ -434,29 +559,14 @@ MJ_L16:
 
 MJ_L11:
 
-	.text
-.global Cloud_inBounds
-	.type  Cloud_inBounds, @function
-Cloud_inBounds:
-	push   r29
-	push   r28
-	# make space for locals and params
-	ldi    r30, 0
-
-	push   r30
-	push   r30
-	push   r30
-	push   r30
-	
-	# Copy stack pointer to frame pointer
-	in     r28,__SP_L__
-	in     r29,__SP_H__
-	
-	# save off parametersstd    Y + 2, r25
-std    Y + 1, r24
-
-	pop    r23
-
-	pop    r21
-
-/* done with function Cloud_inBounds prologue */
+/* epilogue start for Cloud_rain */
+	# pop space off stack for parameters and locals
+	pop		r30
+	pop		r30
+	pop		r30
+	pop		r30
+	# restoring the frame pointer
+	pop    r28 
+	pop    r29 
+	ret
+	.size Cloud_inBounds, .-Cloud_inBounds
