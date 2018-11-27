@@ -30,19 +30,19 @@ public class VarSTE extends STE {
 		return mType;
 	}
 
-	public String getmBase(){
+	public String getBase(){
 		return mBase;
 	}
 
-	public void setmBase(String base){
+	public void setBase(String base){
 		this.mBase = base;
 	}
 
-	public int getmOffset(){
+	public int getOffset(){
 		return mOffset;
 	}
 
-	public void setmOffset(int offset){
+	public void setOffset(int offset){
 		this.mOffset = offset;
 	}
 

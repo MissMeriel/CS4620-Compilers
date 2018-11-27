@@ -24,14 +24,6 @@ import symtable.Type;
 import exceptions.InternalException;
 import exceptions.SemanticException;
 
-/*
-Node not implemented in CheckTypes, class ast.node.IntLiteral
-Node not implemented in CheckTypes, class ast.node.ColorLiteral
-Node not implemented in CheckTypes, class ast.node.MeggySetPixel
-Node not implemented in CheckTypes, class ast.node.BlockStatement
-Node not implemented in CheckTypes, class ast.node.MainClass
-Node not implemented in CheckTypes, class ast.node.Program
-*/
 
 public class CheckTypes extends DepthFirstVisitor
 {
@@ -42,9 +34,7 @@ public class CheckTypes extends DepthFirstVisitor
      if(st==null) {
           throw new InternalException("unexpected null argument");
       }
-      mCurrentST = st;
-		//HashMap<Node, Type> hm = st.getExpTypeMap();
-//	System.out.println("st size: "+st.size());
+      mCurrentST = st.clone();
    }
    
    //========================= Overriding the visitor interface
@@ -68,12 +58,12 @@ public class CheckTypes extends DepthFirstVisitor
    }
   
    public void outPlusExp(PlusExp node){
-		System.out.println("node.getLExp() null: "+(node.getLExp() == null));
-		System.out.println("node.getRExp() null: "+(node.getRExp() == null));
+		/*System.out.println("node.getLExp() null: "+(node.getLExp() == null));
+		System.out.println("node.getRExp() null: "+(node.getRExp() == null));*/
        Type lexpType = this.mCurrentST.getExpType(node.getLExp());
        Type rexpType = this.mCurrentST.getExpType(node.getRExp());
-		System.out.println("rexpType "+rexpType.toString());
-		System.out.println("lexpType "+lexpType.toString());
+		/*System.out.println("rexpType "+rexpType.toString());
+		System.out.println("lexpType "+lexpType.toString());*/
        if ((lexpType==Type.INT  || lexpType==Type.BYTE) &&
            (rexpType==Type.INT  || rexpType==Type.BYTE)
           ){
@@ -90,13 +80,13 @@ public class CheckTypes extends DepthFirstVisitor
 	public void outLtExp(LtExp node){
        Type lexpType = this.mCurrentST.getExpType(node.getLExp());
        Type rexpType = this.mCurrentST.getExpType(node.getRExp());
-       if ((lexpType==Type.BOOL) &&
-           (rexpType==Type.BOOL)
+       if ((lexpType==Type.INT  || lexpType==Type.BYTE) &&
+           (rexpType==Type.INT  || rexpType==Type.BYTE)
           ){
            this.mCurrentST.setExpType(node, Type.BOOL);
        } else {
            throw new SemanticException(
-                   "Operands to LtExp must be BOOL",
+                   "Operands to LtExp must be INT or BYTE",
                    node.getLExp().getLine(),
                    node.getLExp().getPos());
        }
@@ -122,14 +112,14 @@ public class CheckTypes extends DepthFirstVisitor
    public void outIntegerExp(IntLiteral node){   
 	try{
      if(this.mCurrentST.getExpType(node) != Type.INT) {
-		System.out.println("Invalid type for IntLiteral "+node.getLine()+","+node.getPos());
+		//System.out.println("Invalid type for IntLiteral "+node.getLine()+","+node.getPos());
        throw new SemanticException(
          "Invalid type for IntLiteral",
          node.getLine(), node.getPos());
      }   
      this.mCurrentST.setExpType(node, Type.INT);
 	}catch(Exception e){
-		System.out.println(e.getMessage());
+		//System.out.println(e.getMessage());
 		e.printStackTrace();
 	}
    } 
@@ -137,7 +127,7 @@ public class CheckTypes extends DepthFirstVisitor
 	@Override
    public void outColorExp(ColorLiteral node){
      if(this.mCurrentST.getExpType(node) != Type.COLOR) {
-		System.out.println("Invalid type for ColorLiteral "+node.getLine()+","+node.getPos());
+		//System.out.println("Invalid type for ColorLiteral "+node.getLine()+","+node.getPos());
        throw new SemanticException(
          "Invalid type for ColorLiteral",
          node.getLine(), node.getPos());
@@ -149,7 +139,7 @@ public class CheckTypes extends DepthFirstVisitor
 	@Override
    public void outMainClass(MainClass node){
      if(this.mCurrentST.getExpType(node) != Type.MAINCLASS) {
-		System.out.println("Invalid type for MainClass "+node.getLine()+","+node.getPos());
+		//System.out.println("Invalid type for MainClass "+node.getLine()+","+node.getPos());
        throw new SemanticException(
          "Invalid type for MainClass",
          node.getLine(), node.getPos());
@@ -189,8 +179,13 @@ public class CheckTypes extends DepthFirstVisitor
 
 	@Override
 	public void outMethodDecl(MethodDecl node){
+	//System.out.println("MethodDecl: "+node.getName());
 	Type returnType = this.mCurrentST.getExpType(node.getExp());
+	if(node.getExp() == null){
+		returnType = Type.VOID;
+	}
 	Type declType = VarSTE.iTypeToType(node.getType());
+	//System.out.println("returnType: "+returnType+"; declType: "+declType);
      if(returnType != declType){
        throw new SemanticException(
          "Invalid type for MethodDecl",
@@ -242,6 +237,8 @@ public class CheckTypes extends DepthFirstVisitor
 
 	@Override
 	public void outIdLiteral(IdLiteral node){
+	 Type t = this.mCurrentST.getExpType(node);
+	 //System.out.println("IdLiteral type: "+t.toString());
      if(this.mCurrentST.getExpType(node) == Type.MAINCLASS) {
        throw new SemanticException(
          "Invalid type for IdLiteral",
@@ -274,9 +271,9 @@ public class CheckTypes extends DepthFirstVisitor
 	@Override
 	public void outCallExp(CallExp node){
         MethodSTE methodSTE = (MethodSTE) mCurrentST.lookup(node.getId().trim());
-        System.out.println("callExp.getId(): "+node.getId());
-        System.out.println("null ste? "+(methodSTE == null));
-        System.out.println("null type? "+(methodSTE.getType() == null));
+        //System.out.println("callExp.getId(): "+node.getId());
+        //System.out.println("null ste? "+(methodSTE == null));
+        //System.out.println("null type? "+(methodSTE.getType() == null));
 		mCurrentST.setExpType(node, methodSTE.getType());
 	/*
      if(this.mCurrentST.getExpType(node) != Type.VOID) {
@@ -320,10 +317,12 @@ public class CheckTypes extends DepthFirstVisitor
 /////////////////////////////////////////////////////////////
 	@Override
 	public void outByteCast(ByteCast node){
-	boolean expIsInt = this.mCurrentST.getExpType(node.getExp()) == Type.INT;
+	Type expType = this.mCurrentST.getExpType(node.getExp());
+	//System.out.println("byteCast "+node.getExp().getClass().toString()+" expType: "+expType.toString());
+	boolean expIsInt = expType  == Type.INT;
     if(this.mCurrentST.getExpType(node) != Type.BYTE || !expIsInt) {
        throw new SemanticException(
-         "Invalid type for ByteCast",
+         "Invalid type "+" for ByteCast",
          node.getLine(), node.getPos());
      }
      this.mCurrentST.setExpType(node, Type.BYTE);
@@ -377,7 +376,7 @@ public class CheckTypes extends DepthFirstVisitor
 	@Override
 	public void outIfStatement(IfStatement node){
        Type expType = this.mCurrentST.getExpType(node.getExp()); 
-		System.out.println("expType "+expType.toString());
+		//System.out.println("expType "+expType.toString());
      if(this.mCurrentST.getExpType(node.getExp()) != Type.BOOL) {
        throw new SemanticException(
          "Invalid type for IfStatement",

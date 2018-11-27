@@ -4,6 +4,7 @@ public class Scope{
 
 	String name = null;
 	HashMap<String, STE> dict;
+	String scopeType = null;
 
 	public Scope(){
 		dict = new HashMap<String, STE>();
@@ -18,6 +19,12 @@ public class Scope{
 		dict = new HashMap<String, STE>();
 	}
 
+	public Scope(String type, String name){
+		this.name = name;
+		this.scopeType = type;
+		dict = new HashMap<String, STE>();
+	}
+
 	public HashMap<String, STE> getDict(){
 		return dict;
 	}
@@ -29,9 +36,20 @@ public class Scope{
 	public String getName(){
 		return name;
 	}
-	
+
+	public String getType(){
+		return scopeType;
+	}
+
+	public void setType(String str){
+		this.scopeType = str;
+	}
+
+/*	public void size(){
+		return dict.keySet().size();
+	}
+*/	
 	public void add(String str, STE ste){
-	//	System.out.println("dict null? "+(dict == null));
 		dict.put(str, ste);
 	}
 

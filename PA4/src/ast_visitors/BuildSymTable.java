@@ -43,13 +43,13 @@ public class BuildSymTable extends DepthFirstVisitor
    */
    public void defaultIn(Node node) {
 		if (node instanceof Program) {
-			this.symTable.addScope(new Scope("Program"));
+			this.symTable.addScope(new Scope("Program", "Program"));
 			symTable.setExpType(node, Type.VOID);
 		} else if (node instanceof MainClass) {
 				MainClass mc = (MainClass) node;
 				symTable.setExpType(node, Type.MAINCLASS);
 				
-				ClassSTE classSTE = new ClassSTE(mc.getName(), true, null, new Scope("MainClass"+mc.getName()));
+				ClassSTE classSTE = new ClassSTE(mc.getName(), true, null, new Scope("MainClass", mc.getName()));
 				//search for "Program" stack containing other classes
 				Scope progScope = this.symTable.lookupScope("Program");
 				if (progScope != null){
@@ -61,7 +61,7 @@ public class BuildSymTable extends DepthFirstVisitor
 				//add to quicklookup table
 				TopClassDecl tcd = (TopClassDecl) node;
 				symTable.setExpType(node, Type.CLASS);
-				ClassSTE classSTE = new ClassSTE(tcd.getName(), false, null, new Scope("TopClassDecl"+tcd.getName()));
+				ClassSTE classSTE = new ClassSTE(tcd.getName(), false, null, new Scope("TopClassDecl", tcd.getName()));
 				//search for "Program" stack containing other classes
 				Scope progScope = this.symTable.lookupScope("Program");
 				if (progScope != null){
@@ -72,12 +72,12 @@ public class BuildSymTable extends DepthFirstVisitor
 		}else if (node instanceof MethodDecl){
 				MethodDecl md = (MethodDecl) node;
 				Type t = VarSTE.iTypeToType(md.getType());
-				symTable.setExpType(node, t);
+				symTable.setExpType(md.getType(), t);
 				//create signature & VarSTEs
 				LinkedList<Formal> ll = md.getFormals();
 				String sig = "(";
 				Iterator<Formal> iter = ll.listIterator();
-				Scope scope = new Scope("MethodDecl"+md.getName());
+				Scope scope = new Scope("MethodDecl", md.getName());
 				while(iter.hasNext()){
 					Formal f = iter.next();
 					scope.add(f.getName(), new VarSTE(f.getName(), f.getType()));
@@ -111,6 +111,13 @@ public class BuildSymTable extends DepthFirstVisitor
 				Type t = VarSTE.iTypeToType(vd.getType());
 				symTable.setExpType(node, t);
 			} else if (node instanceof MethodDecl) {
+				MethodDecl n = (MethodDecl) node;
+				if(n.getExp() == null){
+					symTable.setExpType(n, Type.VOID);
+				}else{
+					Type t = symTable.getExpType(n.getExp());
+					symTable.setExpType(n, t);
+				}
 			}
 			if (node instanceof NewExp){
 				symTable.setExpType(node, Type.CLASS);
@@ -164,8 +171,12 @@ public class BuildSymTable extends DepthFirstVisitor
 				symTable.setExpType(node, methodSTE.getType());
 /*			if (node instanceof ){
 				symTable.setExpType(node, Type.);
-*/			} //else if (node instanceof ) {
-				
+*/			} else if (node instanceof MinusExp) {
+				symTable.setExpType(node, Type.INT);
+			//} else if (node instanceof ) {
+			//} else if (node instanceof ) {
+			//} else if (node instanceof ) {
+			}	
 		}
    }
  

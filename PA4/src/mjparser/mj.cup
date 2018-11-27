@@ -102,10 +102,11 @@ non terminal List<IExp> additional_params;
 non terminal Object comment;
 non terminal Object comments;
 non terminal IdLiteral identifier;
+non terminal IExp byte;
 
 /* Declare precedence and associativity  here */
-precedence left TIMES, PLUS, MINUS, AND, LT, EQUAL, ELSE, DOT, COMMENT;
-precedence right UMINUS, CLASS;
+precedence left  TIMES, PLUS, MINUS, AND, EQUAL, ELSE, DOT, COMMENT;
+precedence right UMINUS, CLASS, BYTE, NOT, LPAREN, ELSE, RPAREN;
 
 
 /* Meggy Java Grammar */
@@ -195,7 +196,7 @@ formals ::=
 	;
 
 return ::=
-	RETURN exp:e SEMI
+	RETURN lexp:e SEMI
 	{:
 		RESULT = e;
 	:}
@@ -252,63 +253,77 @@ statement ::=
 		RESULT = new BlockStatement(lb.line, lb.pos, list);
 		//System.out.println("successfully set statement::= blockstatements "+ list.size());
 	:}
-	| MEGGYSETPIXEL:msp LPAREN exp:e1 COMMA 
-	exp:e2 COMMA exp:e3 RPAREN SEMI
+	| MEGGYSETPIXEL:msp LPAREN lexp:e1 COMMA 
+	lexp:e2 COMMA lexp:e3 RPAREN SEMI
 	{:
 		//System.out.println("MSP");
 		RESULT = new MeggySetPixel(msp.line, msp.pos, e1, e2, e3);
 	:}
-	| MEGGYDELAY:m LPAREN exp:e RPAREN SEMI
+	| MEGGYDELAY:m LPAREN lexp:e RPAREN SEMI
 	{:
 		//System.out.println("Delay");
 		RESULT = new MeggyDelay(m.line, m.pos, e);
 	:}
-	| IF:i LPAREN exp:e RPAREN statement:s1
+	| IF:i LPAREN lexp:e RPAREN statement:s1
 	{:
 		//System.out.println("if");
 		IStatement s2 = new BlockStatement(s1.getLine(), s1.getPos()+1, new LinkedList<IStatement>());
 		RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
 	:}
-	| IF:i LPAREN exp:e RPAREN statement:s1 ELSE statement:s2 
+	| IF:i LPAREN lexp:e RPAREN statement:s1 ELSE statement:s2 
 	{:
 		//System.out.println("if/else");
 		RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
 	:}
-	| WHILE:w LPAREN exp:e RPAREN statement:s 
+	| WHILE:w LPAREN lexp:e RPAREN statement:s 
 	{:	
 		//System.out.println("in while statement");
 		RESULT = new WhileStatement(w.line, w.pos, e, s);
 	:}
     | exp:e1 DOT identifier:id params:p SEMI
     {:
-        RESULT = new CallStatement(e1.getLine(), e1.getPos(), e1, id.getLexeme(), new LinkedList<IExp>());
+        RESULT = new CallStatement(e1.getLine(), e1.getPos(), e1, id.getLexeme(), p); 
     :}
 	;
 
-exp ::=
-	exp:e1 AND:a exp:e2
+
+lexp ::=
+	lexp:e1 LT exp:e2
+	{:
+		RESULT = new LtExp(e1.getLine(), e1.getPos(), e1, e2);
+		//RESULT = new LtExp(e1.line, e1.pos, e1, e2);
+	:}
+	| lexp:e1 AND:a exp:e2
 	{:
 		RESULT = new AndExp(a.line, a.pos, e1, e2);
 	:}
-	| exp:e1 EQUAL:eq exp:e2
+	| lexp:e1 EQUAL:eq exp:e2
 	{:
 		RESULT = new EqualExp(eq.line, eq.pos, e1, e2);
 	:}
-	| exp:e1 LT:lt exp:e2
-	{:
-		RESULT = new LtExp(lt.line, lt.pos, e1, e2);
-	:}
-	| exp:e1 PLUS:p exp:e2
+	| lexp:e1 PLUS:p exp:e2
 	{:
 		RESULT = new PlusExp(p.line, p.pos, e1, e2);
 	:}
-	| exp:e1 MINUS:m exp:e2
+	| lexp:e1 MINUS:m exp:e2
 	{:
 		RESULT = new MinusExp(m.line, m.pos, e1, e2);
 	:}
-	| exp:e1 TIMES:t exp:e2
+	| lexp:e1 TIMES:t exp:e2
 	{:
 		RESULT = new MulExp(t.line, t.pos, e1, e2);
+	:}
+	| LPAREN exp:e RPAREN
+	{: RESULT = e; :}
+	| exp:e
+	{: RESULT = e; :}
+	;
+
+
+exp ::=
+	LPAREN BYTE RPAREN exp:e 
+	{:	
+		RESULT = new ByteCast(e.getLine(), e.getPos(), e);
 	:}
 	| MINUS:m exp:e 
 	{:
@@ -321,10 +336,6 @@ exp ::=
 	| MEGGYCHECKBUTTON:m LPAREN exp:e RPAREN
 	{:
 		RESULT = new MeggyCheckButton(m.line, m.pos, e);
-	:}
-	| LPAREN BYTE RPAREN exp:e 
-	{:	
-		RESULT = new ByteCast(e.getLine(), e.getPos(), (IExp)e);
 	:}
 	| INT_LITERAL:i
 	{:
@@ -355,7 +366,7 @@ exp ::=
 	{:
 		RESULT = new NotExp(n.line, n.pos, e);
 	:}
-	| LPAREN:lp exp:e RPAREN
+	| LPAREN:lp lexp:e RPAREN
 	{:
 		RESULT = e;
 	:}
@@ -378,7 +389,7 @@ exp ::=
 	;
 
 params ::=
-    LPAREN exp:e additional_params:ap RPAREN
+    LPAREN lexp:e additional_params:ap RPAREN
     {:
         LinkedList<IExp> p  = new LinkedList<IExp>();
         p.add(e);
@@ -393,7 +404,7 @@ params ::=
     ;
 
 additional_params ::=
-     COMMA exp:e additional_params:ap
+     COMMA lexp:e additional_params:ap
     {:
         ap.add(e);
         RESULT = ap;

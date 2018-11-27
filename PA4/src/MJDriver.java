@@ -110,6 +110,7 @@ public class MJDriver {
           java.io.PrintStream avrsout =
               new java.io.PrintStream(
                       new java.io.FileOutputStream(filename + ".s"));
+		  if(globalST == null){System.out.println("globalST null");}
           ast_root.accept(new AVRgenVisitor(new PrintWriter(avrsout),globalST));
           System.out.println("Printing Atmel assembly to " + filename + ".s");
 

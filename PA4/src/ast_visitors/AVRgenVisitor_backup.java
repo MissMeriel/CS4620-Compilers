@@ -16,9 +16,6 @@ import java.io.*;
 import java.util.Stack;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.*;
 
 import ast.node.*;
 import symtable.*;
@@ -44,12 +41,48 @@ public class AVRgenVisitor extends DepthFirstVisitor
    to generate start of .dot file, output the dot output for the node.
    */
    public void defaultIn(Node node) {
+       if (nodeStack.empty()) {
+           //out.println("digraph ASTGraph {");
+		out.println("\t.file  \"main.java\""
+			+"\n__SREG__ = 0x3f"
+			+"\n__SP_H__ = 0x3e"
+			+"\n__SP_L__ = 0x3d"
+			+"\n__tmp_reg__ = 0"
+			+"\n__zero_reg__ = 1"
+			+"\n\t.global __do_copy_data"
+			+"\n\t.global __do_clear_bss"
+			+"\n\t.text"
+			+"\n.global main"
+			+"\n\t.type   main, @function"
+			+"\nmain:"
+			+"\n\tpush r29"
+			+"\n\tpush r28"
+			+"\n\tin r28,__SP_L__"
+			+"\n\tin r29,__SP_H__"
+			+"\n/* prologue: function */"
+			+"\n\tcall _Z18MeggyJrSimpleSetupv");
+       } 
+
        nodeDotOutput(node);
+       
+       // store this node id on the nodeStack
+       // the call to nodeDotOutput increments for
+       // the next guy so we have to decrement here
+       //nodeStack.push(nodeCount-1);    
    } //end defaultIn
   
 
  
    public void defaultOut(Node node) {
+
+       //nodeStack.pop();
+     if (nodeStack.empty()) {
+		//out.println("/* epilogue start */"
+		/*	+"\n\tendLabel:"
+			+"\n\tjmp endLabel"
+			+"\n\tret"
+			+"\n\t.size   main, .-main");*/
+     }else{
 		if(node instanceof MeggySetPixel){
 			out.println("\n\t/*MeggySetPixel: pop args off of stack */"
 				+"\n\tpop r20"
@@ -141,6 +174,12 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\nMJ_L"+ (++breakCount) +":"
                 +"\n\tpush   r24"
                 );  
+        //} else if (node instanceof MainClass) {
+		//out.println("/* epilogue start */"
+		/*	+"\n\tendLabel:"
+			+"\n\tjmp endLabel"
+			+"\n\tret"
+			+"\n\t.size   main, .-main");*/
 /*		
 		else if(node instanceof ){
 			out.println(
@@ -401,23 +440,64 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator -");
             }
         }
-		out.println("\n\t#do INT sub operation"
-			+"\n\tsub    r24, r18"
-			+"\n\tsbc    r25, r19"
-			+"\n\t# push hi order byte first"
-			+"\n\t# push two byte expression onto stack"
-			+"\n\tpush   r25"
-			+"\n\tpush r24"
-			);
         outMinusExp(node);
     } 
 
     @Override
 	/** containing class important */
-    public void visitMethodDecl(MethodDecl node) {   
-		//bring scope to top of scope stack
-		this.st.pushScope(node.getName());
-		//get unique function name
+    public void visitMethodDecl(MethodDecl node)
+    {   
+        inMethodDecl(node);
+        if(node.getType() != null) {
+			if(node.getType() instanceof IType) {
+				node.getType().accept(this);
+            } else {
+                System.out.println("["+node.getType().getLine()+","+node.getType().getPos()+"] Invalid type for method declaration "+node.getName());
+			}   
+        }   
+        if(node.getFormals() != null) {
+			//if(node.getFormals() instanceof LinkedList<Formal>) {
+			if(node.getFormals() instanceof LinkedList) {
+				Iterator<Formal> iter = node.getFormals().listIterator();
+				while(iter.hasNext()){
+					Formal formal = iter.next();
+					formal.accept(this);
+				}
+            } else {
+                System.out.println("["+node.getFormals().getFirst().getLine()+","+node.getFormals().getFirst().getPos()+"] Invalid formal list for method decl "+node.getName());
+			}   
+        }   
+        if(node.getVarDecls() != null) {
+            //if(node.getVarDecls() instanceof LinkedList<VarDecl>) {
+            if(node.getVarDecls() instanceof LinkedList) {
+                Iterator<VarDecl> iter = node.getVarDecls().listIterator();
+                while(iter.hasNext()){
+                    VarDecl vd = iter.next();
+                    vd.accept(this);
+                }
+            } else {
+                System.out.println("["+node.getVarDecls().getFirst().getLine()+","+node.getVarDecls().getFirst().getPos()+"] Invalid var decl list for method decl "+node.getName());
+            }
+        }
+        if(node.getStatements() != null) {
+			//if(node.getStatements() instanceof LinkedList<IStatement>) {
+			if(node.getStatements() instanceof LinkedList) {
+                Iterator<IStatement> iter = node.getStatements().listIterator();
+                while(iter.hasNext()){
+                    IStatement s = iter.next();
+                    s.accept(this);
+                }
+            } else {
+                System.out.println("["+node.getStatements().getFirst().getLine()+","+node.getStatements().getFirst().getPos()+"] Invalid left operand type for operator -");
+			}   
+        }
+        if(node.getExp() != null) {
+            if(node.getExp() instanceof IExp) {
+                node.getExp().accept(this);
+            } else {
+                System.out.println("["+node.getExp().getLine()+","+node.getExp().getPos()+"] Invalid return for method declaration "+node.getName());
+            }
+        }
         String methodName = "";
         if(node.parent() != null){
 			if(node.parent() instanceof TopClassDecl){
@@ -426,9 +506,8 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				//do nothing
 			}
         }
-        methodName += "_" + node.getName(); 
-
-		// function start
+        methodName += node.getName();
+        LinkedList<Formal> fs = node.getFormals();
         out.println("\n\t.text"
                 +"\n.global "+methodName
                 +"\n\t.type  "+methodName+", @function"
@@ -437,7 +516,6 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n\tpush   r28"
                 +"\n\t# make space for locals and params"
                 +"\n\tldi    r30, 0");
-        LinkedList<Formal> fs = node.getFormals();
         for(int i = 0; i < fs.size()*2; i++){
             out.print("\n\tpush   r30");
         }
@@ -458,104 +536,26 @@ public class AVRgenVisitor extends DepthFirstVisitor
             Formal arg = iter.next();
             if(arg.getType() instanceof IntType){
                 //pop 2 bytes off stack
-				out.println("\n\tstd    Y + "+(offset+1)+", r"+avrReg);
-				avrReg--;
-				out.println("\n\tstd    Y + "+(offset)+", r"+avrReg);
-				//update ST with offset
-				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
-				ste.setBase("Y");
-				ste.setOffset(offset);
-				avrReg--;
-                offset += 2;
-			} else if(arg.getType() instanceof ByteType){
-                //pop 1 byte off stack
-                out.println("\n\tstd    Y + "+offset+", r"+avrReg);
-				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
-				ste.setBase("Y");
-				ste.setOffset(offset);
+                out.println("\n\tstd    Y + "+(offset+1)+", r"+avrReg);
                 avrReg--;
-                offset++;
+                out.println("\n\tstd    Y + "+offset+", r"+avrReg);
+                avrReg--;
+                offset += 2;
             }else{
+                //pop 1 byte off stack
                 out.println("\n\tpop    r"+avrReg);
                 avrReg -= 2;
+                offset++;
 			}
         }
         out.print("\n/* done with function "+methodName+" prologue */");
-        inMethodDecl(node);
-
-        if(node.getType() != null) {
-			node.getType().accept(this);
-        }
-		{   
-		List<Formal> copy = new ArrayList<Formal>(node.getFormals());
-        for(Formal e : copy){
-                e.accept(this);
-		}
-		}
-        {
-			List<VarDecl> copy = new ArrayList<VarDecl>(node.getVarDecls());
-			for(VarDecl e : copy) {
-				e.accept(this);
-			}
-		}
-		{
-        List<IStatement> copy = new ArrayList<IStatement>(node.getStatements());
-        for(IStatement e : copy)        {
-            e.accept(this);
-        }
-        }
-
-        if(node.getExp() != null) {
-            node.getExp().accept(this);
-		}
-
-		out.println("\n/* epilogue start for Cloud_rain */");
-		if(node.getType() == Type.VOID){
-			out.println("\t# no return value");
-		} else if (node.getType() == Type.CLASS || node.getType() == Type.INT){
-			out.println("\t# handle return value");
-		} else if (node.getType() == Type.BOOL){
-			out.println("\t# handle return value");
-			out.println("\t# promoting a byte to an int");
-			out.println("\t# load a one byte expression off stack"
-				+"\n\tpop    r24"
-				+"\n\t# promoting a byte to an int"
-				+"\n\ttst     r24"
-				+"\n\tbrlt     MJ_L"+ (++breakCount)
-				+"\n\tldi    r25, 0"
-				+"\n\tjmp    MJ_L"+ (breakCount+1)
-				+"\nMJ_L"+ breakCount
-				+"\n\tldi    r25, hi8(-1)"
-				+"\nMJ_L"+ (++breakCount)
-				);
-			
-		}
-		out.println("\t# pop space off stack for parameters and locals");
-		{
-			List<Formal> copy = new ArrayList<Formal>(node.getFormals());
-			for(Formal e : copy){
-				out.println("\tpop		r30");
-				out.println("\tpop		r30"); }
-		}
-		out.println("\t# restoring the frame pointer"
-			+"\n\tpop    r28 "
-			+"\n\tpop    r29 "
-			+"\n\tret"
-			+"\n\t.size "+methodName+", .-"+methodName
-			);
         outMethodDecl(node);
-		this.st.removeScope();
     } 
 
     @Override
     public void visitCallExp(CallExp node) {
-		//get method name
-		//lookup class Scope containing call name
-		//with correct signature
-		MethodSTE ste = (MethodSTE) this.st.lookup(node.getId());
-		Scope scope = this.st.lookupEnclosingScope(node.getId());
-		String methodName = scope.getName()+"_"+ste.getName();
-/*        if(node.getExp() != null){
+		String methodName = "";
+        if(node.getExp() != null){
 			if(node.getExp() instanceof NewExp){
 				methodName += ((NewExp)node.getExp()).getId();
             } else if (node.getExp() instanceof ThisLiteral){
@@ -563,7 +563,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
             }   
             node.getExp().accept(this);
         } 
-		methodName += node.getId();*/
+		methodName += node.getId();
         LinkedList<IExp> args = node.getArgs();
         int avrReg = 24 - args.size() * 2;
         out.println("\n\t#### function call"
@@ -571,7 +571,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
         Iterator<IExp> iter = args.descendingIterator();
         while(iter.hasNext()){
             IExp arg = iter.next();
-            if(st.getExpType(arg).getAVRSize() == 2){
+            if(arg instanceof IntLiteral){
                 //pop 2 bytes off stack
                 out.println("\n\tpop    r"+avrReg);
                 avrReg++;
@@ -589,20 +589,6 @@ public class AVRgenVisitor extends DepthFirstVisitor
         out.println("\n\tpop    r"+avrReg);
         out.println("\n\tcall    "+methodName);
         
-		Type returnType = this.st.getExpType(node);
-		if(returnType == Type.VOID){
-			//DO NOTHING
-		} else if (returnType == Type.INT || returnType == Type.CLASS){
-			out.println("\t# handle return value");
-			out.println("\t# push two byte expression onto stack");
-			out.println("\tpush	r24");
-			out.println("\tpush	r25");
-		} else {
-			out.println("\t# handle return value");
-			out.println("\t# push one byte expression onto stack");
-			out.println("\tpush	r24");
-
-		}
         outCallExp(node);
     }
 
@@ -653,7 +639,8 @@ public class AVRgenVisitor extends DepthFirstVisitor
 
 
     @Override
-    public void visitMainClass(MainClass node){   
+    public void visitMainClass(MainClass node)
+    {   
 		out.println("\t.file  \"main.java\""
 			+"\n__SREG__ = 0x3f"
 			+"\n__SP_H__ = 0x3e"
@@ -673,20 +660,30 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\n/* prologue: function */"
 			+"\n\tcall _Z18MeggyJrSimpleSetupv");
         inMainClass(node);
-        if(node.getStatement() != null)
-        {    
-            node.getStatement().accept(this);
-        }    
+        if(node.getLExp() != null)
+        {   
+            if(node.getLExp() instanceof IExp){
+                node.getLExp().accept(this);
+            } else {
+                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator -");
+            }   
+        }   
+        if(node.getRExp() != null)
+        {   
+            if(node.getRExp() instanceof IExp) {
+                node.getRExp().accept(this);
+            } else {
+                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator -");
+            }   
+        }   
 		out.println("/* epilogue start */"
 			+"\n\tendLabel:"
 			+"\n\tjmp endLabel"
 			+"\n\tret"
 			+"\n\t.size   main, .-main");
+		
         outMainClass(node);
-		this.st.pushScope(node.getName());
-		this.st.removeScope();
-	}        
-
+	}
 /*
     @Override
     public void visitMinusExp(MinusExp node)

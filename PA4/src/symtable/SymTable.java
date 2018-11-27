@@ -34,6 +34,15 @@ public class SymTable {
 		this.mExpType = st;
 		this.mScopeStack = new Stack<Scope>();
     }
+	
+	public SymTable(HashMap<Node, Type> st, Stack<Scope> ms){
+		this.mExpType = st;
+		this.mScopeStack = ms;
+	}
+
+	public SymTable clone(){
+		return new SymTable((HashMap<Node, Type>)this.mExpType.clone(), (Stack<Scope>)this.mScopeStack.clone());
+	}
     
     public void setExpType(Node exp, Type t){
     	this.mExpType.put(exp, t);
@@ -83,27 +92,18 @@ public class SymTable {
 		}
 
 	public Scope lookupClosestScopeWith(String str){
-			//looks at other scopees if no return from current scope
-			Iterator<Scope> iter = mScopeStack.iterator();
-			while(iter.hasNext()){
-				Scope scope = iter.next();
+		//looks at other scopees if no return from current scope
+		Iterator<Scope> iter = mScopeStack.iterator();
+		while(iter.hasNext()){
+			Scope scope = iter.next();
 				//scope.getExpTypeMap();
-				printScope(scope);
-				if(scope.getName().contains(str)){
-					return scope;
-				}
-				HashMap<String, STE> dict = scope.getDict();
-				Iterator<String> mapIter = dict.keySet().iterator();
-				while(mapIter.hasNext()){
-					String key = mapIter.next();
-					if(key.contains(str)){
-						//return scope;
-						//return dict.get(key); 
-					}
-				}
+			printScope(scope);
+			if(scope.getName().contains(str) || scope.getType().contains(str)){
+				return scope;
 			}
-			return null;
 		}
+		return null;
+	}
 
 
 
@@ -114,17 +114,36 @@ public class SymTable {
      */
     public STE lookup(String sym) {
 			Iterator<Scope> iter = mScopeStack.iterator();
-			System.out.println("in scope lookup(); size "+mScopeStack.size());
 			while(iter.hasNext()){
 				Scope scope = iter.next();
-				System.out.println("Scope: "+scope.getName());
-				printScope(scope);
 				if(scope.lookupInnermost(sym) != null){
 					return scope.lookupInnermost(sym);
 				}
 			}
 		return null;
     }
+
+    public Scope lookupClosestScope(String sym) {
+			Iterator<Scope> iter = mScopeStack.iterator();
+			while(iter.hasNext()){
+				Scope scope = iter.next();
+				if(scope.lookupInnermost(sym) != null){
+					if(scope.lookupInnermost(sym) != null){
+						return scope;
+					}
+				}
+			}
+		return null;
+    }
+
+	public void printST(){
+		Iterator<Scope> iter = mScopeStack.iterator();
+		while(iter.hasNext()){
+			Scope scope = iter.next();
+			System.out.println("Scope: "+scope.getName());
+			printScope(scope);
+		}
+	}
 
 	public void printScope(Scope scope){
 		HashMap<String, STE> dict = scope.getDict();
@@ -133,7 +152,7 @@ public class SymTable {
 		while(iter.hasNext()){
 			String str = iter.next();
 			STE ste = dict.get(str);
-			System.out.println("\t"+str+ste.getClass());
+			System.out.println("\t"+str+": "+ste.getClass());
 		}
 	}
 
@@ -169,7 +188,11 @@ public class SymTable {
 			Iterator<Scope> iter =mScopeStack.iterator();
 			
 			while(iter.hasNext()){
-
+				Scope scope = iter.next();
+				if (scope.getName().equals(str)){
+					mScopeStack.remove(scope);
+					mScopeStack.push(scope);
+				}
 			}
 		}
     }
@@ -187,18 +210,16 @@ public class SymTable {
 		out.println("\tnode [shape=plain]");
 		out.println("\trankdir=LR;");
 
-		while ( !mScopeStack.empty() ) {
-			scopeDotOutput(mScopeStack.peek());
-			mScopeStack.pop();
+		//make copy of stack to pop from so you don't obliterate your symtable
+		Stack<Scope> scopeStackClone = (Stack<Scope>) mScopeStack.clone();
+		while ( !scopeStackClone.empty() ) {
+			scopeDotOutput(scopeStackClone.peek());
+			scopeStackClone.pop();
 		}
-		if (mScopeStack.empty()) {
+		if (scopeStackClone.empty()) {
 		    out.println("}");
 		}   
 		out.flush();
-		// store this node id on the nodeStack
-		// the call to nodeDotOutput increments for
-		// the next guy so we have to decrement here
-		//mScopeStack.push(scopeCount-1);
 	}   
 
 
@@ -291,8 +312,6 @@ public class SymTable {
 			iterCount++;
 			steCount++;
 		}
-
-       // increment for ourseves
        scopeCount++;
    }
 
