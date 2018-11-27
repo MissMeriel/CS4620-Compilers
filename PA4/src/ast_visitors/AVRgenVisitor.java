@@ -448,9 +448,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
             +"\n\t# save off parameters");
         int avrReg = 20 + fs.size()*2 + 1;
         int offset = 3;
-        out.println("std    Y + 2, r"+avrReg);
+        out.println("\n\tstd    Y + 2, r"+avrReg);
         avrReg--;
-        out.println("std    Y + 1, r"+avrReg);
+        out.println("\tstd    Y + 1, r"+avrReg);
         avrReg--;
         Iterator<Formal> iter = fs.listIterator();
         while(iter.hasNext()){
@@ -475,8 +475,13 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 avrReg--;
                 offset++;
             }else{
-                out.println("\n\tpop    r"+avrReg);
-                avrReg -= 2;
+                //pop 1 byte off stack
+                out.println("\n\tstd    Y + "+offset+", r"+avrReg);
+				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
+				ste.setBase("Y");
+				ste.setOffset(offset);
+                avrReg--;
+                offset++;
 			}
         }
         out.print("\n/* done with function "+methodName+" prologue */");

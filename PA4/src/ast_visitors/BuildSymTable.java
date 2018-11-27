@@ -129,6 +129,8 @@ public class BuildSymTable extends DepthFirstVisitor
 				symTable.setExpType(node, Type.BYTE);
 			} else if (node instanceof ColorLiteral){
 				symTable.setExpType(node, Type.COLOR);
+			} else if (node instanceof ColorType){
+				symTable.setExpType(node, Type.COLOR);
 			} else if (node instanceof MeggySetPixel){
 				symTable.setExpType(node, Type.VOID);
 			} else if (node instanceof BlockStatement){

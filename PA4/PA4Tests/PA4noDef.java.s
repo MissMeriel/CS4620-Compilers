@@ -80,14 +80,15 @@ C_setP:
 	in     r28,__SP_L__
 	in     r29,__SP_H__
 	
-	# save off parametersstd    Y + 2, r27
-std    Y + 1, r26
+	# save off parameters
+	std    Y + 2, r27
+	std    Y + 1, r26
 
 	std    Y + 3, r25
 
 	std    Y + 4, r24
 
-	pop    r23
+	std    Y + 5, r23
 
 /* done with function C_setP prologue */
 	# IdExp
@@ -113,7 +114,7 @@ std    Y + 1, r26
 	# variable is a local or param variable
 
 	# load a one byte variable from base+offset
-	ldd    r24, INVALID + 0
+	ldd    r24, Y + 5
 	# push one byte expression onto stack
 	push	r24
 

@@ -178,6 +178,16 @@ public class CheckTypes extends DepthFirstVisitor
      this.mCurrentST.setExpType(node, Type.COLOR);
    }
 
+	@Override
+   public void outColorType(ColorType  node){
+     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
+		//System.out.println("Invalid type for ColorLiteral "+node.getLine()+","+node.getPos());
+       throw new SemanticException(
+         "Invalid type for ColorType",
+         node.getLine(), node.getPos());
+     }
+     this.mCurrentST.setExpType(node, Type.COLOR);
+   }
 ///////////////////////////////////////////////////////////////
 
 	@Override
