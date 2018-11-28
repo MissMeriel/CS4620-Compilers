@@ -376,26 +376,26 @@ initMazeCool [ label=<
 </table>>];
 Solver:Solver9 -> initMazeCool:initMazeCool0;
 initMazeCool:29 -> initMazeCool:initMazeCool0
-PA4MazeSolver [ label=<
+PA4MazeSolver_simple [ label=<
 <table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="PA4MazeSolver0"><i>Scope PA4MazeSolver</i></td></tr>
+	<tr><td port="PA4MazeSolver_simple0"><i>Scope PA4MazeSolver_simple</i></td></tr>
 </table>>];
 Program [ label=<
 <table border="0" cellborder="1" cellspacing="0">
 	<tr><td port="Program0"><i>Scope Program</i></td></tr>
-	<tr><td port="Program1">mDict[PA4MazeSolver]</td></tr>
+	<tr><td port="Program1">mDict[PA4MazeSolver_simple]</td></tr>
 	<tr><td port="Program2">mDict[Solver]</td></tr>
 </table>>];
-PA4MazeSolver [ label=<
+PA4MazeSolver_simple [ label=<
 <table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="PA4MazeSolver0"><i>ClassSTE</i></td></tr>
-	<tr><td>mName=PA4MazeSolver</td></tr>
+	<tr><td port="PA4MazeSolver_simple0"><i>ClassSTE</i></td></tr>
+	<tr><td>mName=PA4MazeSolver_simple</td></tr>
 	<tr><td>mMain=true</td></tr>
 	<tr><td>mSuperClass=NULL</td></tr>
 	<tr><td port="30">mScope</td></tr>
 </table>>];
-Program:Program0 -> PA4MazeSolver:PA4MazeSolver0;
-PA4MazeSolver:30 -> PA4MazeSolver:PA4MazeSolver0
+Program:Program0 -> PA4MazeSolver_simple:PA4MazeSolver_simple0;
+PA4MazeSolver_simple:30 -> PA4MazeSolver_simple:PA4MazeSolver_simple0
 Solver [ label=<
 <table border="0" cellborder="1" cellspacing="0">
 	<tr><td port="Solver1"><i>ClassSTE</i></td></tr>

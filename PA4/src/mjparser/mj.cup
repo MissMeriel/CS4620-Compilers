@@ -371,24 +371,21 @@ exp ::=
 		RESULT = new ColorLiteral(c.line, c.pos, c.lexeme, c.value);
 	:}
 	| BUTTON_LITERAL:c
-	{:
-		//System.out.println(c.lexeme);
-		RESULT = new ButtonLiteral(c.line, c.pos, c.lexeme, c.value);
-	:}
-	| TRUE:t
-	{:
-		//System.out.println("true");
+    {:
+    	RESULT = new ButtonLiteral(c.line, c.pos, c.lexeme, c.value);
+    :}
+    | TRUE:t
+    {:
 		RESULT = new TrueLiteral(t.line, t.pos, t.lexeme, t.value);
-	:}
-	| FALSE:t
-	{:
-		//System.out.println("false");
-		RESULT = new FalseLiteral(t.line, t.pos, t.lexeme, t.value);
-	:}
-	| NOT:n exp:e
-	{:
-		RESULT = new NotExp(n.line, n.pos, e);
-	:}
+    :}
+    | FALSE:t
+    {:
+    	RESULT = new FalseLiteral(t.line, t.pos, t.lexeme, t.value);
+    :}
+    | NOT:n exp:e
+    {:
+	RESULT = new NotExp(n.line, n.pos, e);
+    :}
     | LPAREN:lp compstart:e RPAREN
     {:
 	RESULT = e;
@@ -407,12 +404,12 @@ exp ::=
     :}
     | exp:e1 DOT identifier:id params:p
     {:
-        RESULT = new CallExp(e1.getLine(), e1.getPos(), e1, id.getLexeme(), new LinkedList<IExp>());
+        RESULT = new CallExp(e1.getLine(), e1.getPos(), e1, id.getLexeme(), p);
     :}
 	;
 
 params ::=
-    LPAREN lexp:e additional_params:ap RPAREN
+    LPAREN compstart:e additional_params:ap RPAREN
     {:
         LinkedList<IExp> p  = new LinkedList<IExp>();
         p.add(e);
@@ -421,13 +418,12 @@ params ::=
     :}
     | LPAREN RPAREN
     {:
-        LinkedList<IExp> p  = new LinkedList<IExp>();
-        RESULT = p;
+        RESULT = new LinkedList<IExp>();
     :}
     ;
 
 additional_params ::=
-     COMMA lexp:e additional_params:ap
+     additional_params:ap COMMA compstart:e 
     {:
         ap.add(e);
         RESULT = ap;

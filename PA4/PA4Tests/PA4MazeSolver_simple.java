@@ -15,7 +15,7 @@
 
 import meggy.Meggy;
 
-class PA4MazeSolver {
+class PA4MazeSolver_simple {
 
     public static void main(String[] whatever){
         // Only want to construct one instance of class
@@ -29,20 +29,10 @@ class Solver {
     public void initMaze1() {
     }
     
-    
     // Cooler example
     public void initMazeCool() {
-        this.mazeRow((byte)0, (byte)7, (byte)7);  // top row
         this.mazeRow((byte)0, (byte)7, (byte)0);  // bottom row
-        this.mazeCol((byte)7, (byte)0, (byte)7);  // rightmost col
         this.mazeCol((byte)0, (byte)0, (byte)7);  // leftmost col
-        
-        // 2,5 to 5,5
-        this.mazeRow((byte)2, (byte)5, (byte)5);
-        // 2,2 to 2,5
-        this.mazeCol((byte)2, (byte)2, (byte)5);
-        // 2,2 to 5,2
-        this.mazeRow((byte)2, (byte)5, (byte)2);
         
         Meggy.setPixel((byte)5, (byte)1, Meggy.Color.VIOLET);
 
@@ -69,7 +59,8 @@ class Solver {
     
     public void findTargetOrMove(byte nextX, byte nextY, byte targetX, byte targetY) {
         // If target then turn target BLUE and fall to end of function.
-        if (nextX==targetX && nextY==targetY ) { 
+        if ((nextX==targetX) && (nextY==targetY) ) { 
+        //if (nextX==targetX && nextY==targetY ) { 
             Meggy.setPixel(nextX, nextY, Meggy.Color.BLUE);  
         }
         // if is not target then move there to continue search

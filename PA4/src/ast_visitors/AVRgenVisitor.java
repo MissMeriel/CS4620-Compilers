@@ -61,9 +61,11 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				);
 		}
 		else if(node instanceof ByteCast){
-			out.println("\n\t/* cast to byte */"
-				+"\n\tpop r25"
+			out.println("\n\t# Casting int to byte by popping"
+				+"\n\t# 2 bytes off stack and only pushing low order bits"
+				+"\n\t# back on.  Low order bits are on top of stack."
 				+"\n\tpop r24"
+				+"\n\tpop r25"
 				+"\n\tpush r24"
 				);
 		}
@@ -285,23 +287,23 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n"
                 +"\n\t#use cp to set SREG"
                 +"\n\tcp     r24, r25"
-                +"\n\t#WANT breq MJ_L"+ (++breakCount)
-                +"\n\tbrne   "+ then_label
-                +"\n\tjmp    " + else_label 
+                +"\n\t#WANT breq "+ then_label
+                +"\n\tbrne   "+ else_label 
+                +"\n\tjmp    " + then_label
                 +"\n"
                 +"\n\t#then label for if" 
-                +"\n"+then_label+":" 
+                +"\n"+else_label+":" 
             ); 
             node.getThenStatement().accept(this);
-			out.println("\n\tjmp	"+done_label);
+	    out.println("\n\tjmp	"+done_label);
         }
+	out.println("\n\t# else label for if"
+		+"\n"+then_label+":"
+    	);
         if(node.getElseStatement() != null)
         {
-			out.println("\n\t# else label for if"
-				+"\n"+else_label+":"
-				);
 		    node.getElseStatement().accept(this);
-			out.println("\n\tjmp	"+done_label);
+		    out.println("\n\tjmp	"+done_label);
         }
 		out.println("\n\t# done label for if"
 			+"\n"+done_label+":"
@@ -366,39 +368,13 @@ public class AVRgenVisitor extends DepthFirstVisitor
     }
 
     @Override
-    public void visitPlusExp(PlusExp node)
-    {
-        inPlusExp(node);
-        if(node.getLExp() != null)
-        {
-            if(node.getLExp() instanceof IExp){
-                node.getLExp().accept(this);
-            } else {
-                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator +");
-            }   
-        }         
-        if(node.getRExp() != null)
-        {
-            if(node.getRExp() instanceof IExp) {
-                node.getRExp().accept(this);
-            } else {
-                System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator +");
-            }
-        }
-        outPlusExp(node);
-    }
-
-    @Override
     public void visitMinusExp(MinusExp node) {
         inMinusExp(node);
         if(node.getLExp() != null)
         {
-            if(node.getLExp() instanceof IExp){
                 node.getLExp().accept(this);
-            } else {
-                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator -");
-            }
         }
+	
         if(node.getRExp() != null)
         {
             if(node.getRExp() instanceof IExp) {
@@ -407,6 +383,48 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 System.out.println("["+node.getRExp().getLine()+","+node.getRExp().getPos()+"] Invalid right operand type for operator -");
             }
         }
+	//if lexp is BYTE, convert to INT
+	if(st.getExpType(node.getLExp()) == Type.BYTE){
+	    out.println(" # load a one byte expression off stack"
+		    +"\n\tpop    r18");
+
+	} else {
+	    	out.println(" # load two byte expression off stack"
+		    +"\n\tpop    r18"
+		    +"\n\tpop    r19");
+	}
+	//if rexp is BYTE, convert to INT
+	if(st.getExpType(node.getRExp()) == Type.BYTE){
+	    out.println(" # load a one byte expression off stack"
+		    +"\n\tpop    r24");
+	}  else {
+	    	out.println(" # load two byte expression off stack"
+		    +"\n\tpop    r24"
+		    +"\n\tpop    r25");
+	}
+	if(st.getExpType(node.getRExp()) == Type.BYTE){
+	    	    out.println("\t# promoting a byte to an int"
+			+"\n\ttst     r24"
+			+"\n\tbrlt     MJ_L"+(++breakCount)
+			+"\n\tldi    r25, 0"
+			+"\n\tjmp    MJ_L"+(breakCount +1)
+			+"\nMJ_L"+breakCount+":"
+			+"\n\tldi    r25, hi8(-1)"
+			+"\nMJ_L"+(++breakCount)+":"
+			);
+	}
+	if(st.getExpType(node.getLExp()) == Type.BYTE){
+	    	    out.println("\t# promoting a byte to an int"
+			+"\n\ttst     r18"
+			+"\n\tbrlt     MJ_L"+(++breakCount)
+			+"\n\tldi    r19, 0"
+			+"\n\tjmp    MJ_L"+(breakCount +1)
+			+"\nMJ_L"+breakCount+":"
+			+"\n\tldi    r19, hi8(-1)"
+			+"\nMJ_L"+(++breakCount)+":"
+			);
+	}
+
 		out.println("\n\t#do INT sub operation"
 			+"\n\tsub    r24, r18"
 			+"\n\tsbc    r25, r19"
@@ -416,7 +434,69 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\n\tpush r24"
 			);
         outMinusExp(node);
+    }
+    
+    
+    
+    @Override
+    public void visitPlusExp(PlusExp node) {
+        inPlusExp(node);
+        if(node.getLExp() != null)
+        {
+            node.getLExp().accept(this);
+        }
+	if(node.getRExp() != null)
+        {
+            node.getRExp().accept(this);
+        }
+	//if lexp is BYTE, convert to INT
+	if(st.getExpType(node.getRExp()) == Type.BYTE){
+	    out.println(" # load a one byte expression off stack"
+		    +"\n\tpop    r18");
+	    out.println("\t# promoting a byte to an int"
+			+"\n\ttst     r18"
+			+"\n\tbrlt     MJ_L"+(++breakCount)
+			+"\n\tldi    r19, 0"
+			+"\n\tjmp    MJ_L"+(breakCount +1)
+			+"\nMJ_L"+breakCount+":"
+			+"\n\tldi    r19, hi8(-1)"
+			+"\nMJ_L"+(++breakCount)+":"
+			);
+	} else {
+	    	out.println(" # load two byte expression off stack"
+		    +"\n\tpop    r18"
+		    +"\n\tpop    r19");
+	}
+	
+
+	//if rexp is BYTE, convert to INT
+	if(st.getExpType(node.getLExp()) == Type.BYTE){
+	    out.println(" # load a one byte expression off stack"
+		    +"\n\tpop    r24");
+	    out.println("\t# promoting a byte to an int"
+			+"\n\ttst     r24"
+			+"\n\tbrlt     MJ_L"+(++breakCount)
+			+"\n\tldi    r25, 0"
+			+"\n\tjmp    MJ_L"+(breakCount +1)
+			+"\nMJ_L"+breakCount+":"
+			+"\n\tldi    r25, hi8(-1)"
+			+"\nMJ_L"+(++breakCount)+":"
+			);
+	}  else {
+	    	out.println(" # load two byte expression off stack"
+		    +"\n\tpop    r24"
+		    +"\n\tpop    r25");
+	}
+		out.println("\n\t#do add operation"
+			+"\n\tadd    r24, r18"
+			+"\n\tadc    r25, r19"
+			+"\n\t# push two byte expression onto stack"
+			+"\n\tpush   r25"
+			+"\n\tpush r24"
+			);
+        outPlusExp(node);
     } 
+    
 
     @Override
 	/** containing class important */
@@ -459,7 +539,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
             +"\n\tin     r29,__SP_H__"
             +"\n\t"
             +"\n\t# save off parameters");
-        int avrReg = 20 + (fs.size()+1)*2 + 1;
+	//start at 25 & 24 for this, decrement
+	//1 or 2 registers loaded depends on type
+        int avrReg = 25;// + (fs.size()+1)*2 + 1;
         int offset = 3;
         out.println("\n\tstd    Y + 2, r"+avrReg);
         avrReg--;
@@ -468,7 +550,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
         Iterator<Formal> iter = fs.listIterator();
         while(iter.hasNext()){
             Formal arg = iter.next();
-            if(arg.getType() instanceof IntType){
+            if(this.st.getExpType(arg) == Type.INT ){
                 //pop 2 bytes off stack
 				out.println("\tstd    Y + "+(offset+1)+", r"+avrReg);
 				avrReg--;
@@ -479,21 +561,14 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				ste.setOffset(offset);
 				avrReg--;
                 offset += 2;
-			} else if(arg.getType() instanceof ByteType){
-                //pop 1 byte off stack
-                out.println("\tstd    Y + "+offset+", r"+avrReg);
-				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
-				ste.setBase("Y");
-				ste.setOffset(offset);
-                avrReg--;
-                offset++;
             }else{
                 //pop 1 byte off stack
+		avrReg--;
                 out.println("\tstd    Y + "+offset+", r"+avrReg);
 				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
 				ste.setBase("Y");
 				ste.setOffset(offset);
-                avrReg--;
+                avrReg --;
                 offset++;
 			}
         }
@@ -524,7 +599,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 
         if(node.getExp() != null) {
             node.getExp().accept(this);
-		}
+	}
 
 		out.println("\n\n/* epilogue start for  "+methodName+"*/");
 		if(st.getExpType(node) == Type.VOID){
@@ -541,9 +616,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
 				+"\n\tbrlt     MJ_L"+ (++breakCount)
 				+"\n\tldi    r25, 0"
 				+"\n\tjmp    MJ_L"+ (breakCount+1)
-				+"\nMJ_L"+ breakCount
+				+"\nMJ_L"+ breakCount+":"
 				+"\n\tldi    r25, hi8(-1)"
-				+"\nMJ_L"+ (++breakCount)
+				+"\nMJ_L"+ (++breakCount)+":"
 				);
 			
 		}
@@ -551,12 +626,15 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		{
 		    out.println("\tpop		r30");
 		    out.println("\tpop		r30");
-			List<Formal> copy = new ArrayList<Formal>(node.getFormals());
-			for(Formal e : copy){
-				out.println("\tpop		r30");
-				out.println("\tpop		r30"); }
+		    List<Formal> copy = new ArrayList<Formal>(node.getFormals());
+		    for(Formal e : copy){
+		        int size = this.st.getExpType(e).getAVRTypeSize();
+		        for (int j = size; j >0; j--){
+		        	out.print("\n\tpop    r30");
+		        }
+		    }
 		}
-		out.println("\t# restoring the frame pointer"
+		out.println("\n\t# restoring the frame pointer"
 			+"\n\tpop    r28 "
 			+"\n\tpop    r29 "
 			+"\n\tret"
@@ -610,7 +688,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 	        out.println("\n\t# receiver will be passed as first param"
             +"\n\tpop    r"+avrReg);
         avrReg++;
-        out.println("\n\tpop    r"+avrReg);
+        out.println("\tpop    r"+avrReg);
         out.println("\n\tcall    "+methodName);
         
 		Type returnType = this.st.getExpType(node);
@@ -641,7 +719,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		MethodSTE ste = (MethodSTE) this.st.lookup(node.getId());
 		Scope scope = this.st.lookupClosestScope(node.getId());
 		String methodName = scope.getName()+"_"+ste.getName();
-		System.out.println("Visiting method call "+methodName);
+		//System.out.println("Visiting method call "+methodName);
 
         node.getExp().accept(this);
 	
@@ -736,9 +814,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\n\t# load true"
 			+"\nMJ_L"+breakCount+":"
 			+"\n\tldi    r24, 1"
-			+"\n\t"
+			+"\n"
 			+"\n\t# push result of less than"
-			+"\n\t"
+			+"\nMJ_L"+(++breakCount)+":"
 			+"\n\t# push one byte expression onto stack"
 			+"\n\tpush   r24"
 		);
@@ -765,7 +843,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\n\tin r28,__SP_L__"
 			+"\n\tin r29,__SP_H__"
 			+"\n/* prologue: function */"
-			+"\n\tcall _Z18MeggyJrSimpleSetupv");
+			+"\n\tcall _Z18MeggyJrSimpleSetupv"
+			+"\n\t/* Need to call this so that the meggy library gets set up */"
+			);
         inMainClass(node);
         if(node.getStatement() != null)
         {
@@ -776,11 +856,11 @@ public class AVRgenVisitor extends DepthFirstVisitor
         outMainClass(node);
     	this.st.pushScope(node.getName());
     	this.st.removeScope();
-    	out.println("/* epilogue start */"
+    	out.println("\n/* epilogue start */"
 	        +"\n\tendLabel:"
     		+"\n\tjmp endLabel"
 	    	+"\n\tret"
-		+"\n\t.size   main, .-main");
+		+"\n\t.size   main, .-main\n");
 	}       
 
     @Override

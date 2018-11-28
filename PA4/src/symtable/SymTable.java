@@ -208,11 +208,13 @@ public class SymTable {
    */
 	public void outputDot(PrintStream ps){
 		//System.out.println("stack size: "+ mScopeStack.size());
+		System.out.println("PRINTING SYMBOL TABLE");
+		this.printST();
 		this.out = ps;
 		out.println("digraph ASTGraph {");
-		out.println("\tgraph [pad=\"0.5\", nodesep=\"0.5\", ranksep=\"2\"];");
-		out.println("\tnode [shape=plain]");
-		out.println("\trankdir=LR;");
+		//out.println("\tgraph [pad=\"0.5\", nodesep=\"0.5\", ranksep=\"2\"];");
+		out.println("\tnode [shape=record];");
+		out.println("\tgraph [ rankdir=\"LR\"];");
 
 		//make copy of stack to pop from so you don't obliterate your symtable
 		Stack<Scope> scopeStackClone = (Stack<Scope>) mScopeStack.clone();
@@ -233,82 +235,72 @@ public class SymTable {
     */
    private void scopeDotOutput(Scope scope)
    {
+	    HashMap<String, STE> hm = scope.getDict();
+	    Set keyset = hm.keySet();
+	    
 		// print out scope and its members
 		//as you pop scopes and approach broadest scope level
 		//connect new scope members to their previous scopes
-		HashMap<String, STE> hm = scope.getDict();
-		Set keyset = hm.keySet();
-		int currScopeStart = portCount;
+
+		int currScope = 0;
 		//print out scope
 		Iterator<String> iter = keyset.iterator();
-		out.println(scope.getName() + " [ label=<");
-		out.println("<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">");
-		out.println("\t<tr><td port=\""+scope.getName()+"0"+"\"><i>Scope "+scope.getName()+"</i></td></tr>"); 
+		//0 [label=" <f0> Scope | <f1> mDict\[Simple\] "];
+		String label = ("\tscope"+scope.getName() + " [ label=\"<f0> Scope "+scope.getName());
 		iter = keyset.iterator();
 		int iterCount = 1;
+		String arrows = "";
 		while(iter.hasNext()){
 			String key = iter.next();
 			STE value = hm.get(key);
-			out.println("\t<tr><td port=\""+(scope.getName())+iterCount+"\">mDict["+value.getName()+"]</td></tr>");
+			label += (" | <f"+iterCount+"> mDict\\["+value.getName()+"\\]");
+			//0:<f1> -> 1:<f0>;
+			arrows += ("\n\tscope"+scope.getName()+":<f"+iterCount+"> -> " + value.getName()+":<f0>;");
 			iterCount++;
 		}
-		out.println("</table>>];");
+		out.print(label + " \"];");
+		out.println(arrows);
 
 		//print members of scope
 		iter = keyset.iterator();
 		iterCount = 0;
+		String steArrows = "";
 		while(iter.hasNext()){
 			String key = iter.next();
 			STE value = hm.get(key);
 			if (value instanceof ClassSTE) {
 				ClassSTE val = (ClassSTE) value;
-				out.println(val.getName()+ " [ label=<");
-				out.println("<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">");
-				out.println("\t<tr><td port=\""+val.getName()+iterCount+"\"><i>ClassSTE</i></td></tr>");	
-				out.println("\t<tr><td>mName="+val.getName()+"</td></tr>");
-				out.println("\t<tr><td>mMain="+val.getmMain()+"</td></tr>");
-				if(val.getmSuperClass() == null){
+				
+				//1 [label=" <f0> ClassSTE | <f1> mName = Simple| <f2> mMain = false| <f3> mSuperClass = null| <f4> mScope "];
+				
+				out.println("\n\t"+val.getName()+ " [ label=\" <f0> ClassSTE | <f1> mName="+val.getName()+"| <f2> mMain="+val.getmMain()+"| <f3> mSuperClass = NULL | <f4> mScope \"];");
+				/*if(val.getmSuperClass() == null){
 					out.println("\t<tr><td>mSuperClass=NULL</td></tr>");
 				} else {
 					out.println("\t<tr><td>mSuperClass="+val.getmSuperClass()+"</td></tr>");
-				}
-				out.println("\t<tr><td port=\""+(portCount++)+"\">mScope</td></tr>");
-				out.println("</table>>];");
-				out.println(scope.getName()+":"+scope.getName() +iterCount + " -> " + val.getName()+":"+val.getName() + iterCount + ";");
+				}*/
 
-				//arrow from this to previous (narrower) scope
-				out.println(val.getName()+":"+ (portCount-1) + " -> " + val.getScope().getName()+":"+val.getScope().getName()+"0");
-				
+				//arrow from this to next scope
+				steArrows += ("\n\t"+val.getName()+":<f4>  -> scope" + val.getName()+": <f0>;");
 			} else if (value instanceof MethodSTE) {
 				MethodSTE val = (MethodSTE) value;
-				out.println("\n"+val.getName() + " [ label=<");
-				out.println("<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">");
-				out.println("\t<tr><td port=\""+val.getName()+"0"+"\"><i>MethodSTE</i></td></tr>");
-				out.println("\t<tr><td>mName="+val.getName()+"</td></tr>");
-				out.println("\t<tr><td>mSignature="+val.getmSignature()+"</td></tr>");
-				out.println("\t<tr><td port=\""+(portCount++)+"\">mScope</td></tr>");
-				out.println("</table>>];");
-
-				out.println(scope.getName()+":"+ scope.getName()+iterCount + " -> " + val.getName()+":"+val.getName()+"0"+ ";");
+				out.println("\n\t"+val.getName() + " [ label=\" <f0> MethodSTE | <f1> mName = "+val.getName()+"| <f2> mSignature = "+val.getmSignature()+"| <f3> mScope \"];");
+				//[label=" <f0> MethodSTE | <f1> mName = bluedot| <f2> mSignature = (BYTE, BYTE) returns class_null;| <f3> mScope "];
+				
 				//arrow from this to previous (narrower) scope
-				out.println(val.getName()+":"+ (portCount-1) + " -> " + val.getScope().getName()+":"+val.getScope().getName()+"0");
-
+				//3:<f3> -> 4:<f0>;
+				steArrows += ("\n\t"+val.getName()+":<f3> -> scope" + val.getName()+":<f0>;");
+				    
 			} else if (value instanceof VarSTE) {
 				VarSTE val = (VarSTE) value;
-				out.println("\n"+steCount+ " [ label=<");
-				out.println("<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">");
-				out.println("\t<tr><td port=\""+(portCount++)+"\"><i>VarSTE</i></td></tr>");	
-				out.println("\t<tr><td>mName="+val.getName()+"</td></tr>");
-				out.println("\t<tr><td>mType="+val.getmType().toString()+"</td></tr>");
-				out.println("\t<tr><td>mBase="+val.getBase()+"</td></tr>");
-				out.println("\t<tr><td>mOffset="+val.getOffset()+"</td></tr>");
-				out.println("</table>>];");
+				//5 [label=" <f0> VarSTE | <f1> mName = this| <f2> mType = class_Simple;| <f3> mBase = INVALID| <f4> mOffset = 0"];
+				out.println("\n\t"+val.getName()+ " [ label=\" <f0> VarSTE | <f1> mName = "+val.getName()+"| <f2> mType = "+val.getType()+"| <f3> mBase = INVALID| <f4> mOffset = 0\"];");
 				
-				out.println(scope.getName()+":"+ (currScopeStart+1+iterCount) + " -> " + (steCount)+":"+(portCount)+ ";");
 	       		}
 			iterCount++;
 			steCount++;
 		}
+		out.println("\t"+steArrows);
        scopeCount++;
    }
 

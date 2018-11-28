@@ -1,76 +1,30 @@
 digraph ASTGraph {
-	graph [pad="0.5", nodesep="0.5", ranksep="2"];
-	node [shape=plain]
-	rankdir=LR;
-MethodDeclbluedot [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="MethodDeclbluedot0"><i>Scope MethodDeclbluedot</i></td></tr>
-	<tr><td port="MethodDeclbluedot1">mDict[y]</td></tr>
-	<tr><td port="MethodDeclbluedot2">mDict[x]</td></tr>
-</table>>];
+	node [shape=record];
+	graph [ rankdir="LR"];
+	scopebluedot [ label="<f0> Scope bluedot | <f1> mDict\[y\] | <f2> mDict\[x\] "];
+	scopebluedot:<f1> -> y:<f0>;
+	scopebluedot:<f2> -> x:<f0>;
 
-0 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="0"><i>VarSTE</i></td></tr>
-	<tr><td>mName=y</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-MethodDeclbluedot:1 -> 0:1;
+	y [ label=" <f0> VarSTE | <f1> mName = y| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
 
-1 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="1"><i>VarSTE</i></td></tr>
-	<tr><td>mName=x</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-MethodDeclbluedot:2 -> 1:2;
-TopClassDeclSimple [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="TopClassDeclSimple0"><i>Scope TopClassDeclSimple</i></td></tr>
-	<tr><td port="TopClassDeclSimple1">mDict[bluedot]</td></tr>
-</table>>];
+	x [ label=" <f0> VarSTE | <f1> mName = x| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+	
+	scopeSimple [ label="<f0> Scope Simple | <f1> mDict\[bluedot\] "];
+	scopeSimple:<f1> -> bluedot:<f0>;
 
-bluedot [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="bluedot0"><i>MethodSTE</i></td></tr>
-	<tr><td>mName=bluedot</td></tr>
-	<tr><td>mSignature=(ByteType ByteType ) return VoidType</td></tr>
-	<tr><td port="2">mScope</td></tr>
-</table>>];
-TopClassDeclSimple:TopClassDeclSimple0 -> bluedot:bluedot0;
-bluedot:2 -> MethodDeclbluedot:MethodDeclbluedot0
-MainClassPA4bluedot [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="MainClassPA4bluedot0"><i>Scope MainClassPA4bluedot</i></td></tr>
-</table>>];
-Program [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="Program0"><i>Scope Program</i></td></tr>
-	<tr><td port="Program1">mDict[Simple]</td></tr>
-	<tr><td port="Program2">mDict[PA4bluedot]</td></tr>
-</table>>];
-Simple [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="Simple0"><i>ClassSTE</i></td></tr>
-	<tr><td>mName=Simple</td></tr>
-	<tr><td>mMain=false</td></tr>
-	<tr><td>mSuperClass=NULL</td></tr>
-	<tr><td port="3">mScope</td></tr>
-</table>>];
-Program:Program0 -> Simple:Simple0;
-Simple:3 -> TopClassDeclSimple:TopClassDeclSimple0
-PA4bluedot [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="PA4bluedot1"><i>ClassSTE</i></td></tr>
-	<tr><td>mName=PA4bluedot</td></tr>
-	<tr><td>mMain=true</td></tr>
-	<tr><td>mSuperClass=NULL</td></tr>
-	<tr><td port="4">mScope</td></tr>
-</table>>];
-Program:Program1 -> PA4bluedot:PA4bluedot1;
-PA4bluedot:4 -> MainClassPA4bluedot:MainClassPA4bluedot0
+	bluedot [ label=" <f0> MethodSTE | <f1> mName = bluedot| <f2> mSignature = (ByteType ByteType ) return VoidType| <f3> mScope "];
+	
+	bluedot:<f3> -> scopebluedot:<f0>;
+	scopePA4bluedot [ label="<f0> Scope PA4bluedot "];
+	
+	scopeProgram [ label="<f0> Scope Program | <f1> mDict\[Simple\] | <f2> mDict\[PA4bluedot\] "];
+	scopeProgram:<f1> -> Simple:<f0>;
+	scopeProgram:<f2> -> PA4bluedot:<f0>;
+
+	Simple [ label=" <f0> ClassSTE | <f1> mName=Simple| <f2> mMain=false| <f3> mSuperClass = NULL | <f4> mScope "];
+
+	PA4bluedot [ label=" <f0> ClassSTE | <f1> mName=PA4bluedot| <f2> mMain=true| <f3> mSuperClass = NULL | <f4> mScope "];
+	
+	Simple:<f4>  -> scopeSimple: <f0>;
+	PA4bluedot:<f4>  -> scopePA4bluedot: <f0>;
 }

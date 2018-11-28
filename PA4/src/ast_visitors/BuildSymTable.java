@@ -182,12 +182,19 @@ public class BuildSymTable extends DepthFirstVisitor
 			} else if (node instanceof CallExp){
 				CallExp callExp = (CallExp) node;
 				MethodSTE methodSTE = (MethodSTE) this.symTable.lookup(callExp.getId());
-				Type t = methodSTE.getType();
+				Type t = null;
+				if(methodSTE != null){
+				    if( methodSTE.getType() != null){
+				 t = methodSTE.getType();				    
+				} else {
+				    t = Type.VOID;
+				}
+				}
 				symTable.setExpType(node, t);
 /*				System.out.println("callExp.getId(): "+callExp.getId());
 				System.out.println("null ste? "+(methodSTE == null));
 				System.out.println("null type? "+(methodSTE.getType() == null));
-				symTable.setExpType(node, methodSTE.getType());
+				symTable.setExpType(node, methodSTEfx.getType());
 /*			if (node instanceof ){
 				symTable.setExpType(node, Type.);
 */			} else if (node instanceof MinusExp) {

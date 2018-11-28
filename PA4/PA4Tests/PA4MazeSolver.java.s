@@ -16,6 +16,7 @@ main:
 	in r29,__SP_H__
 /* prologue: function */
 	call _Z18MeggyJrSimpleSetupv
+	/* Need to call this so that the meggy library gets set up */
 
 	# NewExp
 	ldi    r24, lo8(0)
@@ -32,15 +33,16 @@ main:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_run
+
 /* epilogue start */
 	endLabel:
 	jmp endLabel
 	ret
 	.size   main, .-main
+
 
 	.text
 .global Solver_initMaze1
@@ -59,8 +61,8 @@ Solver_initMaze1:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r23
-	std    Y + 1, r22
+	std    Y + 2, r25
+	std    Y + 1, r24
 
 /* done with function Solver_initMaze1 prologue */
 
@@ -69,6 +71,7 @@ Solver_initMaze1:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
+
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -92,8 +95,8 @@ Solver_initMaze2:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r23
-	std    Y + 1, r22
+	std    Y + 2, r25
+	std    Y + 1, r24
 
 /* done with function Solver_initMaze2 prologue */
 	# loading the implicit "this"
@@ -111,9 +114,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -123,9 +128,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -135,9 +142,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -148,7 +157,6 @@ Solver_initMaze2:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
@@ -168,9 +176,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -180,9 +190,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -192,9 +204,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -205,7 +219,6 @@ Solver_initMaze2:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
@@ -225,9 +238,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -237,9 +252,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 0
@@ -249,9 +266,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -262,7 +281,6 @@ Solver_initMaze2:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeCol
@@ -282,9 +300,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -294,9 +314,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 0
@@ -306,9 +328,11 @@ Solver_initMaze2:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -319,7 +343,6 @@ Solver_initMaze2:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeCol
@@ -330,6 +353,7 @@ Solver_initMaze2:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
+
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -353,8 +377,8 @@ Solver_initMazeCool:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r23
-	std    Y + 1, r22
+	std    Y + 2, r25
+	std    Y + 1, r24
 
 /* done with function Solver_initMazeCool prologue */
 	# loading the implicit "this"
@@ -372,9 +396,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -384,9 +410,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -396,9 +424,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -409,7 +439,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
@@ -429,9 +458,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 0
@@ -441,9 +472,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -453,9 +486,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -466,7 +501,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
@@ -486,9 +520,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -498,9 +534,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 0
@@ -510,9 +548,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -523,7 +563,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeCol
@@ -543,9 +582,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 7
@@ -555,9 +596,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 0
@@ -567,9 +610,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -580,7 +625,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeCol
@@ -600,9 +644,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -612,9 +658,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -624,9 +672,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -637,7 +687,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
@@ -657,9 +706,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -669,9 +720,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 2
@@ -681,9 +734,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -694,7 +749,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeCol
@@ -714,9 +768,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 2
@@ -726,9 +782,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 5
@@ -738,9 +796,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -751,7 +811,6 @@ Solver_initMazeCool:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
@@ -763,9 +822,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 1
@@ -775,9 +836,11 @@ Solver_initMazeCool:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	/* load 6 for Meggy.Color.VIOLET */
@@ -798,6 +861,7 @@ Solver_initMazeCool:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
+
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -821,8 +885,8 @@ Solver_run:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r23
-	std    Y + 1, r22
+	std    Y + 2, r25
+	std    Y + 1, r24
 
 /* done with function Solver_run prologue */
 	# loading the implicit "this"
@@ -838,7 +902,6 @@ Solver_run:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_initMazeCool
@@ -858,9 +921,11 @@ Solver_run:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 1
@@ -870,9 +935,11 @@ Solver_run:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 6
@@ -882,9 +949,11 @@ Solver_run:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 6
@@ -894,9 +963,11 @@ Solver_run:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -908,7 +979,6 @@ Solver_run:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_move
@@ -919,6 +989,7 @@ Solver_run:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
+
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -944,10 +1015,10 @@ Solver_inBounds:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r27
-	std    Y + 1, r26
-	std    Y + 3, r25
-	std    Y + 4, r24
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
 
 /* done with function Solver_inBounds prologue */
 	#### short-circuited && operation
@@ -965,6 +1036,9 @@ Solver_inBounds:
 	# push int 0 onto stack
 	push r25
 	push r24
+ # load two byte expression off stack
+	pop    r18
+	pop    r19
 
 	# load int 1
 	ldi r24,lo8(1)
@@ -972,6 +1046,9 @@ Solver_inBounds:
 	# push int 1 onto stack
 	push r25
 	push r24
+ # load two byte expression off stack
+	pop    r24
+	pop    r25
 
 	#do INT sub operation
 	sub    r24, r18
@@ -981,9 +1058,11 @@ Solver_inBounds:
 	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# IdExp
@@ -1010,9 +1089,9 @@ MJ_L6:
 	# load true
 MJ_L7:
 	ldi    r24, 1
-	
+
 	# push result of less than
-	
+MJ_L8:
 	# push one byte expression onto stack
 	push   r24
 
@@ -1046,9 +1125,11 @@ MJ_L5:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# less than expression
@@ -1056,19 +1137,19 @@ MJ_L5:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	brlt MJ_L9
+	brlt MJ_L10
 
 	# load false
-MJ_L8:
+MJ_L9:
 	ldi     r24, 0
-	jmp      MJ_L10
+	jmp      MJ_L11
 	
 	# load true
-MJ_L9:
+MJ_L10:
 	ldi    r24, 1
-	
+
 	# push result of less than
-	
+MJ_L11:
 	# push one byte expression onto stack
 	push   r24
 
@@ -1094,6 +1175,9 @@ MJ_L3:
 	# push int 0 onto stack
 	push r25
 	push r24
+ # load two byte expression off stack
+	pop    r18
+	pop    r19
 
 	# load int 1
 	ldi r24,lo8(1)
@@ -1101,6 +1185,9 @@ MJ_L3:
 	# push int 1 onto stack
 	push r25
 	push r24
+ # load two byte expression off stack
+	pop    r24
+	pop    r25
 
 	#do INT sub operation
 	sub    r24, r18
@@ -1110,9 +1197,11 @@ MJ_L3:
 	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# IdExp
@@ -1129,19 +1218,19 @@ MJ_L3:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	brlt MJ_L11
+	brlt MJ_L13
 
 	# load false
-MJ_L10:
+MJ_L12:
 	ldi     r24, 0
-	jmp      MJ_L12
+	jmp      MJ_L14
 	
 	# load true
-MJ_L11:
+MJ_L13:
 	ldi    r24, 1
-	
+
 	# push result of less than
-	
+MJ_L14:
 	# push one byte expression onto stack
 	push   r24
 
@@ -1177,9 +1266,11 @@ MJ_L1:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# less than expression
@@ -1187,19 +1278,19 @@ MJ_L1:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	brlt MJ_L13
+	brlt MJ_L16
 
 	# load false
-MJ_L12:
+MJ_L15:
 	ldi     r24, 0
-	jmp      MJ_L14
+	jmp      MJ_L17
 	
 	# load true
-MJ_L13:
+MJ_L16:
 	ldi    r24, 1
-	
+
 	# push result of less than
-	
+MJ_L17:
 	# push one byte expression onto stack
 	push   r24
 
@@ -1213,19 +1304,18 @@ MJ_L0:
 	pop    r24
 	# promoting a byte to an int
 	tst     r24
-	brlt     MJ_L14
+	brlt     MJ_L18
 	ldi    r25, 0
-	jmp    MJ_L15
-MJ_L14
+	jmp    MJ_L19
+MJ_L18:
 	ldi    r25, hi8(-1)
-MJ_L15
+MJ_L19:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -1251,10 +1341,10 @@ Solver_isDark:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r27
-	std    Y + 1, r26
-	std    Y + 3, r25
-	std    Y + 4, r24
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
 
 /* done with function Solver_isDark prologue */
 	#### short-circuited && operation
@@ -1268,8 +1358,30 @@ Solver_isDark:
 	push 	   r31
 	push     r30
 
+	# IdExp
+	# load value for variable x
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
 	#### function call
 	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
 
 	# receiver will be passed as first param
 	pop    r24
@@ -1287,11 +1399,11 @@ Solver_isDark:
 	# compare left exp with zero
 	ldi	r25, 0
 	cp    r24, r25
-	# Want this, breq MJ_L16
-	brne	MJ_L17
-	jmp	MJ_L16
+	# Want this, breq MJ_L20
+	brne	MJ_L21
+	jmp	MJ_L20
 
-MJ_L17:
+MJ_L21:
 	# &&: right operand
 	pop	r24
 
@@ -1328,22 +1440,22 @@ MJ_L17:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	breq MJ_L19
+	breq MJ_L23
 
 	#result is false
-MJ_L18:
+MJ_L22:
 	ldi     r24, 0
-	jmp      MJ_L20
+	jmp      MJ_L24
 
 	# result is true
-MJ_L19:
+MJ_L23:
 	ldi     r24, 1
 
 	# store result of equal expression
-MJ_L20:
+MJ_L24:
 	push   r24
 
-MJ_L16:
+MJ_L20:
 
 
 /* epilogue start for  Solver_isDark*/
@@ -1353,19 +1465,18 @@ MJ_L16:
 	pop    r24
 	# promoting a byte to an int
 	tst     r24
-	brlt     MJ_L21
+	brlt     MJ_L25
 	ldi    r25, 0
-	jmp    MJ_L22
-MJ_L21
+	jmp    MJ_L26
+MJ_L25:
 	ldi    r25, hi8(-1)
-MJ_L22
+MJ_L26:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -1391,10 +1502,10 @@ Solver_isBLUE:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r27
-	std    Y + 1, r26
-	std    Y + 3, r25
-	std    Y + 4, r24
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
 
 /* done with function Solver_isBLUE prologue */
 	#### short-circuited && operation
@@ -1408,8 +1519,30 @@ Solver_isBLUE:
 	push 	   r31
 	push     r30
 
+	# IdExp
+	# load value for variable x
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
 	#### function call
 	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
 
 	# receiver will be passed as first param
 	pop    r24
@@ -1427,11 +1560,11 @@ Solver_isBLUE:
 	# compare left exp with zero
 	ldi	r25, 0
 	cp    r24, r25
-	# Want this, breq MJ_L23
-	brne	MJ_L24
-	jmp	MJ_L23
+	# Want this, breq MJ_L27
+	brne	MJ_L28
+	jmp	MJ_L27
 
-MJ_L24:
+MJ_L28:
 	# &&: right operand
 	pop	r24
 
@@ -1468,22 +1601,22 @@ MJ_L24:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	breq MJ_L26
+	breq MJ_L30
 
 	#result is false
-MJ_L25:
+MJ_L29:
 	ldi     r24, 0
-	jmp      MJ_L27
+	jmp      MJ_L31
 
 	# result is true
-MJ_L26:
+MJ_L30:
 	ldi     r24, 1
 
 	# store result of equal expression
-MJ_L27:
+MJ_L31:
 	push   r24
 
-MJ_L23:
+MJ_L27:
 
 
 /* epilogue start for  Solver_isBLUE*/
@@ -1493,19 +1626,18 @@ MJ_L23:
 	pop    r24
 	# promoting a byte to an int
 	tst     r24
-	brlt     MJ_L28
+	brlt     MJ_L32
 	ldi    r25, 0
-	jmp    MJ_L29
-MJ_L28
+	jmp    MJ_L33
+MJ_L32:
 	ldi    r25, hi8(-1)
-MJ_L29
+MJ_L33:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -1533,12 +1665,12 @@ Solver_findTargetOrMove:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r31
-	std    Y + 1, r30
-	std    Y + 3, r29
-	std    Y + 4, r28
-	std    Y + 5, r27
-	std    Y + 6, r26
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
+	std    Y + 5, r18
+	std    Y + 6, r16
 
 /* done with function Solver_findTargetOrMove prologue */
 	#### if statement
@@ -1568,19 +1700,19 @@ Solver_findTargetOrMove:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	breq MJ_L36
+	breq MJ_L40
 
 	#result is false
-MJ_L35:
+MJ_L39:
 	ldi     r24, 0
-	jmp      MJ_L37
+	jmp      MJ_L41
 
 	# result is true
-MJ_L36:
+MJ_L40:
 	ldi     r24, 1
 
 	# store result of equal expression
-MJ_L37:
+MJ_L41:
 	push   r24
 
 	# &&: if left operand is false do not eval right
@@ -1589,11 +1721,11 @@ MJ_L37:
 	# compare left exp with zero
 	ldi	r25, 0
 	cp    r24, r25
-	# Want this, breq MJ_L33
-	brne	MJ_L34
-	jmp	MJ_L33
+	# Want this, breq MJ_L37
+	brne	MJ_L38
+	jmp	MJ_L37
 
-MJ_L34:
+MJ_L38:
 	# &&: right operand
 	pop	r24
 
@@ -1619,22 +1751,22 @@ MJ_L34:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	breq MJ_L39
+	breq MJ_L43
 
 	#result is false
-MJ_L38:
+MJ_L42:
 	ldi     r24, 0
-	jmp      MJ_L40
+	jmp      MJ_L44
 
 	# result is true
-MJ_L39:
+MJ_L43:
 	ldi     r24, 1
 
 	# store result of equal expression
-MJ_L40:
+MJ_L44:
 	push   r24
 
-MJ_L33:
+MJ_L37:
 
 	# load condition and branch if false
 	pop    r24
@@ -1643,12 +1775,12 @@ MJ_L33:
 
 	#use cp to set SREG
 	cp     r24, r25
-	#WANT breq MJ_L41
-	brne   MJ_L30
-	jmp    MJ_L31
+	#WANT breq MJ_L34
+	brne   MJ_L35
+	jmp    MJ_L34
 
 	#then label for if
-MJ_L30:
+MJ_L35:
 
 	# IdExp
 	# load value for variable nextX
@@ -1680,10 +1812,10 @@ MJ_L30:
 	call _Z6DrawPxhhh
 	call _Z12DisplaySlatev
 
-	jmp	MJ_L32
+	jmp	MJ_L36
 
 	# else label for if
-MJ_L31:
+MJ_L34:
 
 	# loading the implicit "this"
 	# load a two byte variable from base+offset
@@ -1738,15 +1870,14 @@ MJ_L31:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_move
 
-	jmp	MJ_L32
+	jmp	MJ_L36
 
 	# done label for if
-MJ_L32:
+MJ_L36:
 
 
 /* epilogue start for  Solver_findTargetOrMove*/
@@ -1754,14 +1885,11 @@ MJ_L32:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -1789,12 +1917,12 @@ Solver_move:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r31
-	std    Y + 1, r30
-	std    Y + 3, r29
-	std    Y + 4, r28
-	std    Y + 5, r27
-	std    Y + 6, r26
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
+	std    Y + 5, r18
+	std    Y + 6, r16
 
 /* done with function Solver_move prologue */
 	# load int 256
@@ -1849,8 +1977,79 @@ Solver_move:
 	push 	   r31
 	push     r30
 
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L48
+	ldi    r25, 0
+	jmp    MJ_L49
+MJ_L48:
+	ldi    r25, hi8(-1)
+MJ_L49:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L50
+	ldi    r25, 0
+	jmp    MJ_L51
+MJ_L50:
+	ldi    r25, hi8(-1)
+MJ_L51:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
 	#### function call
 	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
 
 	# receiver will be passed as first param
 	pop    r24
@@ -1870,133 +2069,8 @@ Solver_move:
 	#use cp to set SREG
 	cp     r24, r25
 	#WANT breq MJ_L45
-	brne   MJ_L42
-	jmp    MJ_L43
-
-	#then label for if
-MJ_L42:
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 6
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 5
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
-
-	# load int 1
-	ldi r24,lo8(1)
-	ldi r25,hi8(1)
-	# push int 1 onto stack
-	push r25
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
-	#do INT sub operation
-	sub    r24, r18
-	sbc    r25, r19
-	# push hi order byte first
-	# push two byte expression onto stack
-	push   r25
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
-	#### function call
-	# put parameter values into appropriate registers
-	pop    r16
-	pop    r18
-	pop    r20
-	pop    r22
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_findTargetOrMove
-
-	jmp	MJ_L44
-
-	# else label for if
-MJ_L43:
-
-	#### if statement
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	#### function call
-	# put parameter values into appropriate registers
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_isDark
-	# handle return value
-	# push one byte expression onto stack
-	push	r24
-
-	# load condition and branch if false
-	pop    r24
-	#load zero into reg
-	ldi   r25, 0
-
-	#use cp to set SREG
-	cp     r24, r25
-	#WANT breq MJ_L49
 	brne   MJ_L46
-	jmp    MJ_L47
+	jmp    MJ_L45
 
 	#then label for if
 MJ_L46:
@@ -2018,23 +2092,6 @@ MJ_L46:
 	# push one byte expression onto stack
 	push	r24
 
-	# load int 1
-	ldi r24,lo8(1)
-	ldi r25,hi8(1)
-	# push int 1 onto stack
-	push r25
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
 	# IdExp
 	# load value for variable targetY
 	# variable is a local or param variable
@@ -2061,106 +2118,16 @@ MJ_L46:
 	ldd    r24, Y + 4
 	# push one byte expression onto stack
 	push	r24
-
-	#### function call
-	# put parameter values into appropriate registers
-	pop    r16
+ # load a one byte expression off stack
 	pop    r18
-	pop    r20
-	pop    r22
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_findTargetOrMove
-
-	jmp	MJ_L48
-
-	# else label for if
-MJ_L47:
-
-	#### if statement
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	#### function call
-	# put parameter values into appropriate registers
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_isDark
-	# handle return value
-	# push one byte expression onto stack
-	push	r24
-
-	# load condition and branch if false
-	pop    r24
-	#load zero into reg
-	ldi   r25, 0
-
-	#use cp to set SREG
-	cp     r24, r25
-	#WANT breq MJ_L53
-	brne   MJ_L50
-	jmp    MJ_L51
-
-	#then label for if
-MJ_L50:
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 6
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 5
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L52
+	ldi    r25, 0
+	jmp    MJ_L53
+MJ_L52:
+	ldi    r25, hi8(-1)
+MJ_L53:
 
 	# load int 1
 	ldi r24,lo8(1)
@@ -2169,283 +2136,23 @@ MJ_L50:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
-	push r24
-
-	/* cast to byte */
 	pop r25
-	pop r24
 	push r24
-
-	#### function call
-	# put parameter values into appropriate registers
-	pop    r16
-	pop    r18
-	pop    r20
-	pop    r22
-
-	# receiver will be passed as first param
+ # load a one byte expression off stack
 	pop    r24
-
-	pop    r25
-
-	call    Solver_findTargetOrMove
-
-	jmp	MJ_L52
-
-	# else label for if
-MJ_L51:
-
-	#### if statement
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	#### function call
-	# put parameter values into appropriate registers
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_isDark
-	# handle return value
-	# push one byte expression onto stack
-	push	r24
-
-	# load condition and branch if false
-	pop    r24
-	#load zero into reg
-	ldi   r25, 0
-
-	#use cp to set SREG
-	cp     r24, r25
-	#WANT breq MJ_L57
-	brne   MJ_L54
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L54
+	ldi    r25, 0
 	jmp    MJ_L55
-
-	#then label for if
 MJ_L54:
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# load int 1
-	ldi r24,lo8(1)
-	ldi r25,hi8(1)
-	# push int 1 onto stack
-	push r25
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
-	#do INT sub operation
-	sub    r24, r18
-	sbc    r25, r19
-	# push hi order byte first
-	# push two byte expression onto stack
-	push   r25
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
-	# IdExp
-	# load value for variable targetY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 6
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 5
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
-
-	#### function call
-	# put parameter values into appropriate registers
-	pop    r16
-	pop    r18
-	pop    r20
-	pop    r22
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_findTargetOrMove
-
-	jmp	MJ_L56
-
-	# else label for if
+	ldi    r25, hi8(-1)
 MJ_L55:
 
-	#### if statement
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	#### function call
-	# put parameter values into appropriate registers
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_isBLUE
-	# handle return value
-	# push one byte expression onto stack
-	push	r24
-
-	# load condition and branch if false
-	pop    r24
-	#load zero into reg
-	ldi   r25, 0
-
-	#use cp to set SREG
-	cp     r24, r25
-	#WANT breq MJ_L61
-	brne   MJ_L58
-	jmp    MJ_L59
-
-	#then label for if
-MJ_L58:
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
-
-	/* load 3 for Meggy.Color.YELLOW */
-	ldi r22, 3
-	push r22
-
-	/*MeggySetPixel: pop args off of stack */
-	pop r20
-	pop r22
-	pop r24
-	/* Draw pixels, display slate */
-	call _Z6DrawPxhhh
-	call _Z12DisplaySlatev
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 6
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable targetX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 5
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
-
-	# load int 1
-	ldi r24,lo8(1)
-	ldi r25,hi8(1)
-	# push int 1 onto stack
-	push r25
-	push r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
-
 	#do INT sub operation
 	sub    r24, r18
 	sbc    r25, r19
@@ -2454,9 +2161,11 @@ MJ_L58:
 	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -2468,82 +2177,16 @@ MJ_L58:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
-	call    Solver_move
+	call    Solver_findTargetOrMove
 
-	jmp	MJ_L60
+	jmp	MJ_L47
 
 	# else label for if
-MJ_L59:
+MJ_L45:
 
 	#### if statement
-
-	# loading the implicit "this"
-	# load a two byte variable from base+offset
-	ldd    r31, Y + 2
-	ldd    r30, Y + 1
-	# push two byte expression onto stack
-	push 	   r31
-	push     r30
-
-	#### function call
-	# put parameter values into appropriate registers
-
-	# receiver will be passed as first param
-	pop    r24
-
-	pop    r25
-
-	call    Solver_isBLUE
-	# handle return value
-	# push one byte expression onto stack
-	push	r24
-
-	# load condition and branch if false
-	pop    r24
-	#load zero into reg
-	ldi   r25, 0
-
-	#use cp to set SREG
-	cp     r24, r25
-	#WANT breq MJ_L65
-	brne   MJ_L62
-	jmp    MJ_L63
-
-	#then label for if
-MJ_L62:
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
-
-	/* load 3 for Meggy.Color.YELLOW */
-	ldi r22, 3
-	push r22
-
-	/*MeggySetPixel: pop args off of stack */
-	pop r20
-	pop r22
-	pop r24
-	/* Draw pixels, display slate */
-	call _Z6DrawPxhhh
-	call _Z12DisplaySlatev
 
 	# loading the implicit "this"
 	# load a two byte variable from base+offset
@@ -2569,14 +2212,150 @@ MJ_L62:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L59
+	ldi    r25, 0
+	jmp    MJ_L60
+MJ_L59:
+	ldi    r25, hi8(-1)
+MJ_L60:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L61
+	ldi    r25, 0
+	jmp    MJ_L62
+MJ_L61:
+	ldi    r25, hi8(-1)
+MJ_L62:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	#### function call
+	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+
+	pop    r25
+
+	call    Solver_isDark
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
+
+	# load condition and branch if false
+	pop    r24
+	#load zero into reg
+	ldi   r25, 0
+
+	#use cp to set SREG
+	cp     r24, r25
+	#WANT breq MJ_L56
+	brne   MJ_L57
+	jmp    MJ_L56
+
+	#then label for if
+MJ_L57:
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L63
+	ldi    r25, 0
+	jmp    MJ_L64
+MJ_L63:
+	ldi    r25, hi8(-1)
+MJ_L64:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L65
+	ldi    r25, 0
+	jmp    MJ_L66
+MJ_L65:
+	ldi    r25, hi8(-1)
+MJ_L66:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
 	push r24
 
 	# IdExp
@@ -2615,15 +2394,14 @@ MJ_L62:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
-	call    Solver_move
+	call    Solver_findTargetOrMove
 
-	jmp	MJ_L64
+	jmp	MJ_L58
 
 	# else label for if
-MJ_L63:
+MJ_L56:
 
 	#### if statement
 
@@ -2635,15 +2413,85 @@ MJ_L63:
 	push 	   r31
 	push     r30
 
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L70
+	ldi    r25, 0
+	jmp    MJ_L71
+MJ_L70:
+	ldi    r25, hi8(-1)
+MJ_L71:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L72
+	ldi    r25, 0
+	jmp    MJ_L73
+MJ_L72:
+	ldi    r25, hi8(-1)
+MJ_L73:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
 	#### function call
 	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
 
 	# receiver will be passed as first param
 	pop    r24
 
 	pop    r25
 
-	call    Solver_isBLUE
+	call    Solver_isDark
 	# handle return value
 	# push one byte expression onto stack
 	push	r24
@@ -2655,42 +2503,12 @@ MJ_L63:
 
 	#use cp to set SREG
 	cp     r24, r25
-	#WANT breq MJ_L69
-	brne   MJ_L66
+	#WANT breq MJ_L67
+	brne   MJ_L68
 	jmp    MJ_L67
 
 	#then label for if
-MJ_L66:
-
-	# IdExp
-	# load value for variable currentX
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 3
-	# push one byte expression onto stack
-	push	r24
-
-	# IdExp
-	# load value for variable currentY
-	# variable is a local or param variable
-
-	# load a one byte variable from base+offset
-	ldd    r24, Y + 4
-	# push one byte expression onto stack
-	push	r24
-
-	/* load 3 for Meggy.Color.YELLOW */
-	ldi r22, 3
-	push r22
-
-	/*MeggySetPixel: pop args off of stack */
-	pop r20
-	pop r22
-	pop r24
-	/* Draw pixels, display slate */
-	call _Z6DrawPxhhh
-	call _Z12DisplaySlatev
+MJ_L68:
 
 	# loading the implicit "this"
 	# load a two byte variable from base+offset
@@ -2708,11 +2526,6 @@ MJ_L66:
 	ldd    r24, Y + 3
 	# push one byte expression onto stack
 	push	r24
-
-	/* cast to byte */
-	pop r25
-	pop r24
-	push r24
 
 	# IdExp
 	# load value for variable targetY
@@ -2748,14 +2561,45 @@ MJ_L66:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L74
+	ldi    r25, 0
+	jmp    MJ_L75
+MJ_L74:
+	ldi    r25, hi8(-1)
+MJ_L75:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L76
+	ldi    r25, 0
+	jmp    MJ_L77
+MJ_L76:
+	ldi    r25, hi8(-1)
+MJ_L77:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -2767,12 +2611,11 @@ MJ_L66:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
-	call    Solver_move
+	call    Solver_findTargetOrMove
 
-	jmp	MJ_L68
+	jmp	MJ_L69
 
 	# else label for if
 MJ_L67:
@@ -2787,8 +2630,298 @@ MJ_L67:
 	push 	   r31
 	push     r30
 
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L81
+	ldi    r25, 0
+	jmp    MJ_L82
+MJ_L81:
+	ldi    r25, hi8(-1)
+MJ_L82:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L83
+	ldi    r25, 0
+	jmp    MJ_L84
+MJ_L83:
+	ldi    r25, hi8(-1)
+MJ_L84:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
 	#### function call
 	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+
+	pop    r25
+
+	call    Solver_isDark
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
+
+	# load condition and branch if false
+	pop    r24
+	#load zero into reg
+	ldi   r25, 0
+
+	#use cp to set SREG
+	cp     r24, r25
+	#WANT breq MJ_L78
+	brne   MJ_L79
+	jmp    MJ_L78
+
+	#then label for if
+MJ_L79:
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L85
+	ldi    r25, 0
+	jmp    MJ_L86
+MJ_L85:
+	ldi    r25, hi8(-1)
+MJ_L86:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L87
+	ldi    r25, 0
+	jmp    MJ_L88
+MJ_L87:
+	ldi    r25, hi8(-1)
+MJ_L88:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable targetY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 6
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable targetX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 5
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	#### function call
+	# put parameter values into appropriate registers
+	pop    r16
+	pop    r18
+	pop    r20
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+	pop    r25
+
+	call    Solver_findTargetOrMove
+
+	jmp	MJ_L80
+
+	# else label for if
+MJ_L78:
+
+	#### if statement
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L92
+	ldi    r25, 0
+	jmp    MJ_L93
+MJ_L92:
+	ldi    r25, hi8(-1)
+MJ_L93:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L94
+	ldi    r25, 0
+	jmp    MJ_L95
+MJ_L94:
+	ldi    r25, hi8(-1)
+MJ_L95:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	#### function call
+	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
 
 	# receiver will be passed as first param
 	pop    r24
@@ -2807,12 +2940,260 @@ MJ_L67:
 
 	#use cp to set SREG
 	cp     r24, r25
-	#WANT breq MJ_L73
-	brne   MJ_L70
-	jmp    MJ_L71
+	#WANT breq MJ_L89
+	brne   MJ_L90
+	jmp    MJ_L89
 
 	#then label for if
-MJ_L70:
+MJ_L90:
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	/* load 3 for Meggy.Color.YELLOW */
+	ldi r22, 3
+	push r22
+
+	/*MeggySetPixel: pop args off of stack */
+	pop r20
+	pop r22
+	pop r24
+	/* Draw pixels, display slate */
+	call _Z6DrawPxhhh
+	call _Z12DisplaySlatev
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable targetY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 6
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable targetX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 5
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L96
+	ldi    r25, 0
+	jmp    MJ_L97
+MJ_L96:
+	ldi    r25, hi8(-1)
+MJ_L97:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L98
+	ldi    r25, 0
+	jmp    MJ_L99
+MJ_L98:
+	ldi    r25, hi8(-1)
+MJ_L99:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	#### function call
+	# put parameter values into appropriate registers
+	pop    r16
+	pop    r18
+	pop    r20
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+	pop    r25
+
+	call    Solver_move
+
+	jmp	MJ_L91
+
+	# else label for if
+MJ_L89:
+
+	#### if statement
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L103
+	ldi    r25, 0
+	jmp    MJ_L104
+MJ_L103:
+	ldi    r25, hi8(-1)
+MJ_L104:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L105
+	ldi    r25, 0
+	jmp    MJ_L106
+MJ_L105:
+	ldi    r25, hi8(-1)
+MJ_L106:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	#### function call
+	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+
+	pop    r25
+
+	call    Solver_isBLUE
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
+
+	# load condition and branch if false
+	pop    r24
+	#load zero into reg
+	ldi   r25, 0
+
+	#use cp to set SREG
+	cp     r24, r25
+	#WANT breq MJ_L100
+	brne   MJ_L101
+	jmp    MJ_L100
+
+	#then label for if
+MJ_L101:
 
 	# IdExp
 	# load value for variable currentX
@@ -2868,22 +3249,45 @@ MJ_L70:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L107
+	ldi    r25, 0
+	jmp    MJ_L108
+MJ_L107:
+	ldi    r25, hi8(-1)
+MJ_L108:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L109
+	ldi    r25, 0
+	jmp    MJ_L110
+MJ_L109:
+	ldi    r25, hi8(-1)
+MJ_L110:
 
-	#do INT sub operation
-	sub    r24, r18
-	sbc    r25, r19
-	# push hi order byte first
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
 	# push two byte expression onto stack
 	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# IdExp
@@ -2922,55 +3326,557 @@ MJ_L70:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_move
 
-	jmp	MJ_L72
+	jmp	MJ_L102
 
 	# else label for if
-MJ_L71:
+MJ_L100:
 
-	jmp	MJ_L72
+	#### if statement
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L114
+	ldi    r25, 0
+	jmp    MJ_L115
+MJ_L114:
+	ldi    r25, hi8(-1)
+MJ_L115:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L116
+	ldi    r25, 0
+	jmp    MJ_L117
+MJ_L116:
+	ldi    r25, hi8(-1)
+MJ_L117:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	#### function call
+	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+
+	pop    r25
+
+	call    Solver_isBLUE
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
+
+	# load condition and branch if false
+	pop    r24
+	#load zero into reg
+	ldi   r25, 0
+
+	#use cp to set SREG
+	cp     r24, r25
+	#WANT breq MJ_L111
+	brne   MJ_L112
+	jmp    MJ_L111
+
+	#then label for if
+MJ_L112:
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	/* load 3 for Meggy.Color.YELLOW */
+	ldi r22, 3
+	push r22
+
+	/*MeggySetPixel: pop args off of stack */
+	pop r20
+	pop r22
+	pop r24
+	/* Draw pixels, display slate */
+	call _Z6DrawPxhhh
+	call _Z12DisplaySlatev
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable targetY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 6
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable targetX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 5
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L118
+	ldi    r25, 0
+	jmp    MJ_L119
+MJ_L118:
+	ldi    r25, hi8(-1)
+MJ_L119:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L120
+	ldi    r25, 0
+	jmp    MJ_L121
+MJ_L120:
+	ldi    r25, hi8(-1)
+MJ_L121:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	#### function call
+	# put parameter values into appropriate registers
+	pop    r16
+	pop    r18
+	pop    r20
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+	pop    r25
+
+	call    Solver_move
+
+	jmp	MJ_L113
+
+	# else label for if
+MJ_L111:
+
+	#### if statement
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L125
+	ldi    r25, 0
+	jmp    MJ_L126
+MJ_L125:
+	ldi    r25, hi8(-1)
+MJ_L126:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L127
+	ldi    r25, 0
+	jmp    MJ_L128
+MJ_L127:
+	ldi    r25, hi8(-1)
+MJ_L128:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	#### function call
+	# put parameter values into appropriate registers
+
+	pop    r20
+
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+
+	pop    r25
+
+	call    Solver_isBLUE
+	# handle return value
+	# push one byte expression onto stack
+	push	r24
+
+	# load condition and branch if false
+	pop    r24
+	#load zero into reg
+	ldi   r25, 0
+
+	#use cp to set SREG
+	cp     r24, r25
+	#WANT breq MJ_L122
+	brne   MJ_L123
+	jmp    MJ_L122
+
+	#then label for if
+MJ_L123:
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	/* load 3 for Meggy.Color.YELLOW */
+	ldi r22, 3
+	push r22
+
+	/*MeggySetPixel: pop args off of stack */
+	pop r20
+	pop r22
+	pop r24
+	/* Draw pixels, display slate */
+	call _Z6DrawPxhhh
+	call _Z12DisplaySlatev
+
+	# loading the implicit "this"
+	# load a two byte variable from base+offset
+	ldd    r31, Y + 2
+	ldd    r30, Y + 1
+	# push two byte expression onto stack
+	push 	   r31
+	push     r30
+
+	# IdExp
+	# load value for variable currentX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L129
+	ldi    r25, 0
+	jmp    MJ_L130
+MJ_L129:
+	ldi    r25, hi8(-1)
+MJ_L130:
+
+	# load int 1
+	ldi r24,lo8(1)
+	ldi r25,hi8(1)
+	# push int 1 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L131
+	ldi    r25, 0
+	jmp    MJ_L132
+MJ_L131:
+	ldi    r25, hi8(-1)
+MJ_L132:
+
+	#do INT sub operation
+	sub    r24, r18
+	sbc    r25, r19
+	# push hi order byte first
+	# push two byte expression onto stack
+	push   r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# IdExp
+	# load value for variable targetY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 6
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable targetX
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 5
+	# push one byte expression onto stack
+	push	r24
+
+	# IdExp
+	# load value for variable currentY
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	#### function call
+	# put parameter values into appropriate registers
+	pop    r16
+	pop    r18
+	pop    r20
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+	pop    r25
+
+	call    Solver_move
+
+	jmp	MJ_L124
+
+	# else label for if
+MJ_L122:
+
+	jmp	MJ_L124
 
 	# done label for if
-MJ_L72:
+MJ_L124:
 
-	jmp	MJ_L68
-
-	# done label for if
-MJ_L68:
-
-	jmp	MJ_L64
+	jmp	MJ_L113
 
 	# done label for if
-MJ_L64:
+MJ_L113:
 
-	jmp	MJ_L60
-
-	# done label for if
-MJ_L60:
-
-	jmp	MJ_L56
+	jmp	MJ_L102
 
 	# done label for if
-MJ_L56:
+MJ_L102:
 
-	jmp	MJ_L52
-
-	# done label for if
-MJ_L52:
-
-	jmp	MJ_L48
+	jmp	MJ_L91
 
 	# done label for if
-MJ_L48:
+MJ_L91:
 
-	jmp	MJ_L44
+	jmp	MJ_L80
 
 	# done label for if
-MJ_L44:
+MJ_L80:
+
+	jmp	MJ_L69
+
+	# done label for if
+MJ_L69:
+
+	jmp	MJ_L58
+
+	# done label for if
+MJ_L58:
+
+	jmp	MJ_L47
+
+	# done label for if
+MJ_L47:
 
 
 /* epilogue start for  Solver_move*/
@@ -2978,14 +3884,11 @@ MJ_L44:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -3012,11 +3915,11 @@ Solver_mazeRow:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r29
-	std    Y + 1, r28
-	std    Y + 3, r27
-	std    Y + 4, r26
-	std    Y + 5, r25
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
+	std    Y + 5, r18
 
 /* done with function Solver_mazeRow prologue */
 	# IdExp
@@ -3074,19 +3977,19 @@ Solver_mazeRow:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	brlt MJ_L78
+	brlt MJ_L137
 
 	# load false
-MJ_L77:
+MJ_L136:
 	ldi     r24, 0
-	jmp      MJ_L79
+	jmp      MJ_L138
 	
 	# load true
-MJ_L78:
+MJ_L137:
 	ldi    r24, 1
-	
+
 	# push result of less than
-	
+MJ_L138:
 	# push one byte expression onto stack
 	push   r24
 
@@ -3097,12 +4000,12 @@ MJ_L78:
 
 	#use cp to set SREG
 	cp     r24, r25
-	#WANT breq MJ_L79
-	brne   MJ_L74
-	jmp    MJ_L75
+	#WANT breq MJ_L133
+	brne   MJ_L134
+	jmp    MJ_L133
 
 	#then label for if
-MJ_L74:
+MJ_L134:
 
 	# loading the implicit "this"
 	# load a two byte variable from base+offset
@@ -3128,14 +4031,45 @@ MJ_L74:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L139
+	ldi    r25, 0
+	jmp    MJ_L140
+MJ_L139:
+	ldi    r25, hi8(-1)
+MJ_L140:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L141
+	ldi    r25, 0
+	jmp    MJ_L142
+MJ_L141:
+	ldi    r25, hi8(-1)
+MJ_L142:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# IdExp
@@ -3164,20 +4098,19 @@ MJ_L74:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeRow
 
-	jmp	MJ_L76
+	jmp	MJ_L135
 
 	# else label for if
-MJ_L75:
+MJ_L133:
 
-	jmp	MJ_L76
+	jmp	MJ_L135
 
 	# done label for if
-MJ_L76:
+MJ_L135:
 
 
 /* epilogue start for  Solver_mazeRow*/
@@ -3185,12 +4118,10 @@ MJ_L76:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 
@@ -3217,11 +4148,11 @@ Solver_mazeCol:
 	in     r29,__SP_H__
 	
 	# save off parameters
-	std    Y + 2, r29
-	std    Y + 1, r28
-	std    Y + 3, r27
-	std    Y + 4, r26
-	std    Y + 5, r25
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
+	std    Y + 5, r18
 
 /* done with function Solver_mazeCol prologue */
 	# IdExp
@@ -3279,19 +4210,19 @@ Solver_mazeCol:
 	pop    r18
 	pop    r24
 	cp    r24, r18
-	brlt MJ_L84
+	brlt MJ_L147
 
 	# load false
-MJ_L83:
+MJ_L146:
 	ldi     r24, 0
-	jmp      MJ_L85
+	jmp      MJ_L148
 	
 	# load true
-MJ_L84:
+MJ_L147:
 	ldi    r24, 1
-	
+
 	# push result of less than
-	
+MJ_L148:
 	# push one byte expression onto stack
 	push   r24
 
@@ -3302,12 +4233,12 @@ MJ_L84:
 
 	#use cp to set SREG
 	cp     r24, r25
-	#WANT breq MJ_L85
-	brne   MJ_L80
-	jmp    MJ_L81
+	#WANT breq MJ_L143
+	brne   MJ_L144
+	jmp    MJ_L143
 
 	#then label for if
-MJ_L80:
+MJ_L144:
 
 	# loading the implicit "this"
 	# load a two byte variable from base+offset
@@ -3351,14 +4282,45 @@ MJ_L80:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
+	push r24
+ # load a one byte expression off stack
+	pop    r18
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L149
+	ldi    r25, 0
+	jmp    MJ_L150
+MJ_L149:
+	ldi    r25, hi8(-1)
+MJ_L150:
+ # load a one byte expression off stack
+	pop    r24
+	# promoting a byte to an int
+	tst     r24
+	brlt     MJ_L151
+	ldi    r25, 0
+	jmp    MJ_L152
+MJ_L151:
+	ldi    r25, hi8(-1)
+MJ_L152:
+
+	#do add operation
+	add    r24, r18
+	adc    r25, r19
+	# push two byte expression onto stack
+	push   r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	#### function call
@@ -3369,20 +4331,19 @@ MJ_L80:
 
 	# receiver will be passed as first param
 	pop    r24
-
 	pop    r25
 
 	call    Solver_mazeCol
 
-	jmp	MJ_L82
+	jmp	MJ_L145
 
 	# else label for if
-MJ_L81:
+MJ_L143:
 
-	jmp	MJ_L82
+	jmp	MJ_L145
 
 	# done label for if
-MJ_L82:
+MJ_L145:
 
 
 /* epilogue start for  Solver_mazeCol*/
@@ -3390,12 +4351,10 @@ MJ_L82:
 	# pop space off stack for parameters and locals
 	pop		r30
 	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
-	pop		r30
+
+	pop    r30
+	pop    r30
+	pop    r30
 	# restoring the frame pointer
 	pop    r28 
 	pop    r29 

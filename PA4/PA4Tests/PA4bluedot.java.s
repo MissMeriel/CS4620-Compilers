@@ -16,6 +16,7 @@ main:
 	in r29,__SP_H__
 /* prologue: function */
 	call _Z18MeggyJrSimpleSetupv
+	/* Need to call this so that the meggy library gets set up */
 
 	# NewExp
 	ldi    r24, lo8(0)
@@ -27,6 +28,45 @@ main:
 	push   r25
 	push   r24
 
+	# load int 3
+	ldi r24,lo8(3)
+	ldi r25,hi8(3)
+	# push int 3 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	# load int 7
+	ldi r24,lo8(7)
+	ldi r25,hi8(7)
+	# push int 7 onto stack
+	push r25
+	push r24
+
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
+	pop r24
+	pop r25
+	push r24
+
+	#### function call
+	# put parameter values into appropriate registers
+	pop    r20
+	pop    r22
+
+	# receiver will be passed as first param
+	pop    r24
+	pop    r25
+
+	call    Simple_bluedot
+
 	# load int 1
 	ldi r24,lo8(1)
 	ldi r25,hi8(1)
@@ -34,9 +74,11 @@ main:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	# load int 2
@@ -46,9 +88,11 @@ main:
 	push r25
 	push r24
 
-	/* cast to byte */
-	pop r25
+	# Casting int to byte by popping
+	# 2 bytes off stack and only pushing low order bits
+	# back on.  Low order bits are on top of stack.
 	pop r24
+	pop r25
 	push r24
 
 	/* load 5 for Meggy.Color.BLUE */
@@ -63,22 +107,17 @@ main:
 	call _Z6DrawPxhhh
 	call _Z12DisplaySlatev
 
-	/* load 5 for Meggy.Color.BLUE */
-	ldi r22, 5
-	push r22
+/* epilogue start */
+	endLabel:
+	jmp endLabel
+	ret
+	.size   main, .-main
 
-	/*MeggySetPixel: pop args off of stack */
-	pop r20
-	pop r22
-	pop r24
-	/* Draw pixels, display slate */
-	call _Z6DrawPxhhh
-	call _Z12DisplaySlatev
 
 	.text
-.global Simplebluedot
-	.type  Simplebluedot, @function
-Simplebluedot:
+.global Simple_bluedot
+	.type  Simple_bluedot, @function
+Simple_bluedot:
 	push   r29
 	push   r28
 	# make space for locals and params
@@ -93,15 +132,54 @@ Simplebluedot:
 	in     r28,__SP_L__
 	in     r29,__SP_H__
 	
-	# save off parametersstd    Y + 2, r25
-std    Y + 1, r24
+	# save off parameters
+	std    Y + 2, r25
+	std    Y + 1, r24
+	std    Y + 3, r22
+	std    Y + 4, r20
 
-	pop    r23
+/* done with function Simple_bluedot prologue */
+	# IdExp
+	# load value for variable x
+	# variable is a local or param variable
 
-	pop    r21
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 3
+	# push one byte expression onto stack
+	push	r24
 
-/* done with function Simplebluedot prologue *//* epilogue start */
-	endLabel:
-	jmp endLabel
+	# IdExp
+	# load value for variable y
+	# variable is a local or param variable
+
+	# load a one byte variable from base+offset
+	ldd    r24, Y + 4
+	# push one byte expression onto stack
+	push	r24
+
+	/* load 5 for Meggy.Color.BLUE */
+	ldi r22, 5
+	push r22
+
+	/*MeggySetPixel: pop args off of stack */
+	pop r20
+	pop r22
+	pop r24
+	/* Draw pixels, display slate */
+	call _Z6DrawPxhhh
+	call _Z12DisplaySlatev
+
+
+/* epilogue start for  Simple_bluedot*/
+	# no return value
+	# pop space off stack for parameters and locals
+	pop		r30
+	pop		r30
+
+	pop    r30
+	pop    r30
+	# restoring the frame pointer
+	pop    r28 
+	pop    r29 
 	ret
-	.size   main, .-main
+	.size Simple_bluedot, .-Simple_bluedot

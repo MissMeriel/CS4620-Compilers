@@ -1,113 +1,42 @@
 digraph ASTGraph {
-	graph [pad="0.5", nodesep="0.5", ranksep="2"];
-	node [shape=plain]
-	rankdir=LR;
-inBounds [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="inBounds0"><i>Scope inBounds</i></td></tr>
-	<tr><td port="inBounds1">mDict[y]</td></tr>
-	<tr><td port="inBounds2">mDict[x]</td></tr>
-</table>>];
+	node [shape=record];
+	graph [ rankdir="LR"];
+	scopeinBounds [ label="<f0> Scope inBounds | <f1> mDict\[y\] | <f2> mDict\[x\] "];
+	scopeinBounds:<f1> -> y:<f0>;
+	scopeinBounds:<f2> -> x:<f0>;
 
-0 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="0"><i>VarSTE</i></td></tr>
-	<tr><td>mName=y</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-inBounds:1 -> 0:1;
+	y [ label=" <f0> VarSTE | <f1> mName = y| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
 
-1 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="1"><i>VarSTE</i></td></tr>
-	<tr><td>mName=x</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-inBounds:2 -> 1:2;
-rain [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="rain0"><i>Scope rain</i></td></tr>
-	<tr><td port="rain1">mDict[y]</td></tr>
-	<tr><td port="rain2">mDict[x]</td></tr>
-</table>>];
+	x [ label=" <f0> VarSTE | <f1> mName = x| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+	
+	scoperain [ label="<f0> Scope rain | <f1> mDict\[y\] | <f2> mDict\[x\] "];
+	scoperain:<f1> -> y:<f0>;
+	scoperain:<f2> -> x:<f0>;
 
-2 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="2"><i>VarSTE</i></td></tr>
-	<tr><td>mName=y</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-rain:3 -> 2:3;
+	y [ label=" <f0> VarSTE | <f1> mName = y| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
 
-3 [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="3"><i>VarSTE</i></td></tr>
-	<tr><td>mName=x</td></tr>
-	<tr><td>mType=BYTE</td></tr>
-	<tr><td>mBase=INVALID</td></tr>
-	<tr><td>mOffset=0</td></tr>
-</table>>];
-rain:4 -> 3:4;
-Cloud [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="Cloud0"><i>Scope Cloud</i></td></tr>
-	<tr><td port="Cloud1">mDict[inBounds]</td></tr>
-	<tr><td port="Cloud2">mDict[rain]</td></tr>
-</table>>];
+	x [ label=" <f0> VarSTE | <f1> mName = x| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+	
+	scopeCloud [ label="<f0> Scope Cloud | <f1> mDict\[inBounds\] | <f2> mDict\[rain\] "];
+	scopeCloud:<f1> -> inBounds:<f0>;
+	scopeCloud:<f2> -> rain:<f0>;
 
-inBounds [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="inBounds0"><i>MethodSTE</i></td></tr>
-	<tr><td>mName=inBounds</td></tr>
-	<tr><td>mSignature=(ByteType ByteType ) return BoolType</td></tr>
-	<tr><td port="4">mScope</td></tr>
-</table>>];
-Cloud:Cloud0 -> inBounds:inBounds0;
-inBounds:4 -> inBounds:inBounds0
+	inBounds [ label=" <f0> MethodSTE | <f1> mName = inBounds| <f2> mSignature = (ByteType ByteType ) return BoolType| <f3> mScope "];
 
-rain [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="rain0"><i>MethodSTE</i></td></tr>
-	<tr><td>mName=rain</td></tr>
-	<tr><td>mSignature=(ByteType ByteType ) return VoidType</td></tr>
-	<tr><td port="5">mScope</td></tr>
-</table>>];
-Cloud:Cloud1 -> rain:rain0;
-rain:5 -> rain:rain0
-PA4raindrop [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="PA4raindrop0"><i>Scope PA4raindrop</i></td></tr>
-</table>>];
-Program [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="Program0"><i>Scope Program</i></td></tr>
-	<tr><td port="Program1">mDict[Cloud]</td></tr>
-	<tr><td port="Program2">mDict[PA4raindrop]</td></tr>
-</table>>];
-Cloud [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="Cloud0"><i>ClassSTE</i></td></tr>
-	<tr><td>mName=Cloud</td></tr>
-	<tr><td>mMain=false</td></tr>
-	<tr><td>mSuperClass=NULL</td></tr>
-	<tr><td port="6">mScope</td></tr>
-</table>>];
-Program:Program0 -> Cloud:Cloud0;
-Cloud:6 -> Cloud:Cloud0
-PA4raindrop [ label=<
-<table border="0" cellborder="1" cellspacing="0">
-	<tr><td port="PA4raindrop1"><i>ClassSTE</i></td></tr>
-	<tr><td>mName=PA4raindrop</td></tr>
-	<tr><td>mMain=true</td></tr>
-	<tr><td>mSuperClass=NULL</td></tr>
-	<tr><td port="7">mScope</td></tr>
-</table>>];
-Program:Program1 -> PA4raindrop:PA4raindrop1;
-PA4raindrop:7 -> PA4raindrop:PA4raindrop0
+	rain [ label=" <f0> MethodSTE | <f1> mName = rain| <f2> mSignature = (ByteType ByteType ) return VoidType| <f3> mScope "];
+	
+	inBounds:<f3> -> scopeinBounds:<f0>;
+	rain:<f3> -> scoperain:<f0>;
+	scopePA4raindrop [ label="<f0> Scope PA4raindrop "];
+	
+	scopeProgram [ label="<f0> Scope Program | <f1> mDict\[Cloud\] | <f2> mDict\[PA4raindrop\] "];
+	scopeProgram:<f1> -> Cloud:<f0>;
+	scopeProgram:<f2> -> PA4raindrop:<f0>;
+
+	Cloud [ label=" <f0> ClassSTE | <f1> mName=Cloud| <f2> mMain=false| <f3> mSuperClass = NULL | <f4> mScope "];
+
+	PA4raindrop [ label=" <f0> ClassSTE | <f1> mName=PA4raindrop| <f2> mMain=true| <f3> mSuperClass = NULL | <f4> mScope "];
+	
+	Cloud:<f4>  -> scopeCloud: <f0>;
+	PA4raindrop:<f4>  -> scopePA4raindrop: <f0>;
 }

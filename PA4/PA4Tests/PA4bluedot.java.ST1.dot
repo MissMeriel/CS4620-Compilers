@@ -1,8 +1,8 @@
 digraph SymTable {
 	graph [rankdir="LR"];
 	node [shape=record];
-	0 [label=" <f0> Scope | <f1> mDict\[Simple\] "];
-	0:<f1> -> 1:<f0>;
+	blue [label=" <f0> Scope | <f1> mDict\[Simple\] "];
+	blue:<f1> -> 1:<f0>;
 	1 [label=" <f0> ClassSTE | <f1> mName = Simple| <f2> mMain = false| <f3> mSuperClass = null| <f4> mScope "];
 	1:<f4> -> 2:<f0>;
 	2 [label=" <f0> Scope | <f1> mDict\[bluedot\] "];
