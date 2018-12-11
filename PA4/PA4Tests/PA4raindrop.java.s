@@ -494,8 +494,6 @@ MJ_L16:
 	# else label for if
 MJ_L6:
 
-	jmp	MJ_L8
-
 	# done label for if
 MJ_L8:
 
@@ -601,8 +599,6 @@ MJ_L20:
 
 	# else label for if
 MJ_L3:
-
-	jmp	MJ_L5
 
 	# done label for if
 MJ_L5:

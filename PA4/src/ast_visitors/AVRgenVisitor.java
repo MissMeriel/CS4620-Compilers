@@ -303,7 +303,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
         if(node.getElseStatement() != null)
         {
 		    node.getElseStatement().accept(this);
-		    out.println("\n\tjmp	"+done_label);
+		    //out.println("\n\tjmp	"+done_label);
         }
 		out.println("\n\t# done label for if"
 			+"\n"+done_label+":"
@@ -785,11 +785,8 @@ public class AVRgenVisitor extends DepthFirstVisitor
         inLtExp(node);
         if(node.getLExp() != null)
         {   
-            if(node.getLExp() instanceof IExp){
                 node.getLExp().accept(this);
-            } else {
-                System.out.println("["+node.getLExp().getLine()+","+node.getLExp().getPos()+"] Invalid left operand type for operator <");
-            }   
+ 
         }   
         if(node.getRExp() != null)
         {   
