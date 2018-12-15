@@ -334,6 +334,10 @@ statement ::=
     {:
 	RESULT = new MeggyDelay(m.line, m.pos, e);
     :}
+    | MEGGYTONESTART:m LPAREN exp:e1 COMMA exp:e2 RPAREN SEMI
+    {:
+	RESULT = new MeggyToneStart(m.line, m.pos, e1, e2);
+    :}
     | if:i 
     {:
 	RESULT = i;
@@ -493,6 +497,38 @@ exp ::=
     {:
 	RESULT = new CallExp(e1.getLine(), e1.getPos(), e1, id.getLexeme(), p);
     :}
+    | TONE_LITERAL:tl
+    {:
+	String[] tlString = tl.lexeme.split(".");
+	String toneId = tlString[tlString.length-1];
+	int toneVal = 0;
+	if(toneId == "C3"){
+	    toneVal = 61157;
+	}else if(toneId == "Cs3"){
+	    toneVal = 57724;
+	}else if(toneId == "D3"){
+	    toneVal = 54485;
+	}else if(toneId == "Ds3"){
+	    toneVal = 51427;
+	}else if(toneId == "E3"){
+	    toneVal = 48541;
+	}else if(toneId == "F3"){
+	    toneVal = 45816;
+	}else if(toneId == "Fs3"){
+	    toneVal = 43243;
+	}else if(toneId == "G3"){
+	    toneVal = 40816;
+	}else if(toneId == "Gs3"){
+	    toneVal = 38526;
+	}else if(toneId == "A3"){
+	    toneVal = 36363;
+	}else if(toneId ==  "As3"){
+	    toneVal = 34323;
+	}else if(toneId == "B3"){
+	    toneVal = 32397;
+	}
+	RESULT = new ToneLiteral(tl.line, tl.pos, toneId, toneVal);
+    :}
     ;
 
 params ::=
@@ -522,7 +558,7 @@ additional_params ::=
     ;
 
 comments ::=
-  	comments COMMENT
+    comments COMMENT
     {:
 	RESULT = new Object();
     :}

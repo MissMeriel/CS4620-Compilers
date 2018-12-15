@@ -527,4 +527,14 @@ public class CheckTypes extends DepthFirstVisitor
       }
    }
    
+   @Override
+   public void outMeggyToneStart(MeggyToneStart node){
+      if(this.mCurrentST.getExpType(node.getToneExp()) != Type.TONE) {
+         throw new SemanticException("Invalid Tone type for MeggyToneStart", node.getLine(), node.getPos());
+      }
+      if(this.mCurrentST.getExpType(node.getDurationExp()) != Type.INT) {
+         throw new SemanticException("Invalid Duration type for MeggyToneStart", node.getLine(), node.getPos());
+      }
+      this.mCurrentST.setExpType(node, Type.VOID);
+   }
 }

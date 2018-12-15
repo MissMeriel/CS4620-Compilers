@@ -959,7 +959,42 @@ public class AVRgenVisitor extends DepthFirstVisitor
         outAssignStatement(node);
     }
     
+    @Override
+    public void visitMeggyToneStart(MeggyToneStart node)
+    {
+        inMeggyToneStart(node);
+        if(node.getToneExp() != null)
+        {
+            node.getToneExp().accept(this);
+        }
+	
+        if(node.getDurationExp() != null)
+        {
+            node.getDurationExp().accept(this);
+        }
+	out.println("\t### Meggy.toneStart(tone, time_ms) call"
+		    +"\n\tpop    r22"
+		    +"\n\tpop    r23"
+		    +"\n\tpop    r24"
+		    +"\n\tpop    r25"
+		    +"\n\tcall   _Z10Tone_Startjj"
+		    );
+        outMeggyToneStart(node);
+    }
 
+    @Override
+    public void visitToneLiteral(ToneLiteral node)
+    {
+        inToneExp(node);
+	out.println("\n\t# Push Meggy.Tone."+node.getLexeme()+" onto the stack."
+		    +"\n\tldi    r25, hi8("+node.getIntValue()
+		    +"\n\tldi    r24, hi8("+node.getIntValue()
+		    +"\n\tpush   r25"
+		    +"\n\tpush   r24"
+		    );
+	
+        outToneExp(node);
+    }
 
 
    /** A helper that trims a node's class name before printing it.
