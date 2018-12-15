@@ -1,0 +1,139 @@
+digraph ASTGraph {
+0 [ label="Program" ];
+1 [ label="MainClass" ];
+0 -> 1
+2 [ label="BlockStatement" ];
+1 -> 2
+3 [ label="MeggySetPixel" ];
+2 -> 3
+4 [ label="ByteCast" ];
+3 -> 4
+5 [ label="MulExp" ];
+4 -> 5
+6 [ label="ByteCast" ];
+5 -> 6
+7 [ label="IntLiteral\n1" ];
+6 -> 7
+8 [ label="ByteCast" ];
+5 -> 8
+9 [ label="IntLiteral\n6" ];
+8 -> 9
+10 [ label="ByteCast" ];
+3 -> 10
+11 [ label="MinusExp" ];
+10 -> 11
+12 [ label="IntLiteral\n9" ];
+11 -> 12
+13 [ label="IntLiteral\n5" ];
+11 -> 13
+14 [ label="ColorLiteral\nMeggy.Color.BLUE" ];
+3 -> 14
+15 [ label="MeggySetPixel" ];
+2 -> 15
+16 [ label="ByteCast" ];
+15 -> 16
+17 [ label="PlusExp" ];
+16 -> 17
+18 [ label="ByteCast" ];
+17 -> 18
+19 [ label="PlusExp" ];
+18 -> 19
+20 [ label="ByteCast" ];
+19 -> 20
+21 [ label="IntLiteral\n3" ];
+20 -> 21
+22 [ label="ByteCast" ];
+19 -> 22
+23 [ label="IntLiteral\n2" ];
+22 -> 23
+24 [ label="ByteCast" ];
+17 -> 24
+25 [ label="IntLiteral\n1" ];
+24 -> 25
+26 [ label="ByteCast" ];
+15 -> 26
+27 [ label="PlusExp" ];
+26 -> 27
+28 [ label="ByteCast" ];
+27 -> 28
+29 [ label="PlusExp" ];
+28 -> 29
+30 [ label="ByteCast" ];
+29 -> 30
+31 [ label="IntLiteral\n0" ];
+30 -> 31
+32 [ label="ByteCast" ];
+29 -> 32
+33 [ label="IntLiteral\n0" ];
+32 -> 33
+34 [ label="ByteCast" ];
+27 -> 34
+35 [ label="IntLiteral\n7" ];
+34 -> 35
+36 [ label="ColorLiteral\nMeggy.Color.RED" ];
+15 -> 36
+37 [ label="MeggySetPixel" ];
+2 -> 37
+38 [ label="ByteCast" ];
+37 -> 38
+39 [ label="MinusExp" ];
+38 -> 39
+40 [ label="ByteCast" ];
+39 -> 40
+41 [ label="MinusExp" ];
+40 -> 41
+42 [ label="ByteCast" ];
+41 -> 42
+43 [ label="IntLiteral\n3" ];
+42 -> 43
+44 [ label="ByteCast" ];
+41 -> 44
+45 [ label="IntLiteral\n2" ];
+44 -> 45
+46 [ label="ByteCast" ];
+39 -> 46
+47 [ label="IntLiteral\n1" ];
+46 -> 47
+48 [ label="ByteCast" ];
+37 -> 48
+49 [ label="PlusExp" ];
+48 -> 49
+50 [ label="ByteCast" ];
+49 -> 50
+51 [ label="MinusExp" ];
+50 -> 51
+52 [ label="ByteCast" ];
+51 -> 52
+53 [ label="IntLiteral\n0" ];
+52 -> 53
+54 [ label="ByteCast" ];
+51 -> 54
+55 [ label="IntLiteral\n7" ];
+54 -> 55
+56 [ label="ByteCast" ];
+49 -> 56
+57 [ label="IntLiteral\n7" ];
+56 -> 57
+58 [ label="ColorLiteral\nMeggy.Color.YELLOW" ];
+37 -> 58
+59 [ label="MeggySetPixel" ];
+2 -> 59
+60 [ label="ByteCast" ];
+59 -> 60
+61 [ label="MulExp" ];
+60 -> 61
+62 [ label="ByteCast" ];
+61 -> 62
+63 [ label="IntLiteral\n3" ];
+62 -> 63
+64 [ label="ByteCast" ];
+61 -> 64
+65 [ label="IntLiteral\n2" ];
+64 -> 65
+66 [ label="ByteCast" ];
+59 -> 66
+67 [ label="IntLiteral\n5" ];
+66 -> 67
+68 [ label="ColorLiteral\nMeggy.Color.WHITE" ];
+59 -> 68
+}

@@ -1,0 +1,30 @@
+digraph ASTGraph {
+	node [shape=record];
+	graph [ rankdir="LR"];
+	scoperain [ label="<f0> Scope rain | <f1> mDict\[y\] | <f2> mDict\[x\] "];
+	scoperain:<f1> -> y:<f0>;
+	scoperain:<f2> -> x:<f0>;
+
+	y [ label=" <f0> VarSTE | <f1> mName = y| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+
+	x [ label=" <f0> VarSTE | <f1> mName = x| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+	
+	scopeCloud [ label="<f0> Scope Cloud | <f1> mDict\[rain\] "];
+	scopeCloud:<f1> -> rain:<f0>;
+
+	rain [ label=" <f0> MethodSTE | <f1> mName = rain| <f2> mSignature = (ByteType ByteType ) return VoidType| <f3> mScope "];
+	
+	rain:<f3> -> scoperain:<f0>;
+	scopePA4raindropSimpler [ label="<f0> Scope PA4raindropSimpler "];
+	
+	scopeProgram [ label="<f0> Scope Program | <f1> mDict\[PA4raindropSimpler\] | <f2> mDict\[Cloud\] "];
+	scopeProgram:<f1> -> PA4raindropSimpler:<f0>;
+	scopeProgram:<f2> -> Cloud:<f0>;
+
+	PA4raindropSimpler [ label=" <f0> ClassSTE | <f1> mName=PA4raindropSimpler| <f2> mMain=true| <f3> mSuperClass = NULL | <f4> mScope "];
+
+	Cloud [ label=" <f0> ClassSTE | <f1> mName=Cloud| <f2> mMain=false| <f3> mSuperClass = NULL | <f4> mScope "];
+	
+	PA4raindropSimpler:<f4>  -> scopePA4raindropSimpler: <f0>;
+	Cloud:<f4>  -> scopeCloud: <f0>;
+}

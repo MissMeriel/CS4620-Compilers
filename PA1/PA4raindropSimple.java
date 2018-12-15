@@ -9,7 +9,7 @@
 
 import meggy.Meggy;
 
-class PA4raindrop {
+class PA4raindropSimple {
 
     public static void main(String[] whatever){
 

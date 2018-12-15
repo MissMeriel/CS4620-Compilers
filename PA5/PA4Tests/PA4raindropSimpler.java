@@ -9,7 +9,7 @@
 
 import meggy.Meggy;
 
-class PA4raindrop {
+class PA4raindropSimpler {
 
     public static void main(String[] whatever){
 
@@ -23,13 +23,8 @@ class Cloud {
     
     public void rain(byte x, byte y) {
 
-        if (this.inBounds(x, y)) {
+        if (((byte)(0-1) < y)) {
             Meggy.setPixel(x, y, Meggy.Color.BLUE);
         } else {}
     }
-    
-    public boolean inBounds(byte x, byte y) {
-        return ((byte)(0-1) < y) && (y < (byte)8);
-    }
-
 }

@@ -3,7 +3,6 @@ import meggy.Meggy;
 class PA5Test1 {
 
     public static void main(String[] args) {
-		boolean bool;
 		int ms;
 		Meggy.Tone tone;
 		bool = true;

@@ -1,0 +1,30 @@
+digraph ASTGraph {
+	node [shape=record];
+	graph [ rankdir="LR"];
+	scopebluedot [ label="<f0> Scope bluedot | <f1> mDict\[y\] | <f2> mDict\[x\] "];
+	scopebluedot:<f1> -> y:<f0>;
+	scopebluedot:<f2> -> x:<f0>;
+
+	y [ label=" <f0> VarSTE | <f1> mName = y| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+
+	x [ label=" <f0> VarSTE | <f1> mName = x| <f2> mType = BYTE| <f3> mBase = INVALID| <f4> mOffset = 0"];
+	
+	scopeSimple [ label="<f0> Scope Simple | <f1> mDict\[bluedot\] "];
+	scopeSimple:<f1> -> bluedot:<f0>;
+
+	bluedot [ label=" <f0> MethodSTE | <f1> mName = bluedot| <f2> mSignature = (ByteType ByteType ) return VoidType| <f3> mScope "];
+	
+	bluedot:<f3> -> scopebluedot:<f0>;
+	scopePA4bluedot [ label="<f0> Scope PA4bluedot "];
+	
+	scopeProgram [ label="<f0> Scope Program | <f1> mDict\[Simple\] | <f2> mDict\[PA4bluedot\] "];
+	scopeProgram:<f1> -> Simple:<f0>;
+	scopeProgram:<f2> -> PA4bluedot:<f0>;
+
+	Simple [ label=" <f0> ClassSTE | <f1> mName=Simple| <f2> mMain=false| <f3> mSuperClass = NULL | <f4> mScope "];
+
+	PA4bluedot [ label=" <f0> ClassSTE | <f1> mName=PA4bluedot| <f2> mMain=true| <f3> mSuperClass = NULL | <f4> mScope "];
+	
+	Simple:<f4>  -> scopeSimple: <f0>;
+	PA4bluedot:<f4>  -> scopePA4bluedot: <f0>;
+}
