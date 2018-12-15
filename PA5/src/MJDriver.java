@@ -72,10 +72,18 @@ public class MJDriver {
 
           // create the symbol table
           BuildSymTable stVisitor = new BuildSymTable();
-          ast_root.accept(stVisitor);
+	  try{
+	    ast_root.accept(stVisitor);
+	  }catch(Exception e){
+	    //System.err.println("Errors found while building symbol table");
+	    System.err.println(e.getMessage());
+	    //e.printStackTrace();
+	    System.exit(0);
+	  }
           symtable.SymTable globalST = stVisitor.getSymTable();
-		  System.out.println("\n\nFINISHED SYMBOL TABLE:");
-		  globalST.printST();          
+	  //System.out.println("\n\nFINISHED SYMBOL TABLE:");
+	  //globalST.printST();
+	  System.out.println("\n");
           // print ast to file
           java.io.PrintStream STout =
             new java.io.PrintStream(

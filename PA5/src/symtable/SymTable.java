@@ -30,46 +30,46 @@ public class SymTable {
 	private int progIndex;
 	private PrintStream out;
 
-    public SymTable(HashMap<Node, Type> st) {
-		this.mExpType = st;
-		this.mScopeStack = new Stack<Scope>();
-    }
-	
-	public SymTable(HashMap<Node, Type> st, Stack<Scope> ms){
-		this.mExpType = st;
-		this.mScopeStack = ms;
-	}
-
-	public SymTable clone(){
-		return new SymTable((HashMap<Node, Type>)this.mExpType.clone(), (Stack<Scope>)this.mScopeStack.clone());
-	}
+	    public SymTable(HashMap<Node, Type> st) {
+			this.mExpType = st;
+			this.mScopeStack = new Stack<Scope>();
+	    }
+		
+	    public SymTable(HashMap<Node, Type> st, Stack<Scope> ms){
+		    this.mExpType = st;
+		    this.mScopeStack = ms;
+	    }
+	    
+	    public SymTable clone(){
+		    return new SymTable((HashMap<Node, Type>)this.mExpType.clone(), (Stack<Scope>)this.mScopeStack.clone());
+	    }
     
-    public void setExpType(Node exp, Type t){
-    	this.mExpType.put(exp, t);
-    }
-    
-    public Type getExpType(Node exp) {
-    	return this.mExpType.get(exp);
-    }
+	    public void setExpType(Node exp, Type t){
+		this.mExpType.put(exp, t);
+	    }
+	    
+	    public Type getExpType(Node exp) {
+		return this.mExpType.get(exp);
+	    }
 
-	public void addScope(Scope s){
-		mScopeStack.push(s);
-	}
+	    public void addScope(Scope s){
+		    mScopeStack.push(s);
+	    }
 
-	public Scope removeScope(){
-		return mScopeStack.pop();
-	}
+	    public Scope removeScope(){
+		    return mScopeStack.pop();
+	    }
 
-	public HashMap<Node, Type> getExpTypeMap(){
-        Set keyset = mExpType.keySet();
-		Iterator<Node> iter = keyset.iterator();
-		while(iter.hasNext()){
-			Node n = iter.next();
-			Type t = mExpType.get(n);
-			System.out.println(n.getClass().toString()+" "+t.toString());
-		}
-		return mExpType;
-	}
+	    public HashMap<Node, Type> getExpTypeMap(){
+	    Set keyset = mExpType.keySet();
+		    Iterator<Node> iter = keyset.iterator();
+		    while(iter.hasNext()){
+			    Node n = iter.next();
+			    Type t = mExpType.get(n);
+			    //System.out.println(n.getClass().toString()+" "+t.toString());
+		    }
+		    return mExpType;
+	    }
 /*
  */
 
@@ -78,20 +78,19 @@ public class SymTable {
      * look in enclosing scopes.
      * Returns null if scope is not found.
      */
-    public Scope lookupScope(String classType) {
+	    public Scope lookupScope(String classType) {
 			//looks at other scopees if no return from current scope
 			Iterator<Scope> iter = mScopeStack.iterator();
 			while(iter.hasNext()){
 				Scope scope = iter.next();
-				printScope(scope);
 				if(scope.getName() != null && scope.getName() == classType){
 						return scope;
 				}
 			}
 			return null;
-		}
+	    }
 
-	public Scope lookupClosestScopeWith(String s) {
+	    public Scope lookupClosestScopeWith(String s) {
 		//looks at other scopees if no return from current scope
 		Iterator<Scope> iter = mScopeStack.iterator();
 		while(iter.hasNext()){
@@ -102,7 +101,7 @@ public class SymTable {
 			}
 		}
 		return null;
-	}
+	    }
 
 
 	public Scope peek(){
@@ -207,9 +206,6 @@ public class SymTable {
    to generate start of .dot file, output the dot output for the node.
    */
 	public void outputDot(PrintStream ps){
-		//System.out.println("stack size: "+ mScopeStack.size());
-		System.out.println("PRINTING SYMBOL TABLE");
-		this.printST();
 		this.out = ps;
 		out.println("digraph ASTGraph {");
 		//out.println("\tgraph [pad=\"0.5\", nodesep=\"0.5\", ranksep=\"2\"];");

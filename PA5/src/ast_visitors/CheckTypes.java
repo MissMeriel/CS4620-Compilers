@@ -182,20 +182,20 @@ public class CheckTypes extends DepthFirstVisitor
 
    @Override
    public void outColorExp(ColorLiteral node){
-     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
+/*     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
        throw new SemanticException(
          "Invalid type for ColorLiteral",
          node.getLine(), node.getPos());
-     }
+     }*/
      this.mCurrentST.setExpType(node, Type.COLOR);
    }
 
-	@Override
+   @Override
    public void outColorType(ColorType  node){
-     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
-      throw new SemanticException("Invalid type for ColorType", node.getLine(), node.getPos());
-     }
-     this.mCurrentST.setExpType(node, Type.COLOR);
+      if(this.mCurrentST.getExpType(node) != Type.COLOR) {
+         throw new SemanticException("Invalid type for ColorType", node.getLine(), node.getPos());
+      }
+      this.mCurrentST.setExpType(node, Type.COLOR);
    }
    
 ///////////////////////////////////////////////////////////////
@@ -244,22 +244,20 @@ public class CheckTypes extends DepthFirstVisitor
      this.mCurrentST.setExpType(node, Type.VOID);
    }
 
-	@Override
-	public void outMethodDecl(MethodDecl node){
-	System.out.println("MethodDecl: "+node.getName());
-	Type returnType = this.mCurrentST.getExpType(node.getExp());
-	if(node.getExp() == null){
-		returnType = Type.VOID;
-	}
-	Type declType = VarSTE.iTypeToType(node.getType());
-	System.out.println("returnType: "+returnType+"; declType: "+declType);
-     if(returnType != declType){
-       throw new SemanticException(
-         "Invalid type for MethodDecl",
-         node.getLine(), node.getPos());
-     }
-     this.mCurrentST.setExpType(node, declType); 
-	}
+   @Override
+   public void outMethodDecl(MethodDecl node){
+      //System.out.println("Check type of MethodDecl: "+node.getName());
+      Type returnType = this.mCurrentST.getExpType(node.getExp());
+      if(node.getExp() == null){
+         returnType = Type.VOID;
+      }
+      Type declType = VarSTE.iTypeToType(node.getType());
+      //System.out.println("\treturnType: "+returnType+"; declType: "+declType);
+      if(returnType != declType){
+         throw new SemanticException("Invalid type for MethodDecl", node.getLine(), node.getPos());
+      }
+         this.mCurrentST.setExpType(node, declType); 
+   }
 
 	@Override
 	public void outTopClassDecl(TopClassDecl node){
@@ -302,20 +300,18 @@ public class CheckTypes extends DepthFirstVisitor
    
    @Override
    public void outIdLiteral(IdLiteral node){
-   VarSTE ste = (VarSTE) this.mCurrentST.lookup(node.getLexeme());
-   Type steType = ste.getType();
-    Type t = this.mCurrentST.getExpType(node);
-    //System.out.println("IdLiteral type: "+t.toString());
-   if(t == null){
-           //say something
-           this.mCurrentST.setExpType(node, steType);
-   } else if (t != steType) {
-    System.out.println("Type mismatch for "+node.getLexeme()+": quicklookup Type: "+t.toString()+"; STE type: "+steType.toString());
-   this.mCurrentST.setExpType(node, steType);
-   throw new SemanticException(
-    "Invalid type for IdLiteral "+node.getLexeme(),
-    node.getLine(), node.getPos());
-   }
+      VarSTE ste = (VarSTE) this.mCurrentST.lookup(node.getLexeme());
+      Type steType = ste.getType();
+       Type t = this.mCurrentST.getExpType(node);
+       //System.out.println("IdLiteral type: "+t.toString());
+      if(t == null){
+              //say something
+              this.mCurrentST.setExpType(node, steType);
+      } else if (t != steType) {
+         System.out.println("Type mismatch for "+node.getLexeme()+": quicklookup Type: "+t.toString()+"; STE type: "+steType.toString());
+         this.mCurrentST.setExpType(node, steType);
+         throw new SemanticException("Invalid type for IdLiteral "+node.getLexeme(),node.getLine(), node.getPos());
+      }
    }
 
 
@@ -341,66 +337,41 @@ public class CheckTypes extends DepthFirstVisitor
    
    @Override
    public void outCallExp(CallExp node){
-   MethodSTE methodSTE = (MethodSTE) mCurrentST.lookup(node.getId().trim());
-   System.out.println("callExp.getId(): "+node.getId());
-   //System.out.println("null ste? "+(methodSTE == null));
-   //System.out.println("null type? "+(methodSTE.getType() == null));
-           mCurrentST.setExpType(node, methodSTE.getType());
-   /*     if(this.mCurrentST.getExpType(node) != Type.VOID) {
-   throw new SemanticException(
-    "Invalid type for CallExp",
-    node.getLine(), node.getPos());
-   }*/
-   NewExp newExp = null;
-   ThisLiteral thislit = null;
-   Scope scope = null;
-   MethodSTE varSTE = (MethodSTE) mCurrentST.lookup(node.getId());
-   if(node.getExp() instanceof NewExp){
-           newExp = (NewExp) node.getExp();
-           scope = mCurrentST.lookupClosestScope(newExp.getId());
-           System.out.println("Scope: "+scope.getName());
-           System.out.println("NewExp: "+newExp.getId());
-   } else if (node.getExp() instanceof ThisLiteral){ //ThisLiteral
-           thislit = (ThisLiteral) node.getExp();
-           scope = mCurrentST.peek();
-           System.out.println("Scope: "+scope.getName());
-           System.out.println("ThisLiteral");//+scope.lookupInnermost("this"));
-   }
-   
-   if(varSTE == null) {
-   throw new SemanticException(
-    "Method "+node.getId()+" does not exist in class type "+scope.getName(),
-    node.getLine(), node.getPos());
-   }
-   //this.mCurrentST.setExpType(node, Type.VOID);
-   }
-
-/////////////////////////////////////////////////////////////
-
-	@Override
-	public void visitColorLiteral(ColorLiteral node){
-		inColorExp(node);
-		outColorExp(node);
-/*     if(this.mCurrentST.getExpType(node) != Type.COLOR) {
-       throw new SemanticException(
-         "Invalid type for ",
-         node.getLine(), node.getPos());
-     }
-     this.mCurrentST.setExpType(node, Type.COLOR);
-*/	}
-
-/////////////////////////////////////////////////////////////
-
-
-   /*
-   @Override
-   public void out(node){
-      if(this.mCurrentST.getExpType(node) != Type.VOID) {
-         throw new SemanticException("Invalid type for ", node.getLine(), node.getPos());
+      MethodSTE methodSTE = (MethodSTE) mCurrentST.lookup(node.getId().trim());
+      //System.out.println("\ncallExp.getId(): "+node.getId());
+      //System.out.println("null ste? "+(methodSTE == null));
+      //System.out.println("null type? "+(methodSTE.getType() == null));
+      mCurrentST.setExpType(node, methodSTE.getType());
+      NewExp newExp = null;
+      ThisLiteral thislit = null;
+      Scope scope = null;
+      if(node.getExp() instanceof NewExp){
+              newExp = (NewExp) node.getExp();
+              scope = mCurrentST.lookupClosestScope(newExp.getId());
+              //System.out.println("\tExp: NewExp: "+newExp.getId());
+              //System.out.println("\tScope: "+scope.getName());
+      } else if (node.getExp() instanceof ThisLiteral){
+              thislit = (ThisLiteral) node.getExp();
+              scope = mCurrentST.peek();
+              //System.out.println("\tExp: ThisLiteral");
+              //System.out.println("\tScope: "+scope.getName());
       }
-      this.mCurrentST.setExpType(node, Type.VOID);
+      if(methodSTE == null) {
+         throw new SemanticException("Method "+node.getId()+" does not exist in class type "+scope.getName(), node.getLine(), node.getPos());
+      }
+      String r = methodSTE.getReturn();
+      //System.out.println("\tMethod "+node.getId()+" return: "+r);
+      this.mCurrentST.setExpType(node, Type.stringToType(r));
    }
-*/
+
+/////////////////////////////////////////////////////////////
+
+   @Override
+   public void visitColorLiteral(ColorLiteral node){
+           inColorExp(node);
+           outColorExp(node);
+   }
+
 /////////////////////////////////////////////////////////////
 
    @Override
@@ -412,8 +383,6 @@ public class CheckTypes extends DepthFirstVisitor
 	System.out.println("neither: "+(expType != Type.INT && expType != Type.BYTE));
 */
       if( expType != Type.INT && expType != Type.BYTE) {
-          System.out.println("inside if check");
-          System.out.println("neither: "+(expType != Type.INT && expType != Type.BYTE));
          throw new SemanticException(
            "Invalid exp type "+expType.toString()+" for ByteCast",
            node.getLine(), node.getPos());
@@ -427,6 +396,11 @@ public class CheckTypes extends DepthFirstVisitor
          throw new SemanticException("Invalid type for ByteType", node.getLine(), node.getPos());
       }
       this.mCurrentST.setExpType(node, Type.BYTE);
+   }
+   
+   @Override
+   public void outIntType(IntType node){
+      this.mCurrentST.setExpType(node, Type.INT);
    }
 
 
@@ -474,9 +448,9 @@ public class CheckTypes extends DepthFirstVisitor
 
    @Override
    public void outBoolType(BoolType node){
-      if(this.mCurrentST.getExpType(node) != Type.BOOL) {
+/*      if(this.mCurrentST.getExpType(node) != Type.BOOL) {
          throw new SemanticException("Invalid type for BoolType", node.getLine(), node.getPos());
-      }
+      }*/
       this.mCurrentST.setExpType(node, Type.BOOL);
    }
 
@@ -495,7 +469,6 @@ public class CheckTypes extends DepthFirstVisitor
    public void outVarDecl(VarDecl node){
       //if parent is MethodDecl, check enclosing scope
       //if parent is ClassDecl, just check current scope
-      this.mCurrentST.printST();
       Node parent = node.parent();
       Scope classScope = this.mCurrentST.lookupClosestScope("TopClassDecl");
       if(parent instanceof MethodDecl) {
@@ -529,12 +502,50 @@ public class CheckTypes extends DepthFirstVisitor
    
    @Override
    public void outMeggyToneStart(MeggyToneStart node){
-      if(this.mCurrentST.getExpType(node.getToneExp()) != Type.TONE) {
-         throw new SemanticException("Invalid Tone type for MeggyToneStart", node.getLine(), node.getPos());
+      Type t = this.mCurrentST.getExpType(node.getToneExp());
+      if(t != Type.TONE) {
+         throw new SemanticException("Invalid Tone type "+t.toString()+" for MeggyToneStart", node.getLine(), node.getPos());
       }
+      Type t2 = this.mCurrentST.getExpType(node.getDurationExp());
       if(this.mCurrentST.getExpType(node.getDurationExp()) != Type.INT) {
-         throw new SemanticException("Invalid Duration type for MeggyToneStart", node.getLine(), node.getPos());
+         throw new SemanticException("Invalid Duration type "+t2.toString()+" for MeggyToneStart", node.getLine(), node.getPos());
       }
       this.mCurrentST.setExpType(node, Type.VOID);
+   }
+
+   @Override   
+   public void outMeggyCheckButton(MeggyCheckButton node)
+   {
+      Type t = this.mCurrentST.getExpType(node.getExp());
+      if(t != Type.BUTTON){
+         throw new SemanticException("Invalid exp type "+t.toString()+" for MeggyCheckButton", node.getLine(), node.getPos());
+      }
+      this.mCurrentST.setExpType(node, Type.BOOL);
+   }
+
+   @Override
+   public void outToneExp(ToneLiteral node){
+      this.mCurrentST.setExpType(node, Type.TONE);
+   }
+   
+   @Override
+   public void outButtonExp(ButtonLiteral node) {
+      this.mCurrentST.setExpType(node, Type.BUTTON);
+   }
+
+   @Override
+   public void outNotExp(NotExp node)
+   {
+      Type t = this.mCurrentST.getExpType(node.getExp());
+      if(t != Type.BOOL){
+         throw new SemanticException("Invalid exp type "+t.toString()+" for NotExp", node.getLine(), node.getPos());
+      }
+      this.mCurrentST.setExpType(node, Type.BOOL);
+   }
+   
+   @Override
+   public void outClassType(ClassType node)
+   {
+      this.mCurrentST.setExpType(node, Type.CLASS);
    }
 }

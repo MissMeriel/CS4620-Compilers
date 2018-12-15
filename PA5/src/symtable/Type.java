@@ -1,7 +1,6 @@
 package symtable;
 
 import exceptions.*;
-
 import java.util.*;
 
 public class Type
@@ -89,5 +88,38 @@ public class Type
     
 /*  
 */
+
+
+  public static Type stringToType(String str) {
+    if(str.equalsIgnoreCase("INT")) {
+      return Type.INT;
+    }
+    if(str.equalsIgnoreCase("BOOL")){
+      return BOOL;
+    }
+    if(str.equalsIgnoreCase("BYTE")) {
+      return BYTE;
+    }
+    if(str.equalsIgnoreCase("COLOR")) {
+      return COLOR;
+    }
+    if(str.equalsIgnoreCase("BUTTON"))
+    {
+      return BUTTON;
+    }
+    if(str.equalsIgnoreCase("TONE"))
+    {
+      return TONE;
+    }
+    if(str.equalsIgnoreCase("CLASS"))
+    {
+      return CLASS;
+    }
+    if(str.equalsIgnoreCase("MAINCLASS"))
+    {
+      return MAINCLASS;
+    }
+    return null;
+  }
 
 }

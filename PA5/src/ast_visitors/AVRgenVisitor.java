@@ -36,7 +36,6 @@ public class AVRgenVisitor extends DepthFirstVisitor
     {   
         this.out = pw; 
         this.st = st;
-		st.printST(); 
         this.nodeStack = new Stack<Integer>();
     } 
 
@@ -385,7 +384,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
             node.getRExp().accept(this);
         }
 	//if lexp is BYTE, convert to INT
-	if(st.getExpType(node.getLExp()) == Type.BYTE){
+	if(st.getExpType(node.getLExp()).getAVRTypeSize()  == 1){
 	    out.println(" # load a one byte expression off stack"
 		    +"\n\tpop    r18");
 	} else {
@@ -394,7 +393,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		    +"\n\tpop    r19");
 	}
 	//if rexp is BYTE, convert to INT
-	if(st.getExpType(node.getRExp()) == Type.BYTE){
+	if(st.getExpType(node.getRExp()).getAVRTypeSize() == 1){
 	    out.println(" # load a one byte expression off stack"
 		    +"\n\tpop    r24");
 	}  else {
@@ -402,7 +401,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 		    +"\n\tpop    r24"
 		    +"\n\tpop    r25");
 	}
-	if(st.getExpType(node.getRExp()) == Type.BYTE){
+	if(st.getExpType(node.getRExp()).getAVRTypeSize() == 1){
 	    	    out.println("\t# promoting a byte to an int"
 			+"\n\ttst     r24"
 			+"\n\tbrlt     MJ_L"+(++breakCount)
@@ -413,7 +412,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\nMJ_L"+(++breakCount)+":"
 			);
 	}
-	if(st.getExpType(node.getLExp()) == Type.BYTE){
+	if(st.getExpType(node.getLExp()).getAVRTypeSize()  == 1){
 	    	    out.println("\t# promoting a byte to an int"
 			+"\n\ttst     r18"
 			+"\n\tbrlt     MJ_L"+(++breakCount)
@@ -424,7 +423,6 @@ public class AVRgenVisitor extends DepthFirstVisitor
 			+"\nMJ_L"+(++breakCount)+":"
 			);
 	}
-
 		out.println("\n\t#do INT sub operation"
 			+"\n\tsub    r24, r18"
 			+"\n\tsbc    r25, r19"
@@ -501,9 +499,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
     @Override
 	/** containing class important */
     public void visitMethodDecl(MethodDecl node) {   
-		//bring scope to top of scope stack
-		this.st.pushScope(node.getName());
-		//get unique function name
+	//bring scope to top of scope stack
+	this.st.pushScope(node.getName());
+	//get unique function name
         String methodName = "";
         if(node.parent() != null){
 	    if(node.parent() instanceof TopClassDecl){
@@ -513,7 +511,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 	    }
         }
         methodName += "_" + node.getName();
-		// function start
+	// function start
         out.println("\t.text"
                 +"\n.global "+methodName
                 +"\n\t.type  "+methodName+", @function"
@@ -522,9 +520,9 @@ public class AVRgenVisitor extends DepthFirstVisitor
                 +"\n\tpush   r28"
                 +"\n\t# make space for locals and params"
                 +"\n\tldi    r30, 0");
-        LinkedList<Formal> fs = node.getFormals();
 	out.println("\tpush   r30"
 		  +"\n\tpush   r30");
+        LinkedList<Formal> fs = node.getFormals();
         for(int i = 0; i < fs.size(); i++){
 	    Formal f = fs.get(i);
 	    int size = this.st.getExpType(f).getAVRTypeSize();
@@ -536,7 +534,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
 	for(int i = 0; i < vds.size(); i++){
 	    VarDecl vd = vds.get(i);
 	    int size = this.st.getExpType(vd).getAVRTypeSize();
-	    for (int j = size; j >0; j--){
+	    for (int j = size; j > 0; j--){
 		out.println("\tpush   r30");
 	    }
         }
@@ -548,7 +546,7 @@ public class AVRgenVisitor extends DepthFirstVisitor
             +"\n\t# save off parameters");
 	//start at 25 & 24 for this, decrement
 	//1 or 2 registers loaded depends on type
-        int avrReg = 25;// + (fs.size()+1)*2 + 1;
+        int avrReg = 25;
         int offset = 3;
         out.println("\n\tstd    Y + 2, r"+avrReg);
         avrReg--;
@@ -559,31 +557,31 @@ public class AVRgenVisitor extends DepthFirstVisitor
             Formal arg = iter.next();
             if(this.st.getExpType(arg) == Type.INT ){
                 //pop 2 bytes off stack
-				out.println("\tstd    Y + "+(offset+1)+", r"+avrReg);
-				avrReg--;
-				out.println("\tstd    Y + "+(offset)+", r"+avrReg);
-				//update ST with offset
-				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
-				ste.setBase("Y");
-				ste.setOffset(offset);
-				avrReg--;
+		out.println("\tstd    Y + "+(offset+1)+", r"+avrReg);
+		avrReg--;
+		out.println("\tstd    Y + "+(offset)+", r"+avrReg);
+		//update ST with offset
+		VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
+		ste.setBase("Y");
+		ste.setOffset(offset);
+		avrReg--;
                 offset += 2;
             }else{
                 //pop 1 byte off stack
 		avrReg--;
                 out.println("\tstd    Y + "+offset+", r"+avrReg);
-				VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
-				ste.setBase("Y");
-				ste.setOffset(offset);
+		VarSTE ste = (VarSTE) this.st.lookup(arg.getName());
+		ste.setBase("Y");
+		ste.setOffset(offset);
                 avrReg --;
                 offset++;
-			}
+	    }
         }
         out.print("/* done with function "+methodName+" prologue */\n");
         inMethodDecl(node);
 
         if(node.getType() != null) {
-			node.getType().accept(this);
+	    node.getType().accept(this);
         }
     	{   
     	List<Formal> copy = new ArrayList<Formal>(node.getFormals());
@@ -950,11 +948,11 @@ public class AVRgenVisitor extends DepthFirstVisitor
 	}
 	out.println("\t# store rhs into var "+node.getId());
 	if(ste.getType().getAVRTypeSize() == 2){
-	    out.print("\tstd    "+ste.getBase()+" + "+(ste.getOffset()+1)+", r25"
-		+"\n\tstd    "+ste.getBase()+"+"+ste.getOffset()+", r24"
+	    out.print("\tstd      "+ste.getBase()+" + "+(ste.getOffset()+1)+", r25"
+		+"\n\tstd      "+ste.getBase()+" + "+ste.getOffset()+", r24"
 	    );
 	} else {
-	    out.print("\tstd	"+ste.getBase()+"+"+ste.getOffset()+", r24");
+	    out.print("\tstd	"+ste.getBase()+" + "+ste.getOffset()+", r24");
 	}
         outAssignStatement(node);
     }
@@ -987,8 +985,8 @@ public class AVRgenVisitor extends DepthFirstVisitor
     {
         inToneExp(node);
 	out.println("\n\t# Push Meggy.Tone."+node.getLexeme()+" onto the stack."
-		    +"\n\tldi    r25, hi8("+node.getIntValue()
-		    +"\n\tldi    r24, hi8("+node.getIntValue()
+		    +"\n\tldi    r25, hi8("+node.getIntValue()+")"
+		    +"\n\tldi    r24, hi8("+node.getIntValue()+")"
 		    +"\n\tpush   r25"
 		    +"\n\tpush   r24"
 		    );

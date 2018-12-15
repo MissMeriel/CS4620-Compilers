@@ -75,4 +75,11 @@ public class MethodSTE extends STE{
 	public void setmScope(Scope scope){
 		this.mScope = scope;
 	}
+
+	public String getReturn(){
+		String[] s = mSignature.split(" ");
+		String r = s[s.length-1];
+		r = r.replace("Type", "");
+		return r;
+	}
 }

@@ -199,7 +199,7 @@ method_decl ::=
 		sl.add(is);
 	    }
 	}
-	System.out.println("method decl "+id.getLexeme());
+	//System.out.println("method decl "+id.getLexeme());
 	RESULT = new MethodDecl(p.line, p.pos, t, id.getLexeme(), f, vdl, sl, r); 
     :}
     ;
@@ -226,14 +226,14 @@ var_decl_list ::=
     var_decl_list:vdl type:t identifier:id SEMI
     {:
 //    var_decl_list:vdl var_decl:vd
-	System.out.println("var decl "+t.getClass().toString()+" "+id.getLexeme());
+	//System.out.println("var decl "+t.getClass().toString()+" "+id.getLexeme());
 	VarDecl vd = new VarDecl(t.getLine(), t.getPos(), t, id.getLexeme());
 	vdl.add(vd);
 	RESULT = vdl;
     :}
     | /*nothing*/
     {:
-	System.out.println("start var decls");
+	//System.out.println("start var decls");
 	RESULT = new LinkedList<VarDecl>();
     :}
     ;
@@ -241,7 +241,7 @@ var_decl_list ::=
 var_decl ::=
     type:t identifier:id SEMI
     {:
-	System.out.println("var decl "+t.getClass().toString()+" "+id.getLexeme());
+	//System.out.println("var decl "+t.getClass().toString()+" "+id.getLexeme());
 	RESULT = new VarDecl(t.getLine(), t.getPos(), t, id.getLexeme());
     :}
     ;
@@ -303,7 +303,7 @@ type ::=
     :}
     | identifier:id
     {:
-	System.out.println("type id "+id.getLexeme());
+	//System.out.println("type id "+id.getLexeme());
 	RESULT = new ClassType(id.getLine(), id.getPos(), id.getLexeme());
     :}
     ;
@@ -316,13 +316,13 @@ statement_list ::=
     :}
     | /* Empty */
     {:
-	System.out.println("start statement list");
+	//System.out.println("start statement list");
 	RESULT = new LinkedList<IStatement>();
     :}
     ;
 
 statement ::=
-    LBRACE:lb statement_list:list RBRACE
+    LBRACE:lb comments statement_list:list RBRACE
     {:
 	RESULT = new BlockStatement(lb.line, lb.pos, list);
     :}
@@ -352,7 +352,7 @@ statement ::=
     :}
     | identifier:id ASSIGN compstart:e SEMI
     {:
-	System.out.println("assign "+ id.getLexeme()+ " to "+e.getClass().toString());
+	//System.out.println("assign "+ id.getLexeme()+ " to "+e.getClass().toString());
 	RESULT = new AssignStatement(id.getLine(), id.getPos(), id.getLexeme(), e);
     :}
     ;
@@ -360,13 +360,13 @@ statement ::=
 assignment ::=
     identifier:id ASSIGN compstart:e SEMI
     {:
-	System.out.println("assign "+ id.getLexeme()+ " to "+e.getClass().toString());
+	//System.out.println("assign "+ id.getLexeme()+ " to "+e.getClass().toString());
 	RESULT = new AssignStatement(id.getLine(), id.getPos(), id.getLexeme(), e);
     :}
     ;
     
 if ::=
-    IF:i LPAREN compstart:e RPAREN statement:s1 comments else:s2
+    IF:i LPAREN compstart:e RPAREN comments statement:s1 comments else:s2
     {:
 	RESULT = new IfStatement(i.line, i.pos, e, s1, s2);
     :}
@@ -388,9 +388,17 @@ compstart ::=
     {:
 	RESULT = new AndExp(a.line, a.pos, e1, e2);
     :}
+    | eqexp:e1 AND:a compstart:e2
+    {:
+	RESULT = new AndExp(a.line, a.pos, e1, e2);
+    :}
     | eqexp:e
     {:
 	RESULT = e;
+    :}
+    | NOT:n compstart:e
+    {:
+	RESULT = new NotExp(n.line, n.pos, e);
     :}
     ;
 
@@ -472,17 +480,13 @@ exp ::=
     {:
 	RESULT = new FalseLiteral(t.line, t.pos, t.lexeme, t.value);
     :}
-    | NOT:n exp:e
-    {:
-	RESULT = new NotExp(n.line, n.pos, e);
-    :}
     | LPAREN:lp compstart:e RPAREN
     {:
 	RESULT = e;
     :}
     | identifier:id
     {:
-	System.out.println("exp id "+id.getLexeme());
+	//System.out.println("exp id "+id.getLexeme());
 	RESULT = id;
     :}
     | THIS:t
@@ -499,32 +503,33 @@ exp ::=
     :}
     | TONE_LITERAL:tl
     {:
-	String[] tlString = tl.lexeme.split(".");
-	String toneId = tlString[tlString.length-1];
+	/*String[] tlString = tl.lexeme.split(".");
+	String toneId = tlString[tlString.length-1];*/
+	String toneId = tl.lexeme;
 	int toneVal = 0;
-	if(toneId == "C3"){
+	if(toneId.contains("C3")){
 	    toneVal = 61157;
-	}else if(toneId == "Cs3"){
+	}else if(toneId.contains("Cs3")){
 	    toneVal = 57724;
-	}else if(toneId == "D3"){
+	}else if(toneId.contains("D3")){
 	    toneVal = 54485;
-	}else if(toneId == "Ds3"){
+	}else if(toneId.contains("Ds3")){
 	    toneVal = 51427;
-	}else if(toneId == "E3"){
+	}else if(toneId.contains("E3")){
 	    toneVal = 48541;
-	}else if(toneId == "F3"){
+	}else if(toneId.contains("F3")){
 	    toneVal = 45816;
-	}else if(toneId == "Fs3"){
+	}else if(toneId.contains("Fs3")){
 	    toneVal = 43243;
-	}else if(toneId == "G3"){
+	}else if(toneId.contains("G3")){
 	    toneVal = 40816;
-	}else if(toneId == "Gs3"){
+	}else if(toneId.contains("Gs3")){
 	    toneVal = 38526;
-	}else if(toneId == "A3"){
+	}else if(toneId.contains("A3")){
 	    toneVal = 36363;
-	}else if(toneId ==  "As3"){
+	}else if(toneId.contains("As3")){
 	    toneVal = 34323;
-	}else if(toneId == "B3"){
+	}else if(toneId.contains("B3")){
 	    toneVal = 32397;
 	}
 	RESULT = new ToneLiteral(tl.line, tl.pos, toneId, toneVal);

@@ -11,7 +11,7 @@ import java.util.Stack;
 import java.util.HashMap;
 import java.util.*;
 import exceptions.SemanticException;
-
+import java.lang.RuntimeException;
 
 import ast.visitor.DepthFirstVisitor;
 import ast.node.*;
@@ -29,7 +29,9 @@ import symtable.*;
 public class BuildSymTable extends DepthFirstVisitor
 {
     private SymTable symTable;
-
+    private String errorString = "";
+    private int errors = 0;
+    
    public BuildSymTable() {
 	HashMap<Node, Type> map = new HashMap();
 	this.symTable = new SymTable(map);
@@ -40,14 +42,11 @@ public class BuildSymTable extends DepthFirstVisitor
     }   
 
    
-   /** Upon entering each node in AST, check of this node is the root
-   to generate start of .dot file, output the dot output for the node.
-   */
    public void defaultIn(Node node) {
+    try{
 	if (node instanceof Program) {
 	    this.symTable.addScope(new Scope("Program", "Program"));
 	    symTable.setExpType(node, Type.VOID);
-	    
 	    
 	} else if (node instanceof MainClass) {
 	    MainClass mc = (MainClass) node;
@@ -55,26 +54,32 @@ public class BuildSymTable extends DepthFirstVisitor
 	    ClassSTE classSTE = new ClassSTE(mc.getName(), true, null, new Scope("MainClass", mc.getName()));
 	    //search for "Program" stack containing other classes
 	    Scope progScope = this.symTable.lookupScope("Program");
-	    if (progScope != null){
-		    progScope.add(classSTE.getName(), classSTE);
+	    if (progScope != null && progScope.lookupInnermost(classSTE.getName()) != null){
+		errors++;
+		throw new SemanticException("Redefined symbol "+mc.getName(), mc.getLine(), mc.getPos());
+	    } else if(progScope != null){
+		progScope.add(classSTE.getName(), classSTE);
 	    }
 	    //push STE's scope onto stack
 	    this.symTable.addScope(classSTE.getScope());
-
-
+	    
 	} else if (node instanceof TopClassDecl) {
 	    //add to quicklookup table
 	    TopClassDecl tcd = (TopClassDecl) node;
+	    //search for duplicates of class
+	    Scope progScope = this.symTable.lookupScope("Program");
+	    if (progScope != null && progScope.lookupInnermost(tcd.getName()) != null){
+		errors++;
+		throw new SemanticException("Redefined symbol "+tcd.getName(), tcd.getLine(), tcd.getPos());
+	    }
 	    symTable.setExpType(node, Type.CLASS);
 	    //create VarSTEs and add to Class scope
 	    LinkedList<VarDecl> ll = tcd.getVarDecls();
 	    Iterator<VarDecl> iter = ll.listIterator();
 	    Scope scope = new Scope("TopClassDecl", tcd.getName());
 	    int offset = 0;
-	    //int size = 0;
 	    while(iter.hasNext()){
 		VarDecl vd = iter.next();
-		//check for double def
 		VarSTE varSTE = new VarSTE(vd.getName(), vd.getType());
 		varSTE.setBase("Z");
 		varSTE.setOffset(offset);
@@ -86,41 +91,60 @@ public class BuildSymTable extends DepthFirstVisitor
 	    ClassSTE classSTE = new ClassSTE(tcd.getName(), false, null, scope);
 	    classSTE.setObjectSize(offset);
 	    //search for "Program" stack containing other classes
-	    Scope progScope = this.symTable.lookupScope("Program");
 	    if (progScope != null) {
 		progScope.add(classSTE.getName(), classSTE);
 	    }
 	    //push new scope on top of stack to add MethodSTEs to
 	    this.symTable.addScope(classSTE.getScope());
-
-
+	    //check for double defined vardecls
+	    iter = ll.listIterator();
+	    Iterator<VarDecl> iter2 = ll.listIterator();
+	    while(iter.hasNext()){
+		VarDecl vd = iter.next();
+		while(iter2.hasNext()){
+		    VarDecl vdcomp = iter2.next();
+		    if(vd.getName().equals(vdcomp.getName()) && vd != vdcomp){
+			errors++;
+			throw new SemanticException("Redefined symbol "+vdcomp.getName(), vdcomp.getLine(), vdcomp.getPos());
+		    }
+		}
+	    }
+	    
 	} else if (node instanceof MethodDecl){
 	    MethodDecl md = (MethodDecl) node;
 	    //get enclosing class scope
-	    Scope scope = this.symTable.lookupClosestScopeWith("TopClassDecl");
-	    //if(node.parent() instanceof TopClassDecl){
-		TopClassDecl tcd = (TopClassDecl) node.parent();
-		scope = this.symTable.lookupScope(tcd.getName());
-	    //}
-	    System.out.println("\nFinding scope for MethodDecl "+md.getName());
+	    //Scope scope = this.symTable.lookupClosestScopeWith("TopClassDecl");
 	    //Scope scope = symTable.peek();
-	    //make sure method doesn't already exist
-	    if(scope.lookupInnermost(md.getName()) != null){
-		throw new SemanticException("Redefined method "+md.getName(), node.getLine(), node.getPos());
-	    }
+	    //System.out.println("\nBuilding STE for MethodDecl "+md.getName());
+	    TopClassDecl tcd = (TopClassDecl) node.parent();
+	    //System.out.println("tcd null? "+(tcd == null));
+	    //System.out.println("Looking up Scope for TCD "+tcd.getName());
+	    Scope scope = this.symTable.lookupScope(tcd.getName());
+	    //System.out.println("scope null? "+(scope == null));
 	    Type t = VarSTE.iTypeToType(md.getType());
 	    symTable.setExpType(md.getType(), t);
 	    //create signature & VarSTEs
 	    LinkedList<Formal> ll = md.getFormals();
 	    String sig = "(";
 	    Iterator<Formal> iter = ll.listIterator();
+	    Iterator<Formal> iter2 = ll.listIterator();
 	    Scope methodDeclScope = new Scope("MethodDecl", md.getName());
-	    int offset=0;
+	    int offset=3;
 	    while(iter.hasNext()){
 		Formal f = iter.next();
+		//check for redefined formals
+		while(iter2.hasNext()){
+		    Formal fcomp = iter2.next();
+		    //System.out.println(fcomp.getName()+" .equals "+f.getName()+"?: "+(fcomp.getName().trim().equals(f.getName().trim())));
+		    //System.out.println("fcomp != f : "+(fcomp != f));
+		    if(fcomp.getName().trim().equals(f.getName().trim()) && fcomp != f){
+			errors++;
+			throw new SemanticException("Redefined symbol "+f.getName(), f.getLine(), f.getPos());
+		    }
+		}
 		VarSTE varSTE = new VarSTE(f.getName(), f.getType());
 		varSTE.setBase("Y");
-		varSTE.setOffset(++offset);
+		varSTE.setOffset(offset);
 		methodDeclScope.add(f.getName(), varSTE);
 		sig += printNodeName(f.getType().getClass().toString()) + " ";
 		Type type = VarSTE.iTypeToType(f.getType());
@@ -141,6 +165,7 @@ public class BuildSymTable extends DepthFirstVisitor
 		    String[] sigsplit = mSTE.getmSignature().split(" ");
 		    String returnType = sigsplit[sigsplit.length-1];
 		    if(key == md.getName() && returnType == mSTE.getType().getClass().toString()){
+			errors++;
 			throw new SemanticException("Redefined symbol "+md.getName(), node.getLine(), node.getPos());
 		    }
 		}
@@ -152,8 +177,12 @@ public class BuildSymTable extends DepthFirstVisitor
 		VarDecl vd1 = iterVD1.next();
 		while(iterVD2.hasNext()){
 		    VarDecl vd2 = iterVD2.next();
-		    if(vd1.getName() == vd2.getName() && vd1 != vd2){
-			throw new SemanticException("Redefined symbol "+vd1.getName(), vd1.getLine(), vd1.getPos());
+		    /*System.out.println("Checking vardecls for method "+md.getName());
+		    System.out.println("\t"+vd1.getName()+" .equals "+vd2.getName()+"?: "+(vd1.getName().trim().equals(vd2.getName().trim())));
+		    System.out.println("\t"+"vd1 != vd2 : "+(vd1 != vd2));*/
+		    if(vd1.getName().equals(vd2.getName()) && vd1 != vd2){
+			errors++;
+			throw new SemanticException("Redefined symbol "+vd2.getName(), vd2.getLine(), vd2.getPos());
 		    }
 		}
 		VarSTE varSTE = new VarSTE(vd1.getName(), VarSTE.iTypeToType(vd1.getType()));
@@ -164,15 +193,42 @@ public class BuildSymTable extends DepthFirstVisitor
 		methodDeclScope.add(vd1.getName(), varSTE);
 		symTable.setExpType(vd1, type);
 	    }
+	    //check VarDecls and Formals don't conflict
+	    iterVD1 = md.getVarDecls().iterator();
+	    Iterator<Formal> iterF1 = ll.iterator();
+	    while(iterVD1.hasNext()){
+		VarDecl vd = iterVD1.next();
+		while(iterF1.hasNext()){
+		    Formal f = iterF1.next();
+		    //System.out.println("Checking vardecls and formals for method "+md.getName());
+		    //System.out.println("\t"+vd.getName()+" .equals "+f.getName()+"?: "+(vd.getName().trim().equals(f.getName().trim())));
+		    //System.out.println("\t"+"vd != f : "+(vd != f));
+		    if(vd.getName().equals(f.getName())){
+			errors++;
+			throw new SemanticException("Redefined symbol "+f.getName(), f.getLine(), f.getPos());
+		    }
+		}
+	    }
+	    //make sure method doesn't already exist
+	    if(scope.lookupInnermost(md.getName()) != null){
+		errors++;
+		throw new SemanticException("Redefined method "+md.getName(), node.getLine(), node.getPos());
+	    }
 	    //push STE's scope onto stack
 	    MethodSTE methSTE = new MethodSTE(md.getName(), sig, scope, t);
 	    scope.add(methSTE.getName(), methSTE);
 	    this.symTable.addScope(methodDeclScope);
+	    Type mdType = Type.stringToType(methSTE.getReturn());
+	    symTable.setExpType(md, mdType);
 	} else if (node instanceof VarDecl){
 	    //ClassDecls are setup at ClassDecl node
 	    //Method VarDecls are setup at MethodDecl node
 	}
-   }
+    }catch(SemanticException e){
+	//System.out.println("SemanticException");
+	System.out.println(e.getMessage());
+    }
+   } //end defaultIn
 
 
    public void defaultOut(Node node) {
@@ -243,19 +299,17 @@ public class BuildSymTable extends DepthFirstVisitor
 	    } else if (node instanceof WhileStatement){
 		    symTable.setExpType(node, Type.VOID);
 	    } else if (node instanceof ThisLiteral){
-		    symTable.setExpType(node, Type.CLASS);
+		    //symTable.setExpType(node, Type.CLASS);
 	    } else if (node instanceof CallExp){
 		CallExp callExp = (CallExp) node;
 		MethodSTE methodSTE = (MethodSTE) this.symTable.lookup(callExp.getId());
 		Type t = null;
 		if(methodSTE != null){
-		    if( methodSTE.getType() != null){
-			t = methodSTE.getType();
-		    } else {
-			t = Type.VOID;
-		    }
+		    String r = methodSTE.getReturn();
+		    //System.out.println("CallExp "+callExp.getId()+" return: "+r);
+		    symTable.setExpType(node, Type.stringToType(r));
+		    symTable.setExpType(node, t);
 		}
-		symTable.setExpType(node, t);
 	    } else if (node instanceof MinusExp) {
 		symTable.setExpType(node, Type.INT);
 	    } else if(node instanceof AssignStatement){
@@ -263,9 +317,17 @@ public class BuildSymTable extends DepthFirstVisitor
 		VarSTE varSTE = (VarSTE) this.symTable.lookup(as.getId());
 		Type t = varSTE.getType();
 		symTable.setExpType(node, t);
+	    }else if(node instanceof BoolType){
+		symTable.setExpType(node, Type.BOOL);
+	    } else if (node instanceof Program){
+		if(errors > 0){
+		    throw new RuntimeException("Errors found while building symbol table");
+		}
 	    }
 	}
    }
+   
+   
  
    /** A helper that trims a node's class name before printing it.
     * (E.g., "node.Token" --> "Token".) 
